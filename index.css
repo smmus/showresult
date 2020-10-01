@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600&display=swap');
+* , *::after, *::before{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+/* ---------------universal design-------------- */
+.btn {
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    border-radius: 10px;
+    background-image: radial-gradient(circle at 52% 84%, rgba(194, 194, 194,0.06) 0%, rgba(194, 194, 194,0.06) 18%,transparent 18%, transparent 100%),radial-gradient(circle at 38% 97%, rgba(239, 239, 239,0.06) 0%, rgba(239, 239, 239,0.06) 20%,transparent 20%, transparent 100%),radial-gradient(circle at 86% 17%, rgba(210, 210, 210,0.06) 0%, rgba(210, 210, 210,0.06) 61%,transparent 61%, transparent 100%),radial-gradient(circle at 6% 48%, rgba(91, 91, 91,0.06) 0%, rgba(91, 91, 91,0.06) 27%,transparent 27%, transparent 100%),radial-gradient(circle at 27% 63%, rgba(86, 86, 86,0.06) 0%, rgba(86, 86, 86,0.06) 30%,transparent 30%, transparent 100%),radial-gradient(circle at 2% 91%, rgba(182, 182, 182,0.06) 0%, rgba(182, 182, 182,0.06) 29%,transparent 29%, transparent 100%),linear-gradient(90deg, rgb(203, 171, 120),rgb(227, 87, 5));
+    box-shadow: 0 5px 20px -6px #000;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #000;
+    padding: .5em .5em;
+}
+.btn:active {
+    opacity: 0.5;
+}
+.btn:hover {
+    -webkit-transform: translatey(5px);
+            transform: translatey(5px);
+    box-shadow: none;
+  }
+/* ---------------univaersal design end-------------- */
+/* ---------------header starts-------------- */
+header {
+    font-weight: 300;
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #24252A;
+    padding: 1rem;
+    color: #fff;
+}
+header > div {
+    flex: 0;
+    font-size: 1.2em;
+    font-weight: 500;
+}
+header div span{
+    color: #4d7cff;
+}
+header > nav {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+header nav a {
+    text-decoration: none;
+    color: #fff;
+    display: inline-block;
+    padding-left: 2em;
+    transition: color 0.3s ease;
+}
+header nav a:hover{
+    color:#608aff
+}
+/* ---------------header end-------------- */
+/* ---------------index--main starts-------------- */
+main{
+    height: 70vh;
+    background-image: radial-gradient(circle at 29% 55%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 4%,transparent 4%, transparent 44%,transparent 44%, transparent 100%),radial-gradient(circle at 85% 89%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 51%,transparent 51%, transparent 52%,transparent 52%, transparent 100%),radial-gradient(circle at 6% 90%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 53%,transparent 53%, transparent 64%,transparent 64%, transparent 100%),radial-gradient(circle at 35% 75%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 6%,transparent 6%, transparent 98%,transparent 98%, transparent 100%),radial-gradient(circle at 56% 75%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 16%,transparent 16%, transparent 23%,transparent 23%, transparent 100%),radial-gradient(circle at 42% 0%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 3%,transparent 3%, transparent 26%,transparent 26%, transparent 100%),radial-gradient(circle at 29% 28%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 51%,transparent 51%, transparent 75%,transparent 75%, transparent 100%),radial-gradient(circle at 77% 21%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 35%,transparent 35%, transparent 55%,transparent 55%, transparent 100%),radial-gradient(circle at 65% 91%, hsla(329,0%,99%,0.05) 0%, hsla(329,0%,99%,0.05) 46%,transparent 46%, transparent 76%,transparent 76%, transparent 100%),linear-gradient(45deg, rgb(83, 91, 235),rgb(76, 11, 174));
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 70% 86%, 50% 100%, 30% 85%, 0 85%);;
+}
+main .container{
+    width: 85vw;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transform: translateY(80%);
+}
+main .text h4{
+    font-size: 1.7em;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+}
+main .text > *{
+    margin-bottom: 1.1em;
+    
+}
+main .text div > span {
+    display: inline-block;
+    padding: .3em .5em;
+    font-weight: 200;
+    cursor: pointer;
+    transition: color .4s ease;
+}
+main span:hover{
+    color: #fff;
+}
+main .text div > span:nth-of-type(1) {
+    padding: .3em .5em .3em 0em;
+}
+main .image{
+    width: 600px;
+    overflow: hidden;
+    position: relative;
+}
+main img{
+    object-fit: cover;
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+}
+/* ---------------index--main ends-------------- */
+/* ---------------media query start-------------- */
+@media (max-width:768px){
+    header{
+        padding:1rem;
+    }
+}
+/* ---------------media query end-------------- */
