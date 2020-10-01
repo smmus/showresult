@@ -111,6 +111,39 @@ main svg{
     width: 80%;
 }
 /* ---------------index--main ends-------------- */
+/* ---------------index--colleges-------------- */
+#colleges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.box{
+    display: inline-block;
+    background-color: rgb(245, 245, 245);
+    border-color: rgba(255, 255, 255, 0);
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    padding: 1em 2em;;
+    cursor: pointer;
+    box-shadow: 0 2px 10px -6px #000;
+    transition: all .4s ease;
+}
+.box a{
+    text-decoration: none;
+    transition: all .4s ease;
+    color: rgb(116, 116, 116);
+}
+.box:hover {
+    box-shadow: none;
+    transform: translateY(4px);
+}
+.box:hover a{
+    color: #000 !important;
+}
+/* ---------------index--colleges ends-------------- */
 /* ---------------media query start-------------- */
 @media (max-width:768px){
     header{
