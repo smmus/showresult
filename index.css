@@ -1,6 +1,5 @@
 /*===== GOOGLE FONTS =====*/
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600&display=swap');
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 * , *::after, *::before{
     margin: 0;
     padding: 0;
@@ -13,7 +12,7 @@ body {
 
 /*===== VARIABLES CSS =====*/
 :root{
-  --nav-width: 92px;
+  --nav-width: 90px;
 
   /*===== Colores =====*/
   --first-color: #0C5DF4;
@@ -22,7 +21,6 @@ body {
   --white-color: #FFF;
   
   /*===== Fuente y tipografia =====*/
-  --body-font: 'Poppins', sans-serif;
   --normal-font-size: 1rem;
   --small-font-size: .875rem;
   
@@ -59,7 +57,7 @@ header {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #24252A;
+    background-color: var(--bg-color);
     padding: 1rem;
     color: #fff;
 }
@@ -68,7 +66,7 @@ header > div {
     font-size: 1.2em;
     font-weight: 500;
 }
-header div span{
+.header-logo span{
     color: #4d7cff;
 }
 header > nav {
@@ -169,7 +167,7 @@ main svg{
 /*===== l NAV =====*/
 .l-navbar{
     position: fixed;
-    top: 0;
+    top: 1;
     left: 0;
     width: var(--nav-width);
     height: 100vh;
@@ -187,6 +185,9 @@ main svg{
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+  }
+  .nav a {
+    text-decoration: none;
   }
   .nav__brand{
     display: grid;
@@ -214,8 +215,8 @@ main svg{
     color: var(--white-color);
     border-radius: .5rem;
     margin-bottom: 1rem;
-    transition: .3s;
     cursor: pointer;
+    transition: .3s;
   }
   .nav__link:hover{
     background-color: var(--first-color);
@@ -229,7 +230,7 @@ main svg{
   
   /*Expander menu*/
   .expander{
-    width: calc(var(--nav-width) + 9.25rem);
+    width: 300px;
   }
   
   /*Add padding body*/
@@ -265,6 +266,11 @@ main svg{
   /*Show collapse*/
   .showCollapse{
     display: block;
+    grid-column: 1 / 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
   
   /*Rotate icon*/
