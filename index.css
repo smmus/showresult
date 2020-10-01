@@ -78,8 +78,7 @@ main .container{
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    transform: translateY(80%);
+    align-items: center;
 }
 main .text h4{
     font-size: 1.7em;
@@ -106,16 +105,10 @@ main .text div > span:nth-of-type(1) {
 }
 main .image{
     width: 600px;
-    overflow: hidden;
-    position: relative;
 }
-main img{
+main svg{
     object-fit: cover;
-    width: 100%;
-    position: absolute;
-    z-index: 10;
-    top: 0;
-    left: 0;
+    width: 80%;
 }
 /* ---------------index--main ends-------------- */
 /* ---------------media query start-------------- */
