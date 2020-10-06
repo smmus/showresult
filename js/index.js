@@ -38,7 +38,10 @@ for (let i = 0; i < linkCollapse.length; i++) {
         rotate.classList.toggle('rotate')
     })
 }
-// ------------------------ nav functionality ends ------------------------------
+// ------------------------ nav functionality ends -----------------------------
+// ------------------------ some global funcs  -----------------------------
+let firstBy=function(){function n(n){return n}function t(n){return"string"==typeof n?n.toLowerCase():n}function r(r,e){if(e="number"==typeof e?{direction:e}:e||{},"function"!=typeof r){var u=r;r=function(n){return n[u]?n[u]:""}}if(1===r.length){var i=r,o=e.ignoreCase?t:n;r=function(n,t){return o(i(n))<o(i(t))?-1:o(i(n))>o(i(t))?1:0}}return-1===e.direction?function(n,t){return-r(n,t)}:r}function e(n,t){return n=r(n,t),n.thenBy=u,n}function u(n,t){var u=this;return n=r(n,t),e(function(t,r){return u(t,r)||n(t,r)})}return e}();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
+// ------------------------ some global funcs ends -----------------------------
 // ------------------------ main fetching starts ------------------------------
 // for overview
 // checking url-params
@@ -61,13 +64,42 @@ if (!window.indexedDB) {
     //return;
 }
 
-//fetching data first
-let data = null;
-fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
-    .then(res=>res.text())
-    .then(text=> {data = text})
+openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func)
 
-db = openDb(window.indexedDB, DB_NAME, DB_VERSION, async function(event){
+async function onsuccess_func(event) {
+    console.log("[FUNC openDb: DB opended]");
+    db = event.target.result;
+
+    // checking if main objectStore is empty
+    getObjectStore(db, OBJ_STORE_MAIN, 'readonly').count().onsuccess = function () {
+        let rollCount = this.result;
+        console.log('[OBJ_STORE_MAIN count()]', rollCount);
+        if (rollCount == 0) {
+            //fetch data
+            fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
+                .then(res => res.text())
+                .then(data => {
+
+                    // storing main data
+                    let objStoreMain = getObjectStore(db, OBJ_STORE_MAIN, 'readwrite');
+                    data.split('\n').splice(1).forEach(line => { // header row not needed
+                        let result = line.split(',')
+                        objStoreMain.add({
+                            roll: parseInt(result[1].slice(10)),
+                            name: result[0],
+                            result: result.splice(2) // 1st 2 items not needed.
+                        })
+                    })
+
+                    // calculating rank
+                    
+                })
+        }
+    }
+
+}
+
+function onupgradeneeded_func(event) {
     console.log("[FUNC openDb: onupgradeneeded]");
 
     let db = event.target.result;
@@ -77,24 +109,13 @@ db = openDb(window.indexedDB, DB_NAME, DB_VERSION, async function(event){
     let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
     let objStoreInfo = db.createObjectStore(OBJ_STORE_INFO, { keyPath: 'info' });
 
-    objStoreMain.add({roll:'123', any:false})
-
-    data.split('\n').splice(1).forEach(line => { // header row not needed
-        let result = line.split(',')
-        objStoreMain.add({
-            roll: parseInt(result[1]),
-            name: result[0],
-            result: result.splice(2) // 1st 2 items not needed.
-        })
-    })
-
     
+    // error while fetching and storing here : transaction is not active 
     // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
-
-    // adding data to main_objStore
-    // fetchAndStoreIDB(db, OBJ_STORE_MAIN, 'readwrite', `data/${DB_NAME}_${XM_NAME}.csv`);
-})
+}
 // checking index db if contains -- done
+
+
 // fetching data -- done
 // writing to indexdb -- done 
 // calculating all fields
@@ -104,7 +125,7 @@ db = openDb(window.indexedDB, DB_NAME, DB_VERSION, async function(event){
 // for compare 
 
 /* ------------  fetch and store data ------------ */
-async function fetchAndStoreIDB(db, object_store_name, mode, fetch_url){
+async function fetchAndStoreIDB(db, object_store_name, mode, fetch_url) {
     let obj_store = await getObjectStore(db, object_store_name, mode);
     let response = await fetch(fetch_url);
     let data = await response.text();
@@ -117,28 +138,24 @@ async function fetchAndStoreIDB(db, object_store_name, mode, fetch_url){
         })
     })
 
-} 
+}
 /* ------------ indexDb functions------------ */
-function openDb(idb, db_name, db_version, onupgradeneeded_func) {
-    // no modifies global var
+function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
+    // modifies global var
     console.log("[FUNC openDb]");
     let req = idb.open(db_name, db_version);
 
-    req.onsuccess = function (evt) {
-        console.log("[FUNC openDb: DB opended]");
-        return  evt.target.result;
-    };
+    req.onsuccess = onsuccess_func;
 
     req.onerror = function (evt) {
         console.log("[FUNC openDb: ERROR]");
         console.error(evt.target.errorCode);
-        return null;
     };
 
     req.onupgradeneeded = onupgradeneeded_func;
 }
 
 function getObjectStore(db, store_name, mode) {
-    var tx = db.transaction(store_name, mode);
+    var tx = db.transaction([store_name], mode);
     return tx.objectStore(store_name);
 }
