@@ -143,26 +143,97 @@ async function onsuccess_func(event) {
             fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
                 .then(res => res.text())
                 .then(data => {
+                    // imp vars
+                    let sub_code_to_name = {
+                        '101': 'bangla_1st',
+                        '107': 'eng_1st',
+                        '178': 'biology_1st',
+                        '179': 'biology_2nd',
+                        '174': 'physics_1st',
+                        '176': 'chemistry_1st',
+                        '265': 'higher_math_1st',
+                        '275': 'ict'
+                    };
+                    let metaData = {
+                        total_examnee: 0,
+                        failed_examnee: 0
+                    };
+                    for (let i in sub_code_to_name){
+                        metaData[sub_code_to_name[i]] = {
+                            highest:0, 
+                            avg:0,
+                            min:100,
+                            a_plus:0,
+                            a:0,
+                            a_minus:0,
+                            b:0,
+                            c:0,
+                            d:0,
+                            f:0,
+                            no_res:0
+                        }
+                    }
 
-                    // getting header index
-                    let header_index = data.split('\n')[0].split(',');
+                    // getting header_names & indexs
+                    let header_names = data.split('\n')[0].split(',');
 
-                    // storing main data
+                    let name_index =  header_names.indexOf('student_name');
+                    let roll_index =  header_names.indexOf('student_roll');
+                    let rank_index = header_names.indexOf('rank');
+                    let pass_index = header_names.indexOf('isPassed');
+
+                    // opening main_obj_store txn
                     let objStoreMain = getObjectStore(db, OBJ_STORE_MAIN, 'readwrite');
-                    data.split('\n').splice(1).forEach(line => { // header row not needed
+                    
+                    // storing main data + calculating info
+                    data.split('\n').splice(1).forEach(line => { // header row not needed so splice(1)
                         let result = line.split(',');
+                        
+                        let name = result[name_index];
+
+                        if (name) metaData['total_examnee']++;
+                        if (result[pass_index].includes('failed')) metaData['failed_examnee']++;
+
                         let obj = {
-                            roll: parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
-                            name: result[header_index.indexOf('student_name')],
+                            roll: parseInt(result[roll_index].slice(ROLL_SLICE)),
+                            name: name,
                             res: result.map(e=> !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
                         }
-                        if (IS_RANK_GIVEN){
-                            obj.rank = parseInt(result[header_index.indexOf('rank')]);
-                            // console.log(result[header_index.indexOf('rank')]);
-                        }
-                            
-                        objStoreMain.add(obj)
+                        if (IS_RANK_GIVEN)
+                            obj.rank = parseInt(result[rank_index]);
+                        objStoreMain.add(obj);
+
+                        result.forEach((element, index)=>{
+                            for (let i in sub_code_to_name){
+                                if(header_names[index].includes(sub_code_to_name[i])){
+                                    if(header_names[index].includes('mcq') && element!=""){
+                                        metaData[sub_code_to_name[i]]['highest'] = metaData[sub_code_to_name[i]]['highest'] < parseInt(element) ? parseInt(element) : metaData[sub_code_to_name[i]]['highest'];
+                                        parseInt(element) && (metaData[sub_code_to_name[i]]['avg'] += parseInt(element));
+                                        metaData[sub_code_to_name[i]]['min'] = metaData[sub_code_to_name[i]]['min'] > parseInt(element) ? parseInt(element) : metaData[sub_code_to_name[i]]['min'];
+                                    }
+                                    else if(header_names[index].includes('grade')){
+                                        element.toLowerCase()=='a+' && metaData[sub_code_to_name[i]]['a_plus']++;
+                                        element.toLowerCase()=='a' && metaData[sub_code_to_name[i]]['a']++; 
+                                        element.toLowerCase()=='a-' && metaData[sub_code_to_name[i]]['a_minus']++;
+                                        element.toLowerCase()=='b' && metaData[sub_code_to_name[i]]['b']++;
+                                        element.toLowerCase()=='c' && metaData[sub_code_to_name[i]]['c']++;
+                                        element.toLowerCase()=='d' && metaData[sub_code_to_name[i]]['d']++;
+                                        element.toLowerCase()=='f' && metaData[sub_code_to_name[i]]['f']++;
+                                        element=="" && metaData[sub_code_to_name[i]]['no_res']++;
+                                    }
+                                }
+                            }
+                        })
                     })
+                    for (let i in metaData){
+                        metaData[i].avg = (metaData[i].avg / (metaData.total_examnee - metaData[i].no_res)).toFixed(2); 
+                    }
+
+                    // opening info_obj_store txn
+                    let objStoreInfo = getObjectStore(db, OBJ_STORE_INFO, 'readwrite');
+                    objStoreInfo.add({info:'metaData', metaData})
+                    objStoreInfo.add({info:'sub_code_to_name', sub_code_to_name})
+
 
                     // calculating rank
                     if(IS_RANK_GIVEN){
@@ -170,7 +241,7 @@ async function onsuccess_func(event) {
                         console.log('[RANK OK]');
                     }else{
                         console.log('[RANK CALCULATING]');
-                        createRankList(data, header_index);
+                        createRankList(data, header_names);
                     }
 
                     // calculating info
