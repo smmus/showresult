@@ -75,6 +75,7 @@ function createRankList(data, header_index){
             result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
             result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
             result[header_index.indexOf('student_name')],
+            result[header_index.indexOf('isPassed')].toLowerCase().includes('failed') ? false : true
         ]
     })
     let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1)
@@ -95,10 +96,12 @@ function createRankList(data, header_index){
             rank: index+1,
             name : arr[4],
             roll : arr[0],
-            total : arr[1],
+            total : arr[1], 
+            isPassed : arr[5], //boolean
             data : arr.slice(2,4) //2 & 3rd index
         })
     })
+    // todo: update the main list instead of creting new objStore.
 }
 // ------------------------ some global funcs ends -----------------------------
 // ------------------------ main fetching starts ------------------------------
@@ -164,6 +167,8 @@ async function onsuccess_func(event) {
                         createRankList(data, header_index);
                     }
 
+                    // calculating info
+
                 })
         }
     }
@@ -180,7 +185,8 @@ function onupgradeneeded_func(event) {
     let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
     let objStoreInfo = db.createObjectStore(OBJ_STORE_INFO, { keyPath: 'info' });
 
-    
+    objStoreMain.createIndex("rank", "rank", { unique: true });
+
     // error while fetching and storing here : transaction is not active 
     // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
 }
