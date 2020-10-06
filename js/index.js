@@ -61,12 +61,14 @@ if (!window.indexedDB) {
     //return;
 }
 
+//fetching data first
+let data = null;
+fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
+    .then(res=>res.text())
+    .then(text=> {data = text})
+
 db = openDb(window.indexedDB, DB_NAME, DB_VERSION, async function(event){
     console.log("[FUNC openDb: onupgradeneeded]");
-
-    //fetching data first
-    let response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
-    let data = await response.text();
 
     let db = event.target.result;
 
@@ -80,24 +82,13 @@ db = openDb(window.indexedDB, DB_NAME, DB_VERSION, async function(event){
     data.split('\n').splice(1).forEach(line => { // header row not needed
         let result = line.split(',')
         objStoreMain.add({
-            roll: result[1],
+            roll: parseInt(result[1]),
             name: result[0],
             result: result.splice(2) // 1st 2 items not needed.
         })
     })
 
-    // fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
-    // .then(res=>res.text())
-    // .then(data=>{
-    //     data.split('\n').splice(1).forEach(line => { // header row not needed
-    //         let result = line.split(',')
-    //         objStoreMain.add({
-    //             roll: result[1],
-    //             name: result[0],
-    //             result: result.splice(2) // 1st 2 items not needed
-    //         })
-    //     })
-    // })
+    
     // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
 
     // adding data to main_objStore
