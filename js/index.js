@@ -150,16 +150,22 @@ async function onsuccess_func(event) {
                     // storing main data
                     let objStoreMain = getObjectStore(db, OBJ_STORE_MAIN, 'readwrite');
                     data.split('\n').splice(1).forEach(line => { // header row not needed
-                        let result = line.split(',')
-                        objStoreMain.add({
-                            roll: parseInt(result[1].slice(ROLL_SLICE)),
-                            name: result[0],
-                            result: result.splice(2) // 1st 2 items not needed.
-                        })
+                        let result = line.split(',');
+                        let obj = {
+                            roll: parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
+                            name: result[header_index.indexOf('student_name')],
+                            res: result.map(e=> !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
+                        }
+                        if (IS_RANK_GIVEN){
+                            obj.rank = parseInt(result[header_index.indexOf('rank')]);
+                            // console.log(result[header_index.indexOf('rank')]);
+                        }
+                            
+                        objStoreMain.add(obj)
                     })
 
                     // calculating rank
-                    if(header_index.indexOf('rank')>=0 || IS_RANK_GIVEN){
+                    if(IS_RANK_GIVEN){
                         // rank is given in the file
                         console.log('[RANK OK]');
                     }else{
@@ -185,7 +191,8 @@ function onupgradeneeded_func(event) {
     let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
     let objStoreInfo = db.createObjectStore(OBJ_STORE_INFO, { keyPath: 'info' });
 
-    objStoreMain.createIndex("rank", "rank", { unique: true });
+    if (IS_RANK_GIVEN)
+        objStoreMain.createIndex("rank", "rank", { unique: true });
 
     // error while fetching and storing here : transaction is not active 
     // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
