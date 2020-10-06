@@ -41,7 +41,31 @@ for (let i = 0; i < linkCollapse.length; i++) {
 // ------------------------ nav functionality ends -----------------------------
 // ------------------------ some global funcs  -----------------------------
 let firstBy=function(){function n(n){return n}function t(n){return"string"==typeof n?n.toLowerCase():n}function r(r,e){if(e="number"==typeof e?{direction:e}:e||{},"function"!=typeof r){var u=r;r=function(n){return n[u]?n[u]:""}}if(1===r.length){var i=r,o=e.ignoreCase?t:n;r=function(n,t){return o(i(n))<o(i(t))?-1:o(i(n))>o(i(t))?1:0}}return-1===e.direction?function(n,t){return-r(n,t)}:r}function e(n,t){return n=r(n,t),n.thenBy=u,n}function u(n,t){var u=this;return n=r(n,t),e(function(t,r){return u(t,r)||n(t,r)})}return e}();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
-let createRankList = function(data, header_index){
+
+function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
+    // modifies global var
+    console.log("[FUNC openDb]");
+    let req = idb.open(db_name, db_version);
+
+    req.onsuccess = onsuccess_func;
+
+    req.onerror = function (evt) {
+        console.log("[FUNC openDb: ERROR]");
+        console.error(evt.target.errorCode);
+    };
+
+    req.onupgradeneeded = onupgradeneeded_func;
+}
+
+function getObjectStore(db, store_name, mode) {
+    var tx = db.transaction([store_name], mode);
+    tx.oncomplete = function(e){
+        console.log('[TX CPM :',db.name,store_name,mode,']');
+    }
+    return tx.objectStore(store_name);
+}
+
+function createRankList(data, header_index){
     let rankList = data.split('\n').splice(1).map(line=>{
         let result = line.split(',');
         // [roll, total, optional, non-optional, name]
@@ -62,14 +86,17 @@ let createRankList = function(data, header_index){
     
     rankList.sort(sortingFunc);
 
-    console.log('[RANK]')
+    console.log('[RANK LIST -]')
     console.log(rankList)
 
     let objStoreRank = getObjectStore(db, OBJ_STORE_RANK, 'readwrite');
     rankList.forEach((arr, index)=>{
         objStoreRank.add({
             rank: index+1,
-            data : arr
+            name : arr[4],
+            roll : arr[0],
+            total : arr[1],
+            data : arr.slice(2,4) //2 & 3rd index
         })
     })
 }
@@ -81,6 +108,7 @@ const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institu
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLL = new URLSearchParams(window.location.search).get('roll');
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
+const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('r');
 
 const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
@@ -100,7 +128,7 @@ if (!window.indexedDB) {
 openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func)
 
 async function onsuccess_func(event) {
-    console.log("[FUNC openDb: DB opended]");
+    console.log("[FUNC openDb: DB onsuccess]");
     db = event.target.result;
 
     // checking if main objectStore is empty
@@ -128,7 +156,13 @@ async function onsuccess_func(event) {
                     })
 
                     // calculating rank
-                    
+                    if(header_index.indexOf('rank')>=0 || IS_RANK_GIVEN){
+                        // rank is given in the file
+                        console.log('[RANK OK]');
+                    }else{
+                        console.log('[RANK CALCULATING]');
+                        createRankList(data, header_index);
+                    }
 
                 })
         }
@@ -177,25 +211,3 @@ async function fetchAndStoreIDB(db, object_store_name, mode, fetch_url) {
 
 }
 /* ------------ indexDb functions------------ */
-function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
-    // modifies global var
-    console.log("[FUNC openDb]");
-    let req = idb.open(db_name, db_version);
-
-    req.onsuccess = onsuccess_func;
-
-    req.onerror = function (evt) {
-        console.log("[FUNC openDb: ERROR]");
-        console.error(evt.target.errorCode);
-    };
-
-    req.onupgradeneeded = onupgradeneeded_func;
-}
-
-function getObjectStore(db, store_name, mode) {
-    var tx = db.transaction([store_name], mode);
-    tx.oncomplete = function(e){
-        console.log('[TX CPM :',db,store_name,mode,']');
-    }
-    return tx.objectStore(store_name);
-}
