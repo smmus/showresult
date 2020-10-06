@@ -8,7 +8,11 @@ const showMenu = (toggleId, navbarId, bodyId) => {
         toggle.addEventListener('click', () => {
             navbar.classList.toggle('expander')
 
-            bodypadding.classList.toggle('body-pd')
+            // bodypadding.classList.toggle('body-pd') --> code after thish wont execute if error
+
+            document.querySelectorAll('#navbar nav > div >  div+div > div .rotate').forEach(e=>e.classList.remove("rotate"));
+            document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e=>e.classList.remove("showCollapse"))
+
         })
     }
 }
