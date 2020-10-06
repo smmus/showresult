@@ -64,12 +64,44 @@ if (!window.indexedDB) {
 db = openDb(window.indexedDB, DB_NAME, DB_VERSION, async function(event){
     console.log("[FUNC openDb: onupgradeneeded]");
 
+    //fetching data first
+    let response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
+    let data = await response.text();
+
     let db = event.target.result;
 
     // creating main object
-    var objStore = db.createObjectStore(OBJ_STORE_MAIN, { keyPath: 'roll' });
+    let objStoreMain = db.createObjectStore(OBJ_STORE_MAIN, { keyPath: 'roll' });
+    let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
+    let objStoreInfo = db.createObjectStore(OBJ_STORE_INFO, { keyPath: 'info' });
+
+    objStoreMain.add({roll:'123', any:false})
+
+    data.split('\n').splice(1).forEach(line => { // header row not needed
+        let result = line.split(',')
+        objStoreMain.add({
+            roll: result[1],
+            name: result[0],
+            result: result.splice(2) // 1st 2 items not needed.
+        })
+    })
+
+    // fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
+    // .then(res=>res.text())
+    // .then(data=>{
+    //     data.split('\n').splice(1).forEach(line => { // header row not needed
+    //         let result = line.split(',')
+    //         objStoreMain.add({
+    //             roll: result[1],
+    //             name: result[0],
+    //             result: result.splice(2) // 1st 2 items not needed
+    //         })
+    //     })
+    // })
+    // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
+
     // adding data to main_objStore
-    fetchAndStoreIDB(db, OBJ_STORE_MAIN, 'readwrite', `data/${DB_NAME}_${XM_NAME}.csv`);
+    // fetchAndStoreIDB(db, OBJ_STORE_MAIN, 'readwrite', `data/${DB_NAME}_${XM_NAME}.csv`);
 })
 // checking index db if contains -- done
 // fetching data -- done
