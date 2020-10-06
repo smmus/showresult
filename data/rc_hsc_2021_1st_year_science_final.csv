@@ -1,0 +1,305 @@
+student_name,student_roll,bangla_1st_mcq,bangla_1st_grade,bangla_1st_gp,eng_1st_mcq,eng_1st_grade,eng_1st_gp,biology_1st_mcq,biology_1st_grade,biology_1st_gp,physics_1st_mcq,physics_1st_grade,physics_1st_gp,chemistry_1st_mcq,chemistry_1st_grade,chemistry_1st_gp,higher_math_1st_mcq,higher_math_1st_grade,higher_math_1st_gp,ict_mcq,ict_grade,ict_gp,term_total,grade,gpa,optionalSub,isPassed,rank,avg_mark,avg_gp
+Md. Abdullah Ishtiaq,1201920010001,78,A,4,62,A-,3.5,58,B,3,76,A,4,68,A-,3.5,52,B,3,82,A+,5,476,4,GPA 4,biology,Promoted,124,68,3.71
+Luba Moni,1201920010002,72,A,4,74,A,4,64,A-,3.5,80,A+,5,70,A,4,74,A,4,78,A,4,512,4.42,GPA 4.42,biology,Promoted,49,73.14,4.07
+Mostary Sabiha Rimu,1201920010003,78,A,4,68,A-,3.5,42,C,2,64,A-,3.5,60,A-,3.5,60,A-,3.5,74,A,4,446,3.67,GPA 3.67,biology,Promoted,180,63.71,3.43
+Tasnia Tasnim Moury,1201920010004,82,A+,5,80,A+,5,62,A-,3.5,70,A,4,74,A,4,54,B,3,82,A+,5,504,4.58,GPA 4.58,biology,Promoted,64,72,4.21
+Masuma Tabassum Moumi,1201920010005,78,A,4,86,A+,5,80,A+,5,70,A,4,74,A,4,74,A,4,86,A+,5,548,4.83,GPA 4.83,biology,Promoted,11,78.29,4.43
+Sakhawat Hossain Roni,1201920010006,60,A-,3.5,76,A,4,58,B,3,60,A-,3.5,52,B,3,58,B,3,60,A-,3.5,424,3.58,GPA 3.58,biology,Promoted,225,60.57,3.36
+Nowshin Anber,1201920010007,54,B,3,82,A+,5,68,A-,3.5,80,A+,5,72,A,4,84,A+,5,70,A,4,510,4.58,GPA 4.58,biology,Promoted,53,72.86,4.21
+Golam Kibria,1201920010008,36,D,1,60,A-,3.5,74,A,4,76,A,4,60,A-,3.5,78,A,4,82,A+,5,466,3.83,GPA 3.83,biology,Promoted,142,66.57,3.57
+Md. Rakib Hasan,1201920010009,72,A,4,64,A-,3.5,60,A-,3.5,78,A,4,78,A,4,54,B,3,74,A,4,480,4,GPA 4,biology,Promoted,115,68.57,3.71
+Jarin Tarannum Anan,1201920010010,74,A,4,78,A,4,60,A-,3.5,56,B,3,48,C,2,42,C,2,64,A-,3.5,422,3.33,GPA 3.33,biology,Promoted,228,60.29,3.14
+M. Tanvir Ahmed Turja,1201920010011,72,A,4,76,A,4,66,A-,3.5,72,A,4,54,B,3,66,A-,3.5,78,A,4,484,4,GPA 4,biology,Promoted,113,69.14,3.71
+Atiqa Samiha,1201920010012,68,A-,3.5,76,A,4,66,A-,3.5,64,A-,3.5,74,A,4,70,A,4,84,A+,5,502,4.25,GPA 4.25,biology,Promoted,68,71.71,3.93
+Md. Kabbo Shariar Digonto,1201920010013,60,A-,3.5,50,B,3,82,A+,5,70,A,4,46,C,2,66,A-,3.5,68,A-,3.5,442,3.75,GPA 3.75,biology,Promoted,193,63.14,3.5
+Fairuz Jabin,1201920010014,66,A-,3.5,60,A-,3.5,56,B,3,70,A,4,46,C,2,36,D,1,80,A+,5,414,3.33,GPA 3.33,biology,Promoted,240,59.14,3.14
+Habibunnobi Maruf,1201920010015,78,A,4,64,A-,3.5,60,A-,3.5,70,A,4,54,B,3,58,B,3,62,A-,3.5,446,3.75,GPA 3.75,biology,Promoted,182,63.71,3.5
+Samiha Alam,1201920010016,82,A+,5,78,A,4,80,A+,5,82,A+,5,52,B,3,70,A,4,78,A,4,522,4.67,GPA 4.67,biology,Promoted,38,74.57,4.29
+Nisma,1201920010017,86,A+,5,68,A-,3.5,64,A-,3.5,62,A-,3.5,50,B,3,60,A-,3.5,78,A,4,468,4,GPA 4,biology,Promoted,139,66.86,3.71
+Galib Hasnine Dhrubo,1201920010018,76,A,4,68,A-,3.5,58,B,3,76,A,4,68,A-,3.5,72,A,4,90,A+,5,508,4.17,GPA 4.17,biology,Promoted,57,72.57,3.86
+Tanvir Aziz,1201920010019,56,B,3,64,A-,3.5,62,A-,3.5,60,A-,3.5,62,A-,3.5,66,A-,3.5,76,A,4,446,3.75,GPA 3.75,biology,Promoted,184,63.71,3.5
+Sadia Tasneem,1201920010020,80,A+,5,88,A+,5,84,A+,5,80,A+,5,82,A+,5,76,A,4,94,A+,5,584,5,GPA 5,biology,Promoted,4,83.43,4.86
+Sanjida Sarker,1201920010021,68,A-,3.5,54,B,3,38,D,1,62,A-,3.5,38,D,1,48,C,2,62,A-,3.5,370,2.75,GPA 2.75,biology,Promoted,285,52.86,2.5
+Abdullah Mahmud Kafi,1201920010022,88,A+,5,84,A+,5,80,A+,5,82,A+,5,84,A+,5,76,A,4,90,A+,5,584,5,GPA 5,biology,Promoted,3,83.43,4.86
+Umme Halima Borsha,1201920010023,68,A-,3.5,64,A-,3.5,56,B,3,62,A-,3.5,48,C,2,36,D,1,68,A-,3.5,402,3,GPA 3,biology,Promoted,250,57.43,2.86
+Abir Ahmed Hasnain,1201920010024,88,A+,5,86,A+,5,80,A+,5,84,A+,5,90,A+,5,80,A+,5,88,A+,5,596,5,GPA 5,biology,Promoted,2,85.14,5
+Md. Ishrak Tausif,1201920010025,84,A+,5,54,B,3,66,A-,3.5,74,A,4,64,A-,3.5,62,A-,3.5,84,A+,5,488,4.25,GPA 4.25,biology,Promoted,99,69.71,3.93
+Tahmid Adib,1201920010026,78,A,4,86,A+,5,76,A,4,88,A+,5,78,A,4,78,A,4,84,A+,5,568,4.83,GPA 4.83,biology,Promoted,6,81.14,4.43
+Md. Ashfak Natik Chowdhury Munem,1201920010027,82,A+,5,82,A+,5,70,A,4,54,B,3,58,B,3,74,A,4,88,A+,5,508,4.5,GPA 4.5,biology,Promoted,60,72.57,4.14
+Tanvir Anjum Poushra,1201920010028,70,A,4,74,A,4,74,A,4,66,A-,3.5,74,A,4,80,A+,5,90,A+,5,528,4.58,GPA 4.58,biology,Promoted,27,75.43,4.21
+Tabassum Nishat Aitee,1201920010029,50,B,3,68,A-,3.5,64,A-,3.5,58,B,3,48,C,2,46,C,2,74,A,4,408,3.17,GPA 3.17,biology,Promoted,246,58.29,3
+Ahmad Ashab Zabir,1201920010030,80,A+,5,74,A,4,52,B,3,72,A,4,64,A-,3.5,60,A-,3.5,74,A,4,476,4.17,GPA 4.17,biology,Promoted,123,68,3.86
+Mst. Marjia Sultana Ridika,1201920010031,72,A,4,58,B,3,76,A,4,66,A-,3.5,86,A+,5,62,A-,3.5,64,A-,3.5,484,4.08,GPA 4.08,biology,Promoted,114,69.14,3.79
+Zareen Sadaf Zaman,1201920010032,86,A+,5,80,A+,5,76,A,4,76,A,4,86,A+,5,78,A,4,92,A+,5,574,5,GPA 5,biology,Promoted,5,82,4.57
+Md. Atikur Rahman,1201920010033,80,A+,5,82,A+,5,68,A-,3.5,74,A,4,68,A-,3.5,72,A,4,82,A+,5,526,4.67,GPA 4.67,biology,Promoted,29,75.14,4.29
+Fatema Jahan,1201920010034,74,A,4,74,A,4,72,A,4,52,B,3,60,A-,3.5,70,A,4,86,A+,5,488,4.25,GPA 4.25,biology,Promoted,103,69.71,3.93
+Samiha Binte Abbas,1201920010035,74,A,4,78,A,4,74,A,4,84,A+,5,64,A-,3.5,60,A-,3.5,76,A,4,510,4.33,GPA 4.33,biology,Promoted,55,72.86,4
+Mst. Mahfuja Khatun,1201920010036,74,A,4,72,A,4,64,A-,3.5,74,A,4,64,A-,3.5,72,A,4,78,A,4,498,4.17,GPA 4.17,biology,Promoted,82,71.14,3.86
+S. M Shahriar Rifat,1201920010037,74,A,4,82,A+,5,62,A-,3.5,86,A+,5,58,B,3,90,A+,5,68,A-,3.5,520,4.5,GPA 4.5,biology,Promoted,40,74.29,4.14
+Nusrat Jahan Lajuk,1201920010038,76,A,4,60,A-,3.5,60,A-,3.5,54,B,3,42,C,2,42,C,2,76,A,4,410,3.33,GPA 3.33,biology,Promoted,244,58.57,3.14
+Mst. Tasnuva Tanvin,1201920010039,76,A,4,54,B,3,56,B,3,70,A,4,58,B,3,56,B,3,54,B,3,424,3.5,GPA 3.5,biology,Promoted,224,60.57,3.29
+Zannatae Rumman Ympepa,1201920010040,80,A+,5,76,A,4,60,A-,3.5,90,A+,5,58,B,3,72,A,4,84,A+,5,520,4.58,GPA 4.58,biology,Promoted,39,74.29,4.21
+Md. Atik Mahbub,1201920010041,74,A,4,72,A,4,50,B,3,70,A,4,74,A,4,60,A-,3.5,72,A,4,472,4.08,GPA 4.08,biology,Promoted,131,67.43,3.79
+Shrabonti Mondol Borsha,1201920010042,66,A-,3.5,70,A,4,64,A-,3.5,56,B,3,36,D,1,46,C,2,68,A-,3.5,406,3.08,GPA 3.08,biology,Promoted,248,58,2.93
+Md. Siam Been Mastofa,1201920010043,66,A-,3.5,78,A,4,70,A,4,64,A-,3.5,70,A,4,42,C,2,68,A-,3.5,458,3.75,GPA 3.75,biology,Promoted,158,65.43,3.5
+Md. Sahin Alam,1201920010044,64,A-,3.5,42,C,2,52,B,3,60,A-,3.5,52,B,3,56,B,3,68,A-,3.5,394,3.25,GPA 3.25,biology,Promoted,259,56.29,3.07
+Nadia Nahin Hridie,1201920010045,76,A,4,76,A,4,60,A-,3.5,58,B,3,64,A-,3.5,44,C,2,58,B,3,436,3.5,GPA 3.5,biology,Promoted,204,62.29,3.29
+Jarin Tasnim,1201920010046,86,A+,5,84,A+,5,50,B,3,60,A-,3.5,46,C,2,44,C,2,58,B,3,428,3.58,GPA 3.58,biology,Promoted,218,61.14,3.36
+Adrija Agni,1201920010047,76,A,4,74,A,4,60,A-,3.5,66,A-,3.5,50,B,3,64,A-,3.5,68,A-,3.5,458,3.83,GPA 3.83,biology,Promoted,156,65.43,3.57
+Sauda Khanom Shanta,1201920010048,86,A+,5,70,A,4,76,A,4,74,A,4,74,A,4,68,A-,3.5,74,A,4,522,4.42,GPA 4.42,biology,Promoted,37,74.57,4.07
+Esrat Jahan Diba,1201920010049,68,A-,3.5,76,A,4,60,A-,3.5,52,B,3,62,A-,3.5,68,A-,3.5,80,A+,5,466,4,GPA 4,biology,Promoted,140,66.57,3.71
+Monowar Ahmed,1201920010050,76,A,4,14,F,0,80,A+,5,74,A,4,50,B,3,68,A-,3.5,76,A,4,438,0,0,biology,Failed,201,62.57,3.36
+Md. Tousif Hasnat Mugdho,1201920010051,74,A,4,66,A-,3.5,62,A-,3.5,54,B,3,54,B,3,50,B,3,72,A,4,432,3.67,GPA 3.67,biology,Promoted,209,61.71,3.43
+Zinnia Raisa Ayonty,1201920010052,70,A,4,64,A-,3.5,48,C,2,66,A-,3.5,82,A+,5,40,C,2,62,A-,3.5,432,3.58,GPA 3.58,biology,Promoted,207,61.71,3.36
+Jafrin Rubayet Seme,1201920010053,88,A+,5,74,A,4,70,A,4,78,A,4,74,A,4,62,A-,3.5,78,A,4,524,4.42,GPA 4.42,biology,Promoted,34,74.86,4.07
+Mst. Tamanna Akter Bushra,1201920010054,76,A,4,70,A,4,62,A-,3.5,62,A-,3.5,78,A,4,68,A-,3.5,78,A,4,494,4.08,GPA 4.08,biology,Promoted,89,70.57,3.79
+Nishat Tabassum Antara,1201920010055,78,A,4,80,A+,5,74,A,4,60,A-,3.5,72,A,4,64,A-,3.5,84,A+,5,512,4.5,GPA 4.5,biology,Promoted,52,73.14,4.14
+Nafisha Tasnim,1201920010056,74,A,4,54,B,3,62,A-,3.5,68,A-,3.5,60,A-,3.5,50,B,3,82,A+,5,450,3.92,GPA 3.92,biology,Promoted,171,64.29,3.64
+Sadia Rahman Faria,1201920010057,78,A,4,80,A+,5,68,A-,3.5,80,A+,5,70,A,4,82,A+,5,70,A,4,528,4.75,GPA 4.75,biology,Promoted,25,75.43,4.36
+Md. Ishtiak Wadud,1201920010058,92,A+,5,86,A+,5,62,A-,3.5,52,B,3,40,C,2,60,A-,3.5,68,A-,3.5,460,3.92,GPA 3.92,biology,Promoted,153,65.71,3.64
+Mubasserin Zaman,1201920010059,72,A,4,76,A,4,68,A-,3.5,66,A-,3.5,70,A,4,40,C,2,74,A,4,466,3.83,GPA 3.83,biology,Promoted,141,66.57,3.57
+Fouzia Fariha,1201920010060,78,A,4,74,A,4,68,A-,3.5,74,A,4,64,A-,3.5,56,B,3,82,A+,5,496,4.17,GPA 4.17,biology,Promoted,87,70.86,3.86
+Most. Mahmuda Akter,1201920010061,80,A+,5,66,A-,3.5,64,A-,3.5,68,A-,3.5,42,C,2,48,C,2,56,B,3,424,3.42,GPA 3.42,biology,Promoted,227,60.57,3.21
+Sayeeda Binte Reza,1201920010062,78,A,4,76,A,4,60,A-,3.5,66,A-,3.5,74,A,4,76,A,4,68,A-,3.5,498,4.08,GPA 4.08,biology,Promoted,81,71.14,3.79
+Atokia Fairoz Nidhi,1201920010063,68,A-,3.5,64,A-,3.5,56,B,3,64,A-,3.5,32,F,0,40,C,2,66,A-,3.5,390,0,0,biology,Failed,265,55.71,2.71
+Md. Hasibul Haque Shanto,1201920010064,78,A,4,80,A+,5,72,A,4,72,A,4,72,A,4,74,A,4,90,A+,5,538,4.67,GPA 4.67,biology,Promoted,19,76.86,4.29
+Samiat Alam,1201920010065,74,A,4,80,A+,5,54,B,3,52,B,3,38,D,1,44,C,2,76,A,4,418,3.33,GPA 3.33,biology,Promoted,234,59.71,3.14
+Md. Azmain Adil,1201920010066,70,A,4,66,A-,3.5,66,A-,3.5,68,A-,3.5,70,A,4,76,A,4,78,A,4,494,4.08,GPA 4.08,biology,Promoted,91,70.57,3.79
+Nusrat Jahan Dina,1201920010067,72,A,4,78,A,4,58,B,3,62,A-,3.5,62,A-,3.5,66,A-,3.5,88,A+,5,486,4.08,GPA 4.08,biology,Promoted,105,69.43,3.79
+Nazifa Tabassum,1201920010068,72,A,4,56,B,3,58,B,3,50,B,3,68,A-,3.5,50,B,3,76,A,4,430,3.58,GPA 3.58,biology,Promoted,213,61.43,3.36
+Md. Abdul Haque Huzaifa,1201920010069,70,A,4,66,A-,3.5,62,A-,3.5,64,A-,3.5,60,A-,3.5,44,C,2,64,A-,3.5,430,3.58,GPA 3.58,biology,Promoted,216,61.43,3.36
+Muhammad Sayeeb Sadid,1201920010070,60,A-,3.5,60,A-,3.5,68,A-,3.5,52,B,3,44,C,2,54,B,3,76,A,4,414,3.42,GPA 3.42,biology,Promoted,241,59.14,3.21
+Rushdia Afrin Zahan,1201920010071,70,A,4,56,B,3,62,A-,3.5,60,A-,3.5,48,C,2,52,B,3,76,A,4,424,3.5,GPA 3.5,biology,Promoted,226,60.57,3.29
+Md. Jobayer Bin Kamal,1201920010072,74,A,4,76,A,4,64,A-,3.5,78,A,4,78,A,4,70,A,4,68,A-,3.5,508,4.17,GPA 4.17,biology,Promoted,58,72.57,3.86
+Most. Raisa Ferdous,1201920010073,74,A,4,66,A-,3.5,58,B,3,42,C,2,60,A-,3.5,60,A-,3.5,70,A,4,430,3.58,GPA 3.58,biology,Promoted,212,61.43,3.36
+Mst. Abida Sultana,1201920010074,74,A,4,82,A+,5,64,A-,3.5,70,A,4,64,A-,3.5,54,B,3,82,A+,5,490,4.33,GPA 4.33,biology,Promoted,95,70,4
+Sreema Basak,1201920010075,76,A,4,66,A-,3.5,58,B,3,48,C,2,62,A-,3.5,54,B,3,76,A,4,440,3.5,GPA 3.5,biology,Promoted,196,62.86,3.29
+Tasnim Karim,1201920010076,80,A+,5,56,B,3,48,C,2,38,D,1,44,C,2,46,C,2,64,A-,3.5,376,2.75,GPA 2.75,biology,Promoted,277,53.71,2.64
+Md. Fazla Rabbi Hridoy,1201920010077,68,A-,3.5,62,A-,3.5,56,B,3,68,A-,3.5,50,B,3,68,A-,3.5,82,A+,5,454,3.83,GPA 3.83,biology,Promoted,163,64.86,3.57
+Wanta Haque Chowdhury,1201920010078,80,A+,5,74,A,4,52,B,3,52,B,3,52,B,3,60,A-,3.5,80,A+,5,450,4.08,GPA 4.08,biology,Promoted,170,64.29,3.79
+Md. Shanamul Hossen Mukta,1201920010079,76,A,4,60,A-,3.5,68,A-,3.5,62,A-,3.5,68,A-,3.5,44,C,2,86,A+,5,464,3.83,GPA 3.83,biology,Promoted,147,66.29,3.57
+Sanjeeda Islam Mou,1201920010080,68,A-,3.5,78,A,4,68,A-,3.5,72,A,4,74,A,4,70,A,4,72,A,4,502,4.17,GPA 4.17,biology,Promoted,69,71.71,3.86
+Lamia Islam Joty,1201920010081,68,A-,3.5,76,A,4,68,A-,3.5,78,A,4,76,A,4,70,A,4,78,A,4,514,4.17,GPA 4.17,biology,Promoted,48,73.43,3.86
+Asif Ikbal Bobin,1201920010082,74,A,4,76,A,4,70,A,4,80,A+,5,82,A+,5,72,A,4,84,A+,5,538,4.83,GPA 4.83,biology,Promoted,18,76.86,4.43
+Mst. Mariah Sanjida,1201920010083,80,A+,5,66,A-,3.5,66,A-,3.5,72,A,4,44,C,2,40,C,2,80,A+,5,448,3.83,GPA 3.83,biology,Promoted,178,64,3.57
+Mst. Afsana Afrin Nishat,1201920010084,80,A+,5,72,A,4,60,A-,3.5,58,B,3,48,C,2,32,F,0,72,A,4,422,0,0,biology,Failed,229,60.29,3.07
+Md. Nahid Sarkar,1201920010085,82,A+,5,68,A-,3.5,74,A,4,68,A-,3.5,62,A-,3.5,68,A-,3.5,72,A,4,494,4.17,GPA 4.17,biology,Promoted,94,70.57,3.86
+Jabin Jannat,1201920010086,66,A-,3.5,78,A,4,48,C,2,44,C,2,60,A-,3.5,40,C,2,76,A,4,412,3.17,GPA 3.17,biology,Promoted,242,58.86,3
+Md. Jubayer Hasan Jim,1201920010087,72,A,4,62,A-,3.5,64,A-,3.5,64,A-,3.5,60,A-,3.5,58,B,3,82,A+,5,462,4,GPA 4,biology,Promoted,148,66,3.71
+Humayra Tabassum,1201920010088,54,B,3,50,B,3,48,C,2,32,F,0,40,C,2,54,B,3,82,A+,5,360,0,0,biology,Failed,295,51.43,2.57
+Jarin Anjum Nishat,1201920010089,82,A+,5,74,A,4,82,A+,5,66,A-,3.5,72,A,4,58,B,3,68,A-,3.5,502,4.33,GPA 4.33,biology,Promoted,76,71.71,4
+Tasmia Fatima Rida,1201920010090,88,A+,5,76,A,4,66,A-,3.5,80,A+,5,62,A-,3.5,60,A-,3.5,48,C,2,480,4.08,GPA 4.08,biology,Promoted,117,68.57,3.79
+Trishna Rani Biswas,1201920010091,68,A-,3.5,68,A-,3.5,68,A-,3.5,58,B,3,54,B,3,52,B,3,50,B,3,418,3.42,GPA 3.42,biology,Promoted,236,59.71,3.21
+Misluna,1201920010092,84,A+,5,76,A,4,52,B,3,62,A-,3.5,62,A-,3.5,70,A,4,78,A,4,484,4.17,GPA 4.17,biology,Promoted,108,69.14,3.86
+Mst. Sania Tasnim,1201920010093,78,A,4,62,A-,3.5,58,B,3,54,B,3,58,B,3,32,F,0,84,A+,5,426,0,0,biology,Failed,221,60.86,3.07
+Md. Jihad Mondol,1201920010094,68,A-,3.5,60,A-,3.5,52,B,3,52,B,3,40,C,2,36,D,1,56,B,3,364,2.83,GPA 2.83,biology,Promoted,293,52,2.71
+Humaira Rahman Eya,1201920010095,84,A+,5,78,A,4,54,B,3,56,B,3,56,B,3,36,D,1,82,A+,5,446,3.67,GPA 3.67,biology,Promoted,181,63.71,3.43
+Md. Samiul Bashar,1201920010096,72,A,4,68,A-,3.5,64,A-,3.5,76,A,4,68,A-,3.5,58,B,3,70,A,4,476,3.92,GPA 3.92,biology,Promoted,127,68,3.64
+Abdullah Al Mafi,1201920010097,62,A-,3.5,62,A-,3.5,64,A-,3.5,70,A,4,68,A-,3.5,52,B,3,66,A-,3.5,444,3.75,GPA 3.75,biology,Promoted,188,63.43,3.5
+Most. Naorin Tur Raihana,1201920010098,86,A+,5,74,A,4,68,A-,3.5,68,A-,3.5,80,A+,5,60,A-,3.5,98,A+,5,534,4.58,GPA 4.58,biology,Promoted,21,76.29,4.21
+Mst. Miskat Tabassoom,1201920010099,92,A+,5,78,A,4,56,B,3,60,A-,3.5,32,F,0,42,C,2,76,A,4,436,0,0,biology,Failed,203,62.29,3.07
+Asif Istiak Oly,1201920010100,80,A+,5,78,A,4,72,A,4,76,A,4,64,A-,3.5,74,A,4,84,A+,5,528,4.58,GPA 4.58,biology,Promoted,26,75.43,4.21
+Tanzuma Zaman Nova,1201920010101,74,A,4,82,A+,5,64,A-,3.5,78,A,4,50,B,3,62,A-,3.5,66,A-,3.5,476,4.08,GPA 4.08,biology,Promoted,126,68,3.79
+Shatabdi Brahma,1201920010102,86,A+,5,82,A+,5,68,A-,3.5,62,A-,3.5,50,B,3,44,C,2,58,B,3,450,3.83,GPA 3.83,biology,Promoted,172,64.29,3.57
+Bishakha Islam Diya,1201920010103,80,A+,5,68,A-,3.5,78,A,4,72,A,4,66,A-,3.5,32,F,0,80,A+,5,476,0,0,biology,Failed,129,68,3.57
+Fatima Tasneem Dweena,1201920010104,56,B,3,48,C,2,82,A+,5,44,C,2,42,C,2,38,D,1,58,B,3,368,2.67,GPA 2.67,biology,Promoted,287,52.57,2.57
+Md. Shahid Bappy Hamim,1201920010105,66,A-,3.5,82,A+,5,70,A,4,60,A-,3.5,60,A-,3.5,52,B,3,64,A-,3.5,454,4,GPA 4,biology,Promoted,166,64.86,3.71
+Mohima Afroz,1201920010106,80,A+,5,76,A,4,82,A+,5,82,A+,5,84,A+,5,80,A+,5,84,A+,5,568,5,GPA 5,biology,Promoted,7,81.14,4.86
+Mst. Mayesha Farzana,1201920010107,76,A,4,72,A,4,66,A-,3.5,68,A-,3.5,60,A-,3.5,60,A-,3.5,74,A,4,476,4,GPA 4,biology,Promoted,128,68,3.71
+Esha Parvez,1201920010108,54,B,3,50,B,3,72,A,4,56,B,3,60,A-,3.5,36,D,1,54,B,3,382,3.08,GPA 3.08,biology,Promoted,272,54.57,2.93
+Mumtahina Ashrafi Moushi,1201920010109,70,A,4,68,A-,3.5,64,A-,3.5,64,A-,3.5,58,B,3,28,F,0,80,A+,5,432,0,0,biology,Failed,210,61.71,3.21
+Zaki Azraf,1201920010110,72,A,4,52,B,3,82,A+,5,30,F,0,40,C,2,42,C,2,68,A-,3.5,386,0,0,biology,Failed,270,55.14,2.79
+Anika Ibnat,1201920010111,76,A,4,64,A-,3.5,58,B,3,76,A,4,76,A,4,38,D,1,64,A-,3.5,452,3.5,GPA 3.5,biology,Promoted,167,64.57,3.29
+Bidisha Islam Shiya,1201920010112,88,A+,5,90,A+,5,74,A,4,70,A,4,66,A-,3.5,56,B,3,88,A+,5,532,4.58,GPA 4.58,biology,Promoted,22,76,4.21
+Mahbuba Sayed Sinthia,1201920010113,64,A-,3.5,74,A,4,58,B,3,76,A,4,72,A,4,58,B,3,72,A,4,474,3.92,GPA 3.92,biology,Promoted,130,67.71,3.64
+Mst. Rahamania Islam,1201920010114,80,A+,5,76,A,4,70,A,4,70,A,4,52,B,3,68,A-,3.5,86,A+,5,502,4.42,GPA 4.42,biology,Promoted,72,71.71,4.07
+Nusrat Jahan,1201920010115,66,A-,3.5,68,A-,3.5,52,B,3,76,A,4,60,A-,3.5,52,B,3,58,B,3,432,3.58,GPA 3.58,biology,Promoted,208,61.71,3.36
+Adnan Shihab,1201920010116,84,A+,5,80,A+,5,72,A,4,80,A+,5,54,B,3,78,A,4,70,A,4,518,4.67,GPA 4.67,biology,Promoted,43,74,4.29
+Afroja Ahmed,1201920010117,68,A-,3.5,42,C,2,80,A+,5,70,A,4,70,A,4,44,C,2,82,A+,5,456,3.92,GPA 3.92,biology,Promoted,162,65.14,3.64
+Moksura Marine Sorno,1201920010118,88,A+,5,72,A,4,68,A-,3.5,72,A,4,68,A-,3.5,62,A-,3.5,82,A+,5,512,4.42,GPA 4.42,biology,Promoted,51,73.14,4.07
+Md. Mahafuzzaman Pavel,1201920010119,54,B,3,80,A+,5,62,A-,3.5,70,A,4,70,A,4,54,B,3,78,A,4,468,4.08,GPA 4.08,biology,Promoted,138,66.86,3.79
+Abantika Borogoria,1201920010120,76,A,4,68,A-,3.5,62,A-,3.5,50,B,3,50,B,3,56,B,3,68,A-,3.5,430,3.58,GPA 3.58,biology,Promoted,215,61.43,3.36
+Mst. Atiya Adiba,1201920010121,78,A,4,68,A-,3.5,72,A,4,72,A,4,76,A,4,68,A-,3.5,84,A+,5,518,4.33,GPA 4.33,biology,Promoted,44,74,4
+Husna Mahmud,1201920010122,68,A-,3.5,56,B,3,56,B,3,50,B,3,34,D,1,38,D,1,76,A,4,378,2.75,GPA 2.75,biology,Promoted,276,54,2.64
+Mostofa Ahmmed Maruf,1201920010123,76,A,4,74,A,4,72,A,4,78,A,4,64,A-,3.5,58,B,3,80,A+,5,502,4.25,GPA 4.25,biology,Promoted,75,71.71,3.93
+Most. Tasnia Islam,1201920010124,64,A-,3.5,80,A+,5,68,A-,3.5,64,A-,3.5,50,B,3,54,B,3,76,A,4,456,3.92,GPA 3.92,biology,Promoted,160,65.14,3.64
+Mst. Israt Jahan,1201920010125,74,A,4,64,A-,3.5,70,A,4,56,B,3,60,A-,3.5,42,C,2,82,A+,5,448,3.83,GPA 3.83,biology,Promoted,179,64,3.57
+Mahjabin Ferdous Mimi,1201920010126,74,A,4,62,A-,3.5,68,A-,3.5,70,A,4,48,C,2,58,B,3,62,A-,3.5,442,3.58,GPA 3.58,biology,Promoted,192,63.14,3.36
+Anushka Paul Hiyamony,1201920010127,74,A,4,56,B,3,68,A-,3.5,74,A,4,64,A-,3.5,66,A-,3.5,70,A,4,472,3.92,GPA 3.92,biology,Promoted,134,67.43,3.64
+Md. Jannatul Islam,1201920010128,80,A+,5,82,A+,5,68,A-,3.5,82,A+,5,86,A+,5,70,A,4,72,A,4,540,4.92,GPA 4.92,biology,Promoted,16,77.14,4.5
+Md. Mosaddek Ali,1201920010129,68,A-,3.5,72,A,4,74,A,4,82,A+,5,64,A-,3.5,60,A-,3.5,86,A+,5,506,4.42,GPA 4.42,biology,Promoted,63,72.29,4.07
+Naimon Naher,1201920010130,80,A+,5,72,A,4,70,A,4,60,A-,3.5,80,A+,5,66,A-,3.5,74,A,4,502,4.5,GPA 4.5,biology,Promoted,73,71.71,4.14
+Md. Zahidur Rahman,1201920010131,74,A,4,68,A-,3.5,72,A,4,72,A,4,54,B,3,78,A,4,76,A,4,494,4.08,GPA 4.08,biology,Promoted,92,70.57,3.79
+Ishrat Jahan,1201920010132,76,A,4,60,A-,3.5,60,A-,3.5,62,A-,3.5,64,A-,3.5,64,A-,3.5,68,A-,3.5,454,3.83,GPA 3.83,biology,Promoted,165,64.86,3.57
+Kanij Fatima Memoshi,1201920010133,74,A,4,68,A-,3.5,80,A+,5,72,A,4,60,A-,3.5,72,A,4,78,A,4,504,4.33,GPA 4.33,biology,Promoted,67,72,4
+Zahin Tahiat Annesha,1201920010134,70,A,4,64,A-,3.5,48,C,2,60,A-,3.5,34,D,1,32,F,0,70,A,4,378,0,0,biology,Failed,275,54,2.57
+Mst. Tajrin Nahar,1201920010135,70,A,4,68,A-,3.5,64,A-,3.5,66,A-,3.5,62,A-,3.5,58,B,3,48,C,2,436,3.5,GPA 3.5,biology,Promoted,205,62.29,3.29
+Mst. Afia Adiba Eshika,1201920010136,58,B,3,70,A,4,54,B,3,54,B,3,56,B,3,36,D,1,72,A,4,400,3.17,GPA 3.17,biology,Promoted,253,57.14,3
+Md. Al Hasan Mia,1201920010137,80,A+,5,80,A+,5,80,A+,5,84,A+,5,84,A+,5,62,A-,3.5,86,A+,5,556,5,GPA 5,biology,Promoted,10,79.43,4.79
+Natasha Binta Omar,1201920010138,72,A,4,82,A+,5,60,A-,3.5,66,A-,3.5,70,A,4,62,A-,3.5,64,A-,3.5,476,4.17,GPA 4.17,biology,Promoted,125,68,3.86
+Utso Mondal,1201920010139,62,A-,3.5,48,C,2,48,C,2,62,A-,3.5,28,F,0,26,F,0,80,A+,5,354,0,0,biology,Failed,297,50.57,2.29
+Sayeed Ahmad Rafiqullah,1201920010140,78,A,4,80,A+,5,54,B,3,74,A,4,68,A-,3.5,74,A,4,70,A,4,498,4.25,GPA 4.25,biology,Promoted,80,71.14,3.93
+Tasnim Resalatul Ferdous,1201920010141,78,A,4,82,A+,5,60,A-,3.5,52,B,3,58,B,3,42,C,2,74,A,4,446,3.75,GPA 3.75,biology,Promoted,183,63.71,3.5
+Noshin Samiha Rodoshi,1201920010142,62,A-,3.5,74,A,4,44,C,2,52,B,3,42,C,2,56,B,3,86,A+,5,416,3.42,GPA 3.42,biology,Promoted,237,59.43,3.21
+Md. Abdullah Al Noman,1201920010143,70,A,4,70,A,4,72,A,4,58,B,3,62,A-,3.5,54,B,3,74,A,4,460,3.92,GPA 3.92,biology,Promoted,154,65.71,3.64
+Al Musavvir Sium,1201920010144,48,C,2,62,A-,3.5,42,C,2,54,B,3,46,C,2,38,D,1,74,A,4,364,2.58,GPA 2.58,biology,Promoted,291,52,2.5
+Md. Tahmidul Islam,1201920010145,72,A,4,76,A,4,58,B,3,78,A,4,68,A-,3.5,84,A+,5,82,A+,5,518,4.42,GPA 4.42,biology,Promoted,41,74,4.07
+Nafisa Tabassum Sraboni,1201920010146,84,A+,5,58,B,3,50,B,3,62,A-,3.5,48,C,2,42,C,2,76,A,4,420,3.42,GPA 3.42,biology,Promoted,231,60,3.21
+Anamika Sharker,1201920010147,76,A,4,82,A+,5,70,A,4,76,A,4,72,A,4,66,A-,3.5,82,A+,5,524,4.58,GPA 4.58,biology,Promoted,32,74.86,4.21
+Hridoy Kabiraj,1201920010148,60,A-,3.5,50,B,3,56,B,3,62,A-,3.5,52,B,3,54,B,3,64,A-,3.5,398,3.42,GPA 3.42,biology,Promoted,255,56.86,3.21
+Mst. Farzana Khatun,1201920010149,76,A,4,46,C,2,46,C,2,38,D,1,60,A-,3.5,38,D,1,76,A,4,380,2.58,GPA 2.58,biology,Promoted,273,54.29,2.5
+M. R. B. Taseen,1201920010150,82,A+,5,88,A+,5,70,A,4,48,C,2,42,C,2,38,D,1,82,A+,5,450,3.67,GPA 3.67,biology,Promoted,174,64.29,3.43
+Abida Ibnat,1201920010151,80,A+,5,66,A-,3.5,70,A,4,78,A,4,66,A-,3.5,58,B,3,84,A+,5,502,4.33,GPA 4.33,biology,Promoted,74,71.71,4
+Farhan Sadik,1201920010152,80,A+,5,72,A,4,76,A,4,74,A,4,56,B,3,70,A,4,72,A,4,500,4.33,GPA 4.33,biology,Promoted,79,71.43,4
+Faysal Abir,1201920010153,60,A-,3.5,70,A,4,70,A,4,70,A,4,58,B,3,66,A-,3.5,86,A+,5,480,4.17,GPA 4.17,biology,Promoted,119,68.57,3.86
+Rizwan Mahamud,1201920010154,74,A,4,74,A,4,66,A-,3.5,86,A+,5,60,A-,3.5,66,A-,3.5,86,A+,5,512,4.42,GPA 4.42,biology,Promoted,50,73.14,4.07
+Chowdhury Nishat Tasnim,1201920010155,70,A,4,78,A,4,60,A-,3.5,64,A-,3.5,62,A-,3.5,56,B,3,82,A+,5,472,4.08,GPA 4.08,biology,Promoted,132,67.43,3.79
+Md. Zubayer Haque Ruhit,1201920010156,70,A,4,62,A-,3.5,50,B,3,72,A,4,54,B,3,60,A-,3.5,72,A,4,440,3.83,GPA 3.83,biology,Promoted,194,62.86,3.57
+Mst. Sumaiya Aktar Suma,1201920010157,54,B,3,64,A-,3.5,72,A,4,72,A,4,58,B,3,58,B,3,78,A,4,456,3.75,GPA 3.75,biology,Promoted,161,65.14,3.5
+Taslima Tabasom,1201920010158,78,A,4,54,B,3,,,,50,B,3,66,A-,3.5,32,F,0,92,A+,5,372,0,0,biology,Promoted,284,62,3.08
+Most. Tania Akter,1201920010159,78,A,4,68,A-,3.5,70,A,4,68,A-,3.5,72,A,4,58,B,3,76,A,4,490,4,GPA 4,biology,Promoted,98,70,3.71
+Juena Hossain,1201920010160,74,A,4,76,A,4,84,A+,5,64,A-,3.5,70,A,4,76,A,4,66,A-,3.5,510,4.33,GPA 4.33,biology,Promoted,56,72.86,4
+Insaniat Mahzabin,1201920010161,80,A+,5,64,A-,3.5,66,A-,3.5,72,A,4,62,A-,3.5,64,A-,3.5,92,A+,5,500,4.33,GPA 4.33,biology,Promoted,78,71.43,4
+Samira Mostofa Maeesha,1201920010162,60,A-,3.5,50,B,3,56,B,3,42,C,2,42,C,2,30,F,0,64,A-,3.5,344,0,0,biology,Failed,299,49.14,2.43
+Mst. Effat Jamila Snigdha,1201920010163,82,A+,5,80,A+,5,70,A,4,82,A+,5,72,A,4,64,A-,3.5,74,A,4,524,4.75,GPA 4.75,biology,Promoted,33,74.86,4.36
+Mst. Fazilatun Nesa Chomok,1201920010164,88,A+,5,70,A,4,64,A-,3.5,56,B,3,66,A-,3.5,58,B,3,82,A+,5,484,4.17,GPA 4.17,biology,Promoted,112,69.14,3.86
+Nujhhat Tasnim,1201920010165,82,A+,5,78,A,4,64,A-,3.5,74,A,4,54,B,3,58,B,3,88,A+,5,498,4.25,GPA 4.25,biology,Promoted,83,71.14,3.93
+Md. Abdullha Al Noman,1201920010166,68,A-,3.5,80,A+,5,78,A,4,74,A,4,78,A,4,70,A,4,68,A-,3.5,516,4.33,GPA 4.33,biology,Promoted,47,73.71,4
+Monish Mustafi Dibyo,1201920010167,80,A+,5,74,A,4,68,A-,3.5,68,A-,3.5,62,A-,3.5,60,A-,3.5,90,A+,5,502,4.33,GPA 4.33,biology,Promoted,70,71.71,4
+Md. Mehedi Hasan Munna,1201920010168,68,A-,3.5,58,B,3,60,A-,3.5,52,B,3,50,B,3,44,C,2,70,A,4,402,3.33,GPA 3.33,biology,Promoted,251,57.43,3.14
+Md. Fatin Shahriyar,1201920010169,68,A-,3.5,70,A,4,76,A,4,70,A,4,78,A,4,80,A+,5,88,A+,5,530,4.58,GPA 4.58,biology,Promoted,24,75.71,4.21
+Nishat Tasnim,1201920010170,80,A+,5,76,A,4,68,A-,3.5,74,A,4,44,C,2,52,B,3,92,A+,5,486,4.08,GPA 4.08,biology,Promoted,107,69.43,3.79
+Subroto Kumar Kundu,1201920010171,62,A-,3.5,80,A+,5,70,A,4,78,A,4,62,A-,3.5,78,A,4,78,A,4,508,4.33,GPA 4.33,biology,Promoted,59,72.57,4
+Plabon Kundu,1201920010172,60,A-,3.5,58,B,3,60,A-,3.5,66,A-,3.5,72,A,4,84,A+,5,84,A+,5,484,4.25,GPA 4.25,biology,Promoted,109,69.14,3.93
+Musfika Mahzabeen,1201920010173,76,A,4,68,A-,3.5,46,C,2,52,B,3,50,B,3,40,C,2,66,A-,3.5,398,3.17,GPA 3.17,biology,Promoted,254,56.86,3
+Most. Nafisa Binta Mahbub,1201920010174,84,A+,5,80,A+,5,58,B,3,70,A,4,70,A,4,34,D,1,74,A,4,470,4,GPA 4,biology,Promoted,135,67.14,3.71
+Mst. Anika Mobassira,1201920010175,76,A,4,26,F,0,52,B,3,54,B,3,30,F,0,20,F,0,66,A-,3.5,324,0,0,biology,Failed,301,46.29,1.93
+Nadia Anzum Diba,1201920010176,74,A,4,78,A,4,62,A-,3.5,68,A-,3.5,78,A,4,54,B,3,80,A+,5,494,4.17,GPA 4.17,biology,Promoted,90,70.57,3.86
+Shad Ibna Hosain,1201920010178,66,A-,3.5,74,A,4,64,A-,3.5,76,A,4,66,A-,3.5,66,A-,3.5,72,A,4,484,4,GPA 4,biology,Promoted,111,69.14,3.71
+Mst. Jeba Tasnim Lucky,1201920010180,82,A+,5,80,A+,5,66,A-,3.5,80,A+,5,76,A,4,76,A,4,84,A+,5,544,4.92,GPA 4.92,biology,Promoted,13,77.71,4.5
+Anindya Kundu,1201920010181,86,A+,5,82,A+,5,68,A-,3.5,66,A-,3.5,74,A,4,76,A,4,86,A+,5,538,4.67,GPA 4.67,biology,Promoted,17,76.86,4.29
+Hamim Eazdam,1201920010182,80,A+,5,68,A-,3.5,82,A+,5,76,A,4,92,A+,5,96,A+,5,64,A-,3.5,558,4.83,GPA 4.83,biology,Promoted,9,79.71,4.43
+Md. Asfiqur Rahman,1201920010183,80,A+,5,70,A,4,62,A-,3.5,72,A,4,68,A-,3.5,74,A,4,70,A,4,496,4.33,GPA 4.33,biology,Promoted,86,70.86,4
+Sabbir Ahmed Imon,1201920010184,72,A,4,74,A,4,74,A,4,66,A-,3.5,52,B,3,50,B,3,72,A,4,460,3.92,GPA 3.92,biology,Promoted,155,65.71,3.64
+Nahid Kamal Nodi,1201920010185,58,B,3,76,A,4,56,B,3,64,A-,3.5,40,C,2,38,D,1,56,B,3,388,2.92,GPA 2.92,biology,Promoted,266,55.43,2.79
+Tazrian,1201920010186,78,A,4,52,B,3,58,B,3,58,B,3,32,F,0,52,B,3,58,B,3,388,0,0,biology,Failed,268,55.43,2.71
+Tasfia Ummul Wara,1201920010187,74,A,4,68,A-,3.5,70,A,4,74,A,4,78,A,4,58,B,3,66,A-,3.5,488,4,GPA 4,biology,Promoted,102,69.71,3.71
+Adnan Shahriar,1201920010188,72,A,4,60,A-,3.5,70,A,4,74,A,4,62,A-,3.5,68,A-,3.5,82,A+,5,488,4.25,GPA 4.25,biology,Promoted,101,69.71,3.93
+Thasin Ahmed Shiam,1201920010189,78,A,4,62,A-,3.5,72,A,4,76,A,4,78,A,4,68,A-,3.5,76,A,4,510,4.17,GPA 4.17,biology,Promoted,54,72.86,3.86
+Mst. Antora Khatun,1201920010190,70,A,4,70,A,4,50,B,3,74,A,4,72,A,4,48,C,2,80,A+,5,464,4,GPA 4,biology,Promoted,144,66.29,3.71
+Mst. Afia Abida Rahman,1201920010191,60,A-,3.5,60,A-,3.5,60,A-,3.5,74,A,4,64,A-,3.5,68,A-,3.5,66,A-,3.5,452,3.83,GPA 3.83,biology,Promoted,168,64.57,3.57
+A. F. M. Tafsirul Alam,1201920010192,84,A+,5,76,A,4,82,A+,5,76,A,4,72,A,4,66,A-,3.5,72,A,4,528,4.58,GPA 4.58,biology,Promoted,28,75.43,4.21
+Fahim Faysal Jeem,1201920010193,78,A,4,86,A+,5,90,A+,5,74,A,4,60,A-,3.5,64,A-,3.5,92,A+,5,544,4.67,GPA 4.67,biology,Promoted,14,77.71,4.29
+Nusrat Jahan Nisa,1201920010194,68,A-,3.5,68,A-,3.5,66,A-,3.5,58,B,3,60,A-,3.5,54,B,3,72,A,4,446,3.67,GPA 3.67,biology,Promoted,186,63.71,3.43
+Sirajum Nuraina,1201920010195,84,A+,5,50,B,3,46,C,2,58,B,3,44,C,2,36,D,1,72,A,4,390,3,GPA 3,biology,Promoted,263,55.71,2.86
+Sanjida Alam,1201920010196,74,A,4,72,A,4,74,A,4,62,A-,3.5,64,A-,3.5,46,C,2,78,A,4,470,3.83,GPA 3.83,biology,Promoted,137,67.14,3.57
+Md. Abdullah,1201920010197,76,A,4,80,A+,5,58,B,3,66,A-,3.5,72,A,4,64,A-,3.5,84,A+,5,500,4.33,GPA 4.33,biology,Promoted,77,71.43,4
+Md. Samiul Hasan,1201920010198,78,A,4,74,A,4,46,C,2,60,A-,3.5,62,A-,3.5,56,B,3,68,A-,3.5,444,3.58,GPA 3.58,biology,Promoted,187,63.43,3.36
+Fariha Parvin,1201920010199,66,A-,3.5,76,A,4,62,A-,3.5,48,C,2,62,A-,3.5,44,C,2,72,A,4,430,3.42,GPA 3.42,biology,Promoted,217,61.43,3.21
+Most. Jannatun Nadia Nowshin,1201920010200,68,A-,3.5,86,A+,5,70,A,4,78,A,4,64,A-,3.5,76,A,4,62,A-,3.5,504,4.25,GPA 4.25,biology,Promoted,66,72,3.93
+Rahatul Mihita,1201920010201,64,A-,3.5,54,B,3,52,B,3,50,B,3,46,C,2,42,C,2,68,A-,3.5,376,3,GPA 3,biology,Promoted,279,53.71,2.86
+Md. Maruf Ahmad Mahi,1201920010202,78,A,4,58,B,3,76,A,4,72,A,4,62,A-,3.5,32,F,0,72,A,4,450,0,0,biology,Failed,175,64.29,3.21
+Jakia Tasmim Jeba,1201920010203,82,A+,5,62,A-,3.5,66,A-,3.5,68,A-,3.5,68,A-,3.5,64,A-,3.5,80,A+,5,490,4.25,GPA 4.25,biology,Promoted,96,70,3.93
+Md. Nazmus Sakid,1201920010204,52,B,3,60,A-,3.5,78,A,4,68,A-,3.5,56,B,3,66,A-,3.5,82,A+,5,462,3.92,GPA 3.92,biology,Promoted,150,66,3.64
+Md. Tahmidur Rahman,1201920010205,76,A,4,78,A,4,66,A-,3.5,64,A-,3.5,56,B,3,60,A-,3.5,88,A+,5,488,4.08,GPA 4.08,biology,Promoted,100,69.71,3.79
+Payel Sarker,1201920010206,56,B,3,68,A-,3.5,70,A,4,66,A-,3.5,60,A-,3.5,54,B,3,70,A,4,444,3.75,GPA 3.75,biology,Promoted,190,63.43,3.5
+Md. Talha Bin Kobir,1201920010207,80,A+,5,44,C,2,58,B,3,60,A-,3.5,42,C,2,64,A-,3.5,70,A,4,418,3.5,GPA 3.5,biology,Promoted,235,59.71,3.29
+Noshin Anjum Labonno,1201920010208,90,A+,5,70,A,4,60,A-,3.5,76,A,4,58,B,3,46,C,2,60,A-,3.5,460,3.83,GPA 3.83,biology,Promoted,152,65.71,3.57
+Noor Nishat,1201920010209,80,A+,5,76,A,4,84,A+,5,78,A,4,72,A,4,62,A-,3.5,74,A,4,526,4.58,GPA 4.58,biology,Promoted,31,75.14,4.21
+Md. Arafat Sharker,1201920010210,72,A,4,50,B,3,46,C,2,54,B,3,46,C,2,42,C,2,54,B,3,364,2.83,GPA 2.83,biology,Promoted,292,52,2.71
+Shibobrata Nandy,1201920010211,80,A+,5,60,A-,3.5,64,A-,3.5,60,A-,3.5,46,C,2,38,D,1,80,A+,5,428,3.58,GPA 3.58,biology,Promoted,220,61.14,3.36
+Nowshin Anjum,1201920010212,84,A+,5,72,A,4,46,C,2,42,C,2,48,C,2,48,C,2,66,A-,3.5,406,3.08,GPA 3.08,biology,Promoted,247,58,2.93
+Nafisa Saiyara,1201920010213,80,A+,5,58,B,3,56,B,3,44,C,2,26,F,0,38,D,1,58,B,3,360,0,0,biology,Failed,296,51.43,2.43
+Kaif Ahmed Khan,1201920010215,60,A-,3.5,60,A-,3.5,76,A,4,64,A-,3.5,50,B,3,54,B,3,74,A,4,438,3.75,GPA 3.75,biology,Promoted,200,62.57,3.5
+Raihan Mahmud,1201920010216,70,A,4,62,A-,3.5,56,B,3,66,A-,3.5,70,A,4,52,B,3,64,A-,3.5,440,3.75,GPA 3.75,biology,Promoted,195,62.86,3.5
+Sirajum Munira,1201920010217,66,A-,3.5,74,A,4,68,A-,3.5,70,A,4,64,A-,3.5,68,A-,3.5,70,A,4,480,4,GPA 4,biology,Promoted,118,68.57,3.71
+Sanjida Tabassum,1201920010218,66,A-,3.5,56,B,3,52,B,3,46,C,2,,,,24,F,0,48,C,2,292,0,0,biology,Failed,304,48.67,2.25
+Anika Tasnim,1201920010219,62,A-,3.5,76,A,4,70,A,4,64,A-,3.5,30,F,0,66,A-,3.5,82,A+,5,450,0,0,biology,Failed,173,64.29,3.36
+Md. Asib Mahmud Pranto,1201920010220,82,A+,5,64,A-,3.5,82,A+,5,72,A,4,82,A+,5,78,A,4,72,A,4,532,4.75,GPA 4.75,biology,Promoted,23,76,4.36
+Most. Nafisa Nawer,1201920010221,74,A,4,80,A+,5,56,B,3,76,A,4,80,A+,5,78,A,4,78,A,4,522,4.5,GPA 4.5,biology,Promoted,35,74.57,4.14
+Rownok Asif Ovi,1201920010222,64,A-,3.5,70,A,4,52,B,3,56,B,3,44,C,2,42,C,2,62,A-,3.5,390,3.17,GPA 3.17,biology,Promoted,264,55.71,3
+Safi Ahammed Sifat,1201920010223,74,A,4,72,A,4,56,B,3,66,A-,3.5,42,C,2,38,D,1,80,A+,5,428,3.42,GPA 3.42,biology,Promoted,219,61.14,3.21
+Aali Saadat Shams,1201920010224,78,A,4,64,A-,3.5,42,C,2,38,D,1,44,C,2,38,D,1,62,A-,3.5,366,2.5,GPA 2.5,biology,Promoted,288,52.29,2.43
+Mahafuja Afrin Liza,1201920010225,82,A+,5,42,C,2,56,B,3,68,A-,3.5,54,B,3,34,D,1,52,B,3,388,3.08,GPA 3.08,biology,Promoted,267,55.43,2.93
+Priya Rani Mondal,1201920010226,64,A-,3.5,58,B,3,52,B,3,48,C,2,58,B,3,50,B,3,78,A,4,408,3.25,GPA 3.25,biology,Promoted,245,58.29,3.07
+Raad Sharar,1201920010227,88,A+,5,84,A+,5,86,A+,5,82,A+,5,90,A+,5,90,A+,5,86,A+,5,606,5,GPA 5,biology,Promoted,1,86.57,5
+Farhan Asif,1201920010228,70,A,4,64,A-,3.5,84,A+,5,48,C,2,64,A-,3.5,32,F,0,60,A-,3.5,422,0,0,biology,Failed,230,60.29,3.07
+Md. Tareq Aziz,1201920010229,64,A-,3.5,46,C,2,70,A,4,72,A,4,46,C,2,62,A-,3.5,84,A+,5,444,3.67,GPA 3.67,biology,Promoted,189,63.43,3.43
+Tonmoy Shaha Bishal,1201920010230,48,C,2,58,B,3,58,B,3,56,B,3,48,C,2,26,F,0,60,A-,3.5,354,0,0,biology,Failed,298,50.57,2.36
+Md. Sabbir Hossain Shisir,1201920010231,74,A,4,70,A,4,60,A-,3.5,68,A-,3.5,68,A-,3.5,70,A,4,74,A,4,484,4.08,GPA 4.08,biology,Promoted,110,69.14,3.79
+Mahbubur Rahman Mahir,1201920010232,80,A+,5,86,A+,5,50,B,3,58,B,3,44,C,2,42,C,2,64,A-,3.5,424,3.58,GPA 3.58,biology,Promoted,223,60.57,3.36
+Al Masrafi Shahria,1201920010233,78,A,4,70,A,4,58,B,3,68,A-,3.5,66,A-,3.5,56,B,3,82,A+,5,478,4,GPA 4,biology,Promoted,121,68.29,3.71
+Mohibul Hasan,1201920010234,80,A+,5,74,A,4,74,A,4,64,A-,3.5,60,A-,3.5,54,B,3,74,A,4,480,4.17,GPA 4.17,biology,Promoted,120,68.57,3.86
+Abhijit Chakraborty,1201920010235,60,A-,3.5,54,B,3,60,A-,3.5,66,A-,3.5,50,B,3,44,C,2,60,A-,3.5,394,3.33,GPA 3.33,biology,Promoted,261,56.29,3.14
+Md. Fahmid Jamil,1201920010236,74,A,4,76,A,4,,,,76,A,4,74,A,4,90,A+,5,72,A,4,462,0,0,biology,Failed,151,77,4.17
+Md. Nasirul Haque,1201920010237,78,A,4,74,A,4,66,A-,3.5,76,A,4,62,A-,3.5,80,A+,5,80,A+,5,516,4.5,GPA 4.5,biology,Promoted,45,73.71,4.14
+Sumaya Yeasmin Hira,1201920010238,84,A+,5,60,A-,3.5,62,A-,3.5,64,A-,3.5,60,A-,3.5,46,C,2,64,A-,3.5,440,3.75,GPA 3.75,biology,Promoted,197,62.86,3.5
+Md. Atikur Rahman,1201920010239,76,A,4,48,C,2,56,B,3,62,A-,3.5,48,C,2,44,C,2,62,A-,3.5,396,3,GPA 3,biology,Promoted,258,56.57,2.86
+Rokibul Islam,1201920010240,74,A,4,72,A,4,56,B,3,72,A,4,64,A-,3.5,52,B,3,74,A,4,464,3.92,GPA 3.92,biology,Promoted,145,66.29,3.64
+Md. Arif Shahriyar,1201920010241,72,A,4,74,A,4,60,A-,3.5,72,A,4,66,A-,3.5,86,A+,5,92,A+,5,522,4.5,GPA 4.5,biology,Promoted,36,74.57,4.14
+Sumaya Binte Samzad,1201920010242,82,A+,5,74,A,4,58,B,3,58,B,3,60,A-,3.5,58,B,3,74,A,4,464,3.92,GPA 3.92,biology,Promoted,146,66.29,3.64
+Sumaya Reza Supti,1201920010243,72,A,4,54,B,3,66,A-,3.5,68,A-,3.5,46,C,2,36,D,1,56,B,3,398,3,GPA 3,biology,Promoted,257,56.86,2.86
+Fuad Mahmud Shad,1201920010244,78,A,4,74,A,4,66,A-,3.5,72,A,4,62,A-,3.5,40,C,2,70,A,4,462,3.83,GPA 3.83,biology,Promoted,149,66,3.57
+Joy Sarkar,1201920010245,66,A-,3.5,46,C,2,66,A-,3.5,72,A,4,68,A-,3.5,76,A,4,76,A,4,470,3.75,GPA 3.75,biology,Promoted,136,67.14,3.5
+Nishat Yasmin Sadia,1201920010246,74,A,4,50,B,3,56,B,3,60,A-,3.5,34,D,1,32,F,0,58,B,3,364,0,0,biology,Failed,294,52,2.5
+Md. Nayeem Sarkar,1201920010247,80,A+,5,64,A-,3.5,68,A-,3.5,70,A,4,60,A-,3.5,78,A,4,70,A,4,490,4.25,GPA 4.25,biology,Promoted,97,70,3.93
+Nafisha Zinnah,1201920010248,86,A+,5,68,A-,3.5,62,A-,3.5,64,A-,3.5,80,A+,5,58,B,3,68,A-,3.5,486,4.17,GPA 4.17,biology,Promoted,106,69.43,3.86
+Md. Farhan Asif Borno,1201920010249,82,A+,5,78,A,4,72,A,4,80,A+,5,66,A-,3.5,58,B,3,80,A+,5,516,4.58,GPA 4.58,biology,Promoted,46,73.71,4.21
+Sidratul Muntaha Shishir,1201920010250,80,A+,5,64,A-,3.5,80,A+,5,54,B,3,64,A-,3.5,54,B,3,82,A+,5,478,4.33,GPA 4.33,biology,Promoted,122,68.29,4
+Nusrat Jahan Aishi,1201920010251,68,A-,3.5,70,A,4,68,A-,3.5,36,D,1,42,C,2,38,D,1,70,A,4,392,2.83,GPA 2.83,biology,Promoted,262,56,2.71
+Nasif Sarkar Nihal,1201920010252,72,A,4,60,A-,3.5,66,A-,3.5,58,B,3,32,F,0,30,F,0,48,C,2,366,0,0,biology,Failed,289,52.29,2.29
+Samiha Nowshin,1201920010253,,,,68,A-,3.5,64,A-,3.5,60,A-,3.5,62,A-,3.5,44,C,2,78,A,4,376,0,0,biology,Failed,280,62.67,3.33
+Nashita Islam Mahi,1201920010254,72,A,4,74,A,4,72,A,4,72,A,4,64,A-,3.5,50,B,3,90,A+,5,494,4.25,GPA 4.25,biology,Promoted,93,70.57,3.93
+Maimuna Tasnim Nusaiba,1201920010255,80,A+,5,76,A,4,64,A-,3.5,50,B,3,52,B,3,52,B,3,72,A,4,446,3.92,GPA 3.92,biology,Promoted,185,63.71,3.64
+Shams Ul Arefin Nibir,1201920010256,68,A-,3.5,76,A,4,52,B,3,46,C,2,68,A-,3.5,52,B,3,74,A,4,436,3.5,GPA 3.5,biology,Promoted,202,62.29,3.29
+Abrar Jarif Utsab,1201920010257,80,A+,5,74,A,4,68,A-,3.5,86,A+,5,86,A+,5,70,A,4,82,A+,5,546,4.92,GPA 4.92,biology,Promoted,12,78,4.5
+Abdullah,1201920010258,80,A+,5,64,A-,3.5,70,A,4,68,A-,3.5,60,A-,3.5,84,A+,5,76,A,4,502,4.42,GPA 4.42,biology,Promoted,71,71.71,4.07
+Atikur Rahman,1201920010259,84,A+,5,86,A+,5,74,A,4,74,A,4,80,A+,5,80,A+,5,88,A+,5,566,5,GPA 5,biology,Promoted,8,80.86,4.71
+Kausar Ahmmed Anik,1201920010260,76,A,4,54,B,3,60,A-,3.5,60,A-,3.5,58,B,3,46,C,2,66,A-,3.5,420,3.42,GPA 3.42,biology,Promoted,233,60,3.21
+Most. Ayesha Akther,1201920010261,80,A+,5,66,A-,3.5,76,A,4,80,A+,5,76,A,4,82,A+,5,82,A+,5,542,4.92,GPA 4.92,biology,Promoted,15,77.43,4.5
+Arpita Paul,1201920010262,76,A,4,82,A+,5,74,A,4,68,A-,3.5,64,A-,3.5,68,A-,3.5,74,A,4,506,4.25,GPA 4.25,biology,Promoted,62,72.29,3.93
+Jannatun Tasmim,1201920010263,74,A,4,82,A+,5,78,A,4,62,A-,3.5,72,A,4,46,C,2,74,A,4,488,4.08,GPA 4.08,biology,Promoted,104,69.71,3.79
+Mst. Shahida Akter,1201920010264,82,A+,5,56,B,3,66,A-,3.5,64,A-,3.5,60,A-,3.5,60,A-,3.5,70,A,4,458,4,GPA 4,biology,Promoted,157,65.43,3.71
+Nowshin Akter Jahan Risha,1201920010265,80,A+,5,74,A,4,82,A+,5,78,A,4,76,A,4,64,A-,3.5,82,A+,5,536,4.75,GPA 4.75,biology,Promoted,20,76.57,4.36
+Marzia Akter Niha,1201920010266,76,A,4,,,,64,A-,3.5,36,D,1,44,C,2,38,D,1,53,B,3,312,0,0,biology,Failed,303,51.83,2.42
+Mastura Jannat,1201920010267,74,A,4,40,C,2,52,B,3,58,B,3,58,B,3,54,B,3,64,A-,3.5,400,3.25,GPA 3.25,biology,Promoted,252,57.14,3.07
+Indira Nandi,1201920010268,84,A+,5,62,A-,3.5,66,A-,3.5,76,A,4,74,A,4,60,A-,3.5,84,A+,5,506,4.42,GPA 4.42,biology,Promoted,61,72.29,4.07
+Most. Israt Jahan,1201920010269,66,A-,3.5,38,D,1,48,C,2,36,D,1,40,C,2,30,F,0,54,B,3,312,0,0,biology,Failed,302,44.57,1.79
+Md. Mahmudur Rahim Sumon,1201920010270,66,A-,3.5,42,C,2,38,D,1,54,B,3,52,B,3,42,C,2,70,A,4,364,2.92,GPA 2.92,biology,Promoted,290,52,2.64
+Md. Nazmus Sakib,1201920010271,74,A,4,76,A,4,68,A-,3.5,82,A+,5,70,A,4,72,A,4,76,A,4,518,4.42,GPA 4.42,biology,Promoted,42,74,4.07
+Md. Nabil Sadman,1201920010272,62,A-,3.5,36,D,1,54,B,3,54,B,3,40,C,2,40,C,2,56,B,3,342,2.58,GPA 2.58,biology,Promoted,300,48.86,2.5
+Fariha Rahman,1201920010273,84,A+,5,78,A,4,76,A,4,72,A,4,58,B,3,60,A-,3.5,68,A-,3.5,496,4.17,GPA 4.17,biology,Promoted,88,70.86,3.86
+Hosne Ara Ali Supti,1201920010274,76,A,4,52,B,3,46,C,2,58,B,3,54,B,3,74,A,4,90,A+,5,450,3.67,GPA 3.67,biology,Promoted,169,64.29,3.43
+Tanvir Mahmud,1201920010275,68,A-,3.5,60,A-,3.5,66,A-,3.5,58,B,3,64,A-,3.5,46,C,2,64,A-,3.5,426,3.42,GPA 3.42,biology,Promoted,222,60.86,3.21
+Md. Faruk Hassan,1201920010276,56,B,3,64,A-,3.5,44,C,2,56,B,3,36,D,1,34,D,1,80,A+,5,370,2.75,GPA 2.75,biology,Promoted,286,52.86,2.64
+Md. Ayub Ali,1201920010277,64,A-,3.5,46,C,2,68,A-,3.5,56,B,3,60,A-,3.5,44,C,2,68,A-,3.5,406,3.17,GPA 3.17,biology,Promoted,249,58,3
+Shoshi Paromita Khan,1201920010278,66,A-,3.5,60,A-,3.5,58,B,3,60,A-,3.5,52,B,3,46,C,2,74,A,4,416,3.42,GPA 3.42,biology,Promoted,238,59.43,3.21
+Most. Fatematuzzohura Nisu,1201920010279,80,A+,5,54,B,3,56,B,3,72,A,4,52,B,3,56,B,3,84,A+,5,454,4,GPA 4,biology,Promoted,164,64.86,3.71
+Mst. Keya,1201920010280,50,B,3,58,B,3,52,B,3,70,A,4,58,B,3,56,B,3,68,A-,3.5,412,3.42,GPA 3.42,biology,Promoted,243,58.86,3.21
+Mst. Salma Akter,1201920010281,72,A,4,46,C,2,64,A-,3.5,70,A,4,72,A,4,60,A-,3.5,64,A-,3.5,448,3.75,GPA 3.75,biology,Promoted,177,64,3.5
+Md. Shuvo Rahman,1201920010282,78,A,4,34,D,1,52,B,3,66,A-,3.5,42,C,2,54,B,3,50,B,3,376,2.92,GPA 2.92,biology,Promoted,278,53.71,2.79
+Jannatul Ferdous,1201920010283,64,A-,3.5,82,A+,5,52,B,3,36,D,1,50,B,3,46,C,2,52,B,3,382,3.08,GPA 3.08,biology,Promoted,271,54.57,2.93
+Mst. Asrat Jahan Katha,1201920010284,74,A,4,60,A-,3.5,40,C,2,48,C,2,52,B,3,38,D,1,66,A-,3.5,378,2.83,GPA 2.83,biology,Promoted,274,54,2.71
+Md. Salman Farshi,1201920010285,76,A,4,64,A-,3.5,64,A-,3.5,66,A-,3.5,58,B,3,52,B,3,62,A-,3.5,442,3.67,GPA 3.67,biology,Promoted,191,63.14,3.43
+S. M. Nafid Ahnaf Kabir,1201920010286,80,A+,5,76,A,4,64,A-,3.5,86,A+,5,42,C,2,60,A-,3.5,64,A-,3.5,472,4.08,GPA 4.08,biology,Promoted,133,67.43,3.79
+Mst. Sumaiya Aktar Srabony,1201920010287,72,A,4,68,A-,3.5,72,A,4,76,A,4,58,B,3,66,A-,3.5,86,A+,5,498,4.17,GPA 4.17,biology,Promoted,85,71.14,3.86
+Tamima Yeasmin,1201920010288,74,A,4,72,A,4,52,B,3,44,C,2,36,D,1,30,F,0,66,A-,3.5,374,0,0,biology,Failed,281,53.43,2.5
+Farhan Tanvir Kowsik,1201920010289,70,A,4,78,A,4,66,A-,3.5,64,A-,3.5,80,A+,5,60,A-,3.5,80,A+,5,498,4.42,GPA 4.42,biology,Promoted,84,71.14,4.07
+Baki Billah Siddiki,1201920010290,78,A,4,70,A,4,72,A,4,66,A-,3.5,60,A-,3.5,36,D,1,76,A,4,458,3.67,GPA 3.67,biology,Promoted,159,65.43,3.43
+Md. Sivli Sadik,1201920010291,62,A-,3.5,50,B,3,56,B,3,62,A-,3.5,50,B,3,40,C,2,74,A,4,394,3.33,GPA 3.33,biology,Promoted,260,56.29,3.14
+Mst. Sadia Ahmed,1201920010292,60,A-,3.5,70,A,4,80,A+,5,66,A-,3.5,66,A-,3.5,50,B,3,74,A,4,466,4.08,GPA 4.08,biology,Promoted,143,66.57,3.79
+Mst. Afifa Ulfat Khan,1201920010293,80,A+,5,74,A,4,66,A-,3.5,76,A,4,66,A-,3.5,58,B,3,84,A+,5,504,4.33,GPA 4.33,biology,Promoted,65,72,4
+Md. Fardin Hossain Rafat,1201920010294,60,A-,3.5,66,A-,3.5,52,B,3,60,A-,3.5,52,B,3,54,B,3,70,A,4,414,3.58,GPA 3.58,biology,Promoted,239,59.14,3.36
+Samiul Sazid Sammo,1201920010295,56,B,3,62,A-,3.5,46,C,2,60,A-,3.5,50,B,3,44,C,2,54,B,3,372,3,GPA 3,biology,Promoted,283,53.14,2.86
+M. M. R. S Shibli,1201920010296,54,B,3,74,A,4,62,A-,3.5,58,B,3,50,B,3,30,F,0,58,B,3,386,0,0,biology,Failed,269,55.14,2.79
+Samia Bintay Rahman,1201920010297,74,A,4,74,A,4,70,A,4,58,B,3,46,C,2,34,D,1,78,A,4,434,3.33,GPA 3.33,biology,Promoted,206,62,3.14
+Mst. Shifat Amrin Esha,1201920010298,70,A,4,54,B,3,56,B,3,60,A-,3.5,44,C,2,42,C,2,72,A,4,398,3.25,GPA 3.25,biology,Promoted,256,56.86,3.07
+Faria Omar Tithi,1201920010300,80,A+,5,82,A+,5,60,A-,3.5,48,C,2,50,B,3,48,C,2,62,A-,3.5,430,3.67,GPA 3.67,biology,Promoted,214,61.43,3.43
+Deep Shikhar Halder,1201920010301,70,A,4,78,A,4,54,B,3,50,B,3,46,C,2,42,C,2,80,A+,5,420,3.5,GPA 3.5,biology,Promoted,232,60,3.29
+Saima Islam Saba,1201920010302,66,A-,3.5,66,A-,3.5,76,A,4,56,B,3,42,C,2,56,B,3,76,A,4,438,3.5,GPA 3.5,biology,Promoted,199,62.57,3.29
+Tasnim Tabassum,1201920010303,72,A,4,78,A,4,62,A-,3.5,66,A-,3.5,54,B,3,66,A-,3.5,82,A+,5,480,4.08,GPA 4.08,biology,Promoted,116,68.57,3.79
+Zinia Zafrin Nisha,1201920010304,58,B,3,84,A+,5,70,A,4,66,A-,3.5,34,D,1,66,A-,3.5,62,A-,3.5,440,3.58,GPA 3.58,higher_math,Promoted,198,62.86,3.36
+Nazifa Tasnim,1201920010305,76,A,4,62,A-,3.5,64,A-,3.5,62,A-,3.5,42,C,2,70,A,4,72,A,4,448,3.75,GPA 3.75,biology,Promoted,176,64,3.5
+Most.Bilkis Baby Lata,1201920010306,74,A,4,44,C,2,46,C,2,60,A-,3.5,48,C,2,46,C,2,54,B,3,372,2.75,GPA 2.75,biology,Promoted,282,53.14,2.64
+Asif Mahbub,1201920010307,84,A+,5,62,A-,3.5,38,D,1,70,A,4,50,B,3,60,A-,3.5,66,A-,3.5,430,3.75,GPA 3.75,biology,Promoted,211,61.43,3.36
+RAFIUL HAQUE YADI,1201920010308,68,A-,3.5,72,A,4,74,A,4,78,A,4,74,A,4,76,A,4,84,A+,5,526,4.42,GPA 4.42,biology,Promoted,30,75.14,4.07
