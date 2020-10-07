@@ -432,23 +432,23 @@ body {
                 justify-content: space-between;
                 margin: 0 .5em;
             }
+            .header{
+                display: flex;
+                justify-content: space-between;
+            }
+            .footer{
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                span{
+                    display: inline-block;
+                    padding-right: .3em;
+                }
+            }
             .card__1{
                 height: 50vh;
 
-                .header{
-                    display: flex;
-                    justify-content: space-between;
-                }
-                .footer{
-                    display: flex;
-                    justify-content: flex-start;
-                    align-items: center;
-
-                    span{
-                        display: inline-block;
-                        padding-right: .3em;
-                    }
-                }
             }
 
             #grade_overview{

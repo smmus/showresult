@@ -562,11 +562,7 @@ body #main-container .row .card {
   margin: 0 .5em;
 }
 
-body #main-container .row .card__1 {
-  height: 50vh;
-}
-
-body #main-container .row .card__1 .header {
+body #main-container .row .header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -575,7 +571,7 @@ body #main-container .row .card__1 .header {
           justify-content: space-between;
 }
 
-body #main-container .row .card__1 .footer {
+body #main-container .row .footer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -587,9 +583,13 @@ body #main-container .row .card__1 .footer {
           align-items: center;
 }
 
-body #main-container .row .card__1 .footer span {
+body #main-container .row .footer span {
   display: inline-block;
   padding-right: .3em;
+}
+
+body #main-container .row .card__1 {
+  height: 50vh;
 }
 
 body #main-container .row #grade_overview {
