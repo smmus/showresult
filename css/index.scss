@@ -1,0 +1,231 @@
+/*===== GOOGLE FONTS =====*/
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600&display=swap');
+
+/*===== GLOBAL VARS =====*/
+$fontFamily : 'Montserrat', sans-serif;
+
+$navWidth : 90px;
+$navExpandWidth : 300px;
+
+$firstColor: #0C5DF4;
+$bgColor: #12192C;
+$subColor: #B6CEFC;
+$whiteColor: #FFF;
+$primaryColor:#4d7cff;
+$darkoverlayColor:rgba(0,0,0,0.5);
+
+$normalFontSize: 1rem;
+$smallFontSize: .875rem;
+
+$zIndexUp: 100;
+$zIndexMiddle: 50;
+/*===== GLOBAL CLASSES =====*/
+.btn {
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    border-radius: 10px;
+    background-image: radial-gradient(circle at 52% 84%, rgba(194, 194, 194,0.06) 0%, rgba(194, 194, 194,0.06) 18%,transparent 18%, transparent 100%),radial-gradient(circle at 38% 97%, rgba(239, 239, 239,0.06) 0%, rgba(239, 239, 239,0.06) 20%,transparent 20%, transparent 100%),radial-gradient(circle at 86% 17%, rgba(210, 210, 210,0.06) 0%, rgba(210, 210, 210,0.06) 61%,transparent 61%, transparent 100%),radial-gradient(circle at 6% 48%, rgba(91, 91, 91,0.06) 0%, rgba(91, 91, 91,0.06) 27%,transparent 27%, transparent 100%),radial-gradient(circle at 27% 63%, rgba(86, 86, 86,0.06) 0%, rgba(86, 86, 86,0.06) 30%,transparent 30%, transparent 100%),radial-gradient(circle at 2% 91%, rgba(182, 182, 182,0.06) 0%, rgba(182, 182, 182,0.06) 29%,transparent 29%, transparent 100%),linear-gradient(90deg, rgb(203, 171, 120),rgb(227, 87, 5));
+    box-shadow: 0 5px 20px -6px #000;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #000;
+    padding: .5em .5em;
+
+    &:active {
+        opacity: 0.5;
+    }
+
+    &:hover {
+        -webkit-transform: translatey(5px);
+        transform: translatey(5px);
+        box-shadow: none;
+    }
+}
+
+* , *::after, *::before{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: $fontFamily;
+
+    header {
+        font-weight: 300;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: $bgColor;
+        padding: 1rem;
+        color: #fff;
+        
+        & > div {
+            flex: 0;
+            font-size: 1.2em;
+            font-weight: 500;
+
+            span{
+                color: $primaryColor;
+            }
+        }
+
+        & > nav {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            a {
+                text-decoration: none;
+                color: #fff;
+                display: inline-block;
+                padding-left: 2em;
+                transition: color 0.3s ease;
+
+                &:hover{ 
+                    /* TODO: make variable */
+                    color:#608aff;
+                }
+            }
+        }
+    }
+
+    .l-navbar{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: $navWidth;
+        height: 100%;
+        background-color: $bgColor;
+        color: $whiteColor;
+        padding: 1.5rem 1.5rem 2rem;
+        transition: .5s;
+        z-index: $zIndexUp;
+
+        &.expander{
+            width: $navExpandWidth;
+        }
+
+        nav{
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+
+            
+            /*=======Show collapse==========*/
+            .showCollapse{
+                display: block;
+                grid-column: 1 / 4;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+            }
+            /*========Rotate icon=========*/
+            .rotate{
+                transform: rotate(180deg);
+            }
+            /*===== COLLAPSE END =====*/
+
+            a {
+                text-decoration: none;
+            }
+
+            .nav__brand{
+                display: grid;
+                grid-template-columns: max-content max-content;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                
+                .nav__toggle{
+                    font-size: 1.25rem;
+                    padding: .75rem;
+                    cursor: pointer;
+                }
+
+                .nav__logo{
+                    color: $whiteColor;
+                    font-weight: 600;
+                    span{
+                        color: $primaryColor;
+                    }
+                }
+            }
+
+            .nav__link{
+                display: grid;
+                grid-template-columns: max-content max-content;
+                align-items: center;
+                column-gap: .75rem;
+                padding: .75rem;
+                color: var(--white-color);
+                border-radius: .5rem;
+                margin-bottom: 1rem;
+                cursor: pointer;
+                transition: .3s;
+                &:hover{
+                    background-color: $firstColor;
+                }
+                &.active{
+                    background-color: $firstColor;
+                }
+                .nav__icon{
+                    font-size: 1.25rem;
+                }
+                .nav__name{
+                    font-size: $smallFontSize;
+                }
+                /*===== COLLAPSE =====*/
+                &.collapse{
+                    grid-template-columns: 20px max-content 1fr;
+                }
+                .collapse__link{
+                    justify-self: flex-end;
+                    transition: .5s;
+                }
+                .collapse__menu{
+                    display: none;
+                    padding: .75rem 2.25rem;
+                }
+                .collapse__sublink{
+                    color: $subColor;
+                    font-size: $smallFontSize;
+                }
+                .collapse__sublink:hover{
+                    color: var(--white-color);
+                }
+            }
+        }
+    }
+
+    #main-container{
+        margin-left: $navWidth;
+        position: relative;
+        &.overlay {
+            pointer-events: none;
+            transition: all 500ms ease;
+            
+            &::after{
+                content: "";
+                display: block;
+                position: absolute;
+                background: $darkoverlayColor;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                height: 100vh;
+                pointer-events: none;
+                z-index:$zIndexMiddle;
+            }
+        }
+    }
+}

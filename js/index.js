@@ -1,21 +1,19 @@
 /*---------- EXPANDER MENU ----------*/
-const showMenu = (toggleId, navbarId, bodyId) => {
+const showMenu = (toggleId, navbarId) => {
     const toggle = document.getElementById(toggleId),
-        navbar = document.getElementById(navbarId),
-        bodypadding = document.getElementById(bodyId)
+        navbar = document.getElementById(navbarId);
 
     if (toggle && navbar) {
         toggle.addEventListener('click', () => {
-            navbar.classList.toggle('expander')
-
-            // bodypadding.classList.toggle('body-pd') --> code after thish wont execute if error
+            navbar.classList.toggle('expander');
+            document.getElementById('main-container').classList.toggle('overlay');
 
             document.querySelectorAll('#navbar nav > div >  div+div > div .rotate').forEach(e => e.classList.remove("rotate"));
-            document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e => e.classList.remove("showCollapse"))
+            document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e => e.classList.remove("showCollapse"));
         })
     }
 }
-showMenu('nav-toggle', 'navbar', 'body-pd');
+showMenu('nav-toggle', 'navbar');
 
 /*----------- LINK ACTIVE  ------------*/
 const linkColor = document.querySelectorAll('.nav__link')
@@ -246,7 +244,10 @@ function onsuccess_func(event) {
                 })
         }
         // if all data is in db -- show overview
-        
+        /*=========== global vars =============*/
+        Chart.defaults.global.elements.line.tension = 0;
+        Chart.defaults.global.elements.point.hitRadius = 2;
+
     }
 }
 
