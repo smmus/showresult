@@ -39,10 +39,10 @@ for (let i = 0; i < linkCollapse.length; i++) {
 // ------------------------ some global funcs  -----------------------------
 let firstBy = function () { function n(n) { return n } function t(n) { return "string" == typeof n ? n.toLowerCase() : n } function r(r, e) { if (e = "number" == typeof e ? { direction: e } : e || {}, "function" != typeof r) { var u = r; r = function (n) { return n[u] ? n[u] : "" } } if (1 === r.length) { var i = r, o = e.ignoreCase ? t : n; r = function (n, t) { return o(i(n)) < o(i(t)) ? -1 : o(i(n)) > o(i(t)) ? 1 : 0 } } return -1 === e.direction ? function (n, t) { return -r(n, t) } : r } function e(n, t) { return n = r(n, t), n.thenBy = u, n } function u(n, t) { var u = this; return n = r(n, t), e(function (t, r) { return u(t, r) || n(t, r) }) } return e }();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
 
-String.prototype.capitalize = function() {
+String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
-String.prototype.underscrore_to_capitalize = function() {
+String.prototype.underscrore_to_capitalize = function () {
     let splited = this.split('_').join(' ');
     return splited.charAt(0).toUpperCase() + splited.slice(1);
 }
@@ -124,7 +124,7 @@ const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const OBJ_STORE_INFO = `${DB_NAME}_${XM_NAME}_info`;
 const DB_VERSION = 1;
 const ROLL_SLICE = 10;
-const GRADES = ['promoted', 'failed', 'a_plus', 'a','a_minus','b','c','d','f','no_result'];
+const GRADES = ['promoted', 'failed', 'a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_res'];
 
 let db;
 
@@ -165,7 +165,7 @@ function onsuccess_func(event) {
                     let metaData = {
                         total_examnee: 0,
                         failed_examnee: 0,
-                        all_sub:{},
+                        all_sub: {},
                         sub_code_to_name
                     };
                     for (let i in sub_code_to_name) {
@@ -202,7 +202,7 @@ function onsuccess_func(event) {
                         let name = result[name_index];
 
                         if (name) metaData['total_examnee']++;
-                        if (result[pass_index].includes('failed')) metaData['failed_examnee']++;
+                        if (result[pass_index].includes('ailed')) metaData['failed_examnee']++; // don't wannna .toLowerCase() :)
 
                         let obj = {
                             roll: parseInt(result[roll_index].slice(ROLL_SLICE)),
@@ -235,11 +235,13 @@ function onsuccess_func(event) {
                             }
                         })
                     })
+
+                    // calculating avg
                     for (let i in metaData.all_sub) {
                         metaData.all_sub[i].avg = (metaData.all_sub[i].avg / (metaData.total_examnee - metaData.all_sub[i].no_res)).toFixed(2);
                     }
 
-                    // opening info_obj_store txn for storing info
+                    // opening info_obj_store txn for storing info {metaData}
                     let objStoreInfo = getObjectStore(db, OBJ_STORE_INFO, 'readwrite');
                     objStoreInfo.add({ info: 'metaData', metaData });
 
@@ -256,10 +258,11 @@ function onsuccess_func(event) {
         }
         // if all data is in db -- show overview
         // step1: get data from iddb
-        let req = getObjectStore(db,OBJ_STORE_INFO, 'readonly').get('metaData');
-        req.onsuccess = function(e){
+        let req = getObjectStore(db, OBJ_STORE_INFO, 'readonly').get('metaData');
+        req.onsuccess = function (e) {
+            console.log('[metaData]', e.target.result);
             let metaData = e.target.result.metaData;
-            console.log('[metaData]',metaData);
+            // [TODO] [ERROR] e.target.result is undefined for the first time
 
             let subjects = Object.values(metaData.sub_code_to_name);
 
@@ -267,46 +270,54 @@ function onsuccess_func(event) {
             Chart.defaults.global.elements.line.tension = 0;
             Chart.defaults.global.elements.point.hitRadius = 2;
             // Chart.defaults.global.aspectRatio = 1.5;
-    
+
             let subjects_pass_fail_overview_chart = new Chart(document.getElementById('subjects_pass_fail_overview').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.values(metaData.sub_code_to_name).map(sub_name=>sub_name.split('_').join(' ').capitalize()),
+                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.split('_').join(' ').capitalize()),
                     datasets: [
                         {
-                            data: Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res),
+                            data: Object.values(metaData.all_sub).map(obj => obj.f + obj.no_res),
                             backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5']
                         },
                     ]
                 },
-                options:{
-                    aspectRatio : 1.5,
-                    legend:{
-                        position:'right'
+                options: {
+                    aspectRatio: 1.5,
+                    legend: {
+                        position: 'right'
                     }
                 }
             });
             // event listener for select event
-            document.getElementById('pass_fail_select').addEventListener('change', e=>{
-                console.log('[SELECT OptionVal]',e.target.value);
-                
-                //
-                if (e.target.value in GRADES){
-                    console.log('[Matched From GRADES]')
-                    if(e.target.value == 'failed'){
-                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res);
-                    }else if(e.target.value == 'promoted'){
-                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>metaData.total_examnee - obj.f - obj.no_res);
-                    }else{
-                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj[e.target.value]);
+            document.getElementById('pass_fail_select').addEventListener('change', e => {
+                console.log('[SELECT OptionVal]', e.target.value);
+
+                for (let i of GRADES) {
+
+                    if (e.target.value != i) continue;
+                    console.log('[Matched From GRADES]');
+
+                    if (e.target.value == 'failed') {
+                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.f + obj.no_res);
+                    } else if (e.target.value == 'promoted') {
+                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => metaData.total_examnee - obj.f - obj.no_res);
+                    } else {
+                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
                     }
-                }else if (e.target.value in subjects){
-                    console.log('[Matched From Subjects]')
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name=>{
-                        if(metaData.all_sub[e.target.value][grade_name]) return metaData.all_sub[e.target.value][grade_name];
-                        else if(grade_name=='promoted') return metaData.total_examnee - metaData.all_sub[e.target.value]['f'] - metaData.all_sub[e.target.value]['no_res'];
-                        else if(grade_name=='failed') return metaData.all_sub[e.target.value]['f'] + metaData.all_sub[e.target.value]['no_res'];
+
+                }
+                for (let i of subjects) {
+
+                    if (e.target.value != i) continue;
+                    console.log('[Matched From Subjects]');
+
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => {
+                        if (metaData.all_sub[e.target.value][grade_name]) return metaData.all_sub[e.target.value][grade_name];
+                        else if (grade_name == 'promoted') return metaData.total_examnee - metaData.all_sub[e.target.value]['f'] - metaData.all_sub[e.target.value]['no_res'];
+                        else if (grade_name == 'failed') return metaData.all_sub[e.target.value]['f'] + metaData.all_sub[e.target.value]['no_res'];
                     })
+
                 }
                 subjects_pass_fail_overview_chart.update();
                 // switch(e.target.value){
@@ -352,84 +363,102 @@ function onsuccess_func(event) {
                 //         break;
                 // }
             })
-            //checkbox event listener
             
-
+            //checkbox event listener
             document.getElementById('subjects_pass_fail_overview_checkbox').onchange = e => {
                 let select_element = document.getElementById('pass_fail_select');
 
-                console.log("[CheckBox] :",e.target.checked);
+                console.log("[CheckBox] :", e.target.checked);
 
-                if(e.target.checked){
-                    // step1: changing chart label
-                    subjects_pass_fail_overview_chart.data.labels = [0,0,0,0,0,0,0,0,0,0].map((e,i)=>grades[i].underscrore_to_capitalize());
-                    // step2: changing select options
+                if (e.target.checked) {
+                    // step1: changing select options
                     let change = "";
-                    subjects.forEach(el=>{
+                    subjects.forEach(el => {
                         change += `<option value="${el}" ${el.includes('bangla') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>`
                     })
                     select_element.innerHTML = change;
-                    console.log(change);
+                    // console.log(change);
+                    // step2: changing chart label + data && updating
+                    subjects_pass_fail_overview_chart.data.labels = GRADES.map(e =>e.underscrore_to_capitalize());
+
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => {
+                        if (metaData.all_sub['bangla_1st'][grade_name]) return metaData.all_sub['bangla_1st'][grade_name];
+                        else if (grade_name == 'promoted') return metaData.total_examnee - metaData.all_sub['bangla_1st']['f'] - metaData.all_sub['bangla_1st']['no_res'];
+                        else if (grade_name == 'failed') return metaData.all_sub['bangla_1st']['f'] + metaData.all_sub['bangla_1st']['no_res'];
+                    })
+                    subjects_pass_fail_overview_chart.update();
+                }else {
+                    // step1: changing select options
+                    let change = "";
+                    GRADES.forEach(el => {
+                        change += `<option value="${el}" ${el.includes('ailed') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>`
+                    })
+                    select_element.innerHTML = change;
+                    // console.log(change);
+                    // step2: changing chart label + data && updating
+                    subjects_pass_fail_overview_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
+                    
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.f + obj.no_res);
                     subjects_pass_fail_overview_chart.update();
                 }
             }
-    
+
             let subjects_grade_overview_chart = new Chart(document.getElementById('subjects_grade_overview').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: Object.values(metaData.sub_code_to_name).map(sub_name=>sub_name.split('_').join(' ').capitalize()),
+                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.split('_').join(' ').capitalize()),
                     datasets: [{
                         label: 'A+',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.a_plus),
+                        data: Object.values(metaData.all_sub).map(obj => obj.a_plus),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
                         fill: 6
                     }, {
                         label: 'A',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.a),
+                        data: Object.values(metaData.all_sub).map(obj => obj.a),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
                         fill: 6
                     }, {
                         label: 'A-',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.a_minus),
+                        data: Object.values(metaData.all_sub).map(obj => obj.a_minus),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
                         fill: 6
                     }, {
                         label: 'B',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.b),
+                        data: Object.values(metaData.all_sub).map(obj => obj.b),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
                         fill: 6
                     }, {
                         label: 'C',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.c),
+                        data: Object.values(metaData.all_sub).map(obj => obj.c),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
                         fill: 6
                     }, {
                         label: 'D',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.d),
+                        data: Object.values(metaData.all_sub).map(obj => obj.d),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
                         fill: 6
                     }, {
                         label: 'F',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.f),
+                        data: Object.values(metaData.all_sub).map(obj => obj.f),
                         backgroundColor: 'rgb(237, 26, 59,0.3)',
                         borderColor: 'rgb(237, 26, 59)',
                         borderWidth: 1,
                         fill: 'origin'
                     }, {
                         label: 'No Result',
-                        data: Object.values(metaData.all_sub).map(obj=>obj.no_res),
+                        data: Object.values(metaData.all_sub).map(obj => obj.no_res),
                         borderColor: 'rgb(253, 111, 113)',
                         backgroundColor: 'rgba(253, 111, 113,0.2)',
                         borderWidth: 1,
@@ -437,8 +466,8 @@ function onsuccess_func(event) {
                     }]
                 },
                 options: {
-                    aspectRatio : 2,
-                    maintainAspectRatio:true,
+                    aspectRatio: 2,
+                    maintainAspectRatio: true,
                     scales: {
                         yAxes: [{
                             scaleLabel: {
