@@ -42,6 +42,10 @@ let firstBy = function () { function n(n) { return n } function t(n) { return "s
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
+String.prototype.underscrore_to_capitalize = function() {
+    let splited = this.split('_').join(' ');
+    return splited.charAt(0).toUpperCase() + splited.slice(1);
+}
 
 function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
     // modifies global var
@@ -113,12 +117,14 @@ const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLL = new URLSearchParams(window.location.search).get('roll');
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
 const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('r');
+const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
 
 const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const OBJ_STORE_INFO = `${DB_NAME}_${XM_NAME}_info`;
 const DB_VERSION = 1;
 const ROLL_SLICE = 10;
+const GRADES = ['promoted', 'failed', 'a_plus', 'a','a_minus','b','c','d','f','no_result'];
 
 let db;
 
@@ -253,7 +259,9 @@ function onsuccess_func(event) {
         let req = getObjectStore(db,OBJ_STORE_INFO, 'readonly').get('metaData');
         req.onsuccess = function(e){
             let metaData = e.target.result.metaData;
-            console.log(metaData)
+            console.log('[metaData]',metaData);
+
+            let subjects = Object.values(metaData.sub_code_to_name);
 
             /*=========== global vars =============*/
             Chart.defaults.global.elements.line.tension = 0;
@@ -267,7 +275,7 @@ function onsuccess_func(event) {
                     datasets: [
                         {
                             data: Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res),
-                            backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#4BC0C0', '#5A7BFA', '#FF9F40', '#9AD0F5']
+                            backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5']
                         },
                     ]
                 },
@@ -278,6 +286,93 @@ function onsuccess_func(event) {
                     }
                 }
             });
+            // event listener for select event
+            document.getElementById('pass_fail_select').addEventListener('change', e=>{
+                console.log('[SELECT OptionVal]',e.target.value);
+                
+                //
+                if (e.target.value in GRADES){
+                    console.log('[Matched From GRADES]')
+                    if(e.target.value == 'failed'){
+                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res);
+                    }else if(e.target.value == 'promoted'){
+                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>metaData.total_examnee - obj.f - obj.no_res);
+                    }else{
+                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj[e.target.value]);
+                    }
+                }else if (e.target.value in subjects){
+                    console.log('[Matched From Subjects]')
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name=>{
+                        if(metaData.all_sub[e.target.value][grade_name]) return metaData.all_sub[e.target.value][grade_name];
+                        else if(grade_name=='promoted') return metaData.total_examnee - metaData.all_sub[e.target.value]['f'] - metaData.all_sub[e.target.value]['no_res'];
+                        else if(grade_name=='failed') return metaData.all_sub[e.target.value]['f'] + metaData.all_sub[e.target.value]['no_res'];
+                    })
+                }
+                subjects_pass_fail_overview_chart.update();
+                // switch(e.target.value){
+                //     case 'promoted': //passed
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>metaData.total_examnee - obj.f - obj.no_res);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'failed': //failed
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'a+': 
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.a_plus);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'a':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.a);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'a-':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.a_minus);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'b':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.b);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'c':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.c);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'd':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.d);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'f':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.f);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                //     case 'no_result':
+                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.no_res);
+                //         subjects_pass_fail_overview_chart.update();
+                //         break;
+                // }
+            })
+            //checkbox event listener
+            
+
+            document.getElementById('subjects_pass_fail_overview_checkbox').onchange = e => {
+                let select_element = document.getElementById('pass_fail_select');
+
+                console.log("[CheckBox] :",e.target.checked);
+
+                if(e.target.checked){
+                    // step1: changing chart label
+                    subjects_pass_fail_overview_chart.data.labels = [0,0,0,0,0,0,0,0,0,0].map((e,i)=>grades[i].underscrore_to_capitalize());
+                    // step2: changing select options
+                    let change = "";
+                    subjects.forEach(el=>{
+                        change += `<option value="${el}" ${el.includes('bangla') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>`
+                    })
+                    select_element.innerHTML = change;
+                    console.log(change);
+                    subjects_pass_fail_overview_chart.update();
+                }
+            }
     
             let subjects_grade_overview_chart = new Chart(document.getElementById('subjects_grade_overview').getContext('2d'), {
                 type: 'line',

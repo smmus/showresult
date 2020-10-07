@@ -14,62 +14,14 @@ $whiteColor: #FFF;
 $primaryColor:#4d7cff;
 $darkoverlayColor:rgba(0,0,0,0.5);
 $containerBgColor : rgb(243, 244, 249);
+$red: #FF4651;
+$green: #48EA8B;
 
 $normalFontSize: 1rem;
 $smallFontSize: .875rem;
 
 $zIndexUp: 100;
 $zIndexMiddle: 50;
-/*===== GLOBAL NAIMATIONS =====*/
-@keyframes red {
-    0% {
-      height: 30px;
-      width: 0;
-      border-width: 5px;
-    }
-    55% {
-      height: 13px;
-      width: 27px;
-      border-width: 10px;
-    }
-    
-    70% {
-      height: 20px;
-      width: 20px;
-      border-width: 10px;
-    }
-    
-    85% {
-      height: 15px;
-      width: 25px;
-      border-width: 10px;
-    }
-    
-    100% {
-      height: 20px;
-      width: 20px;
-      border-width: 10px;
-    }
-  }
-  
-  @keyframes green {
-    0% {
-      height: 20px;
-      width: 20px;
-      border-width: 10px;
-    }
-    25%, 55%, 85% {
-      height: 30px;
-      width: 5px;
-      border-width: 5px;
-    }
-    
-    40%, 70%, 100% {
-      height: 30px;
-      width: 0;
-      border-width: 5px;
-    }
-  }
 /*===== GLOBAL CLASSES =====*/
 .btn {
     -webkit-transition: all .3s ease-in-out;
@@ -100,7 +52,7 @@ $zIndexMiddle: 50;
     padding: 10px 0 10px 15px;
     font-family: "Open Sans", sans;
     font-weight: 400;
-    color: #377D6A;
+    color: #48E98A;
     background: #efefef;
     border: 0;
     border-radius: 3px;
@@ -121,7 +73,7 @@ $zIndexMiddle: 50;
         left: 0;
         padding: 10px 15px;
         text-shadow: 0 1px 0 rgba(19,74,70,.4);
-        background: #7AB893;
+        background: #48E98A;
         transition: all .4s ease-in-out;
         border-top-left-radius: 3px;
         border-bottom-left-radius: 3px;
@@ -137,7 +89,7 @@ $zIndexMiddle: 50;
             bottom: 0;
             left: 0;
             border-radius: 3px;
-            background: #377D6A;
+            background: #48E98A;
             transform-origin: left bottom;
             transition: all .4s ease-in-out;
             pointer-events: none;
@@ -171,67 +123,111 @@ $zIndexMiddle: 50;
     }
 }
 /*================switch==================*/
-input[type="checkbox"] {
-    display: none;
-}
-.toggleWrapper {
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all .2s;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #fe4551;
-    box-shadow: 0 20px 20px 0 rgba(#fe4551, 0.3);
-    
-    &:active {
-      width: 32px;
-      height: 32px;
-      box-shadow: 0 15px 15px 0 rgba(#fe4551, 0.5);
-      
-      .toggle {
-        height: 5px;
-        width: 5px;
-      }
-    }
-    
-    .toggle {
-      transition: all 0.2s ease-in-out;
-      height: 5px;
-      width: 5px;
-      background-color: transparent;
-      border: 5px solid #fff;
-      border-radius: 50%;
-      cursor: pointer;
-      
-      animation: red .7s linear forwards;
-    }
-}
-input[type="checkbox"]:checked {
-    & ~ .background {
-      background-color: #f9faf7;
-    }
-    & + .toggleWrapper {
-      background-color: #48e98a;
-      box-shadow: 0 20px 20px 0 rgba(#48e98a, 0.3);
-      
-      &:active {
-        box-shadow: 0 15px 15px 0 rgba(#48e98a, 0.5);
-      }
 
-      .toggle {
-        width: 0;
-        background-color: #fff;
-        border-color: transparent;
-        border-radius: 30px;
-        animation: green .7s linear forwards !important;
-      }
+
+.switch {
+    cursor: pointer;
+    input[type="checkbox"] {
+        display: none;
+        & + span {
+            width: 40px;
+            height: 25px;
+            border-radius: 14px;
+            transition: all .3s ease;
+            display: block;
+            position: relative;
+            background: $red;
+            box-shadow: 0 8px 16px -1px rgba($red, .2);
+            &:before,
+            &:after {
+                content: '';
+                display: block;
+                position: absolute;
+                transition: all .3s ease;
+            }
+            &:before {
+                top: 3px;
+                left: 3px;
+                width: 18px;
+                height: 18px;
+                border-radius: 9px;
+                border: 5px solid #fff;
+            }
+            &:after {
+                top: 5px;
+                left: 32px;
+                width: 6px;
+                height: 18px;
+                border-radius: 40%;
+                transform-origin: 50% 50%;
+                background: #fff;
+                opacity: 0;
+            }
+            &:active {
+                transform: scale(.92);
+            }
+        }
+        &:checked {
+            & + span {
+                background: $green;
+                box-shadow: 0 8px 16px -1px rgba($green, .2);
+                &:before {
+                    width: 0px;
+                    border-radius: 3px;
+                    margin-left: 22px;
+                    border-width: 3px;
+                    background: #fff;
+                }
+                &:after {
+                    animation: blobChecked .35s linear forwards .2s;
+                }
+            }
+        }
+        &:not(:checked) {
+            & + span {
+                &:before {
+                    animation: blob .85s linear forwards .2s;
+                }
+            }
+        }
     }
 }
-  
+
+@keyframes blob {
+    0%, 100% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.12, .94);
+    }
+    60% {
+        transform: scale(.96, 1.06);
+    }
+}
+
+@keyframes blobChecked {
+    0% {
+        transform: scaleX(1);
+    }
+    30% {
+        transform: scaleX(1.44);
+    }
+    70% {
+        transform: scaleX(1.18);
+    }
+    50%,
+    99% {
+        transform: scaleX(1);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+}
+
   
 /*===== GLOBAL CLASSES END=====*/
 
@@ -450,7 +446,7 @@ body {
 
                     span{
                         display: inline-block;
-                        padding-right: .1em;
+                        padding-right: .3em;
                     }
                 }
             }
