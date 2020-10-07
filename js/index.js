@@ -258,7 +258,7 @@ function onsuccess_func(event) {
             /*=========== global vars =============*/
             Chart.defaults.global.elements.line.tension = 0;
             Chart.defaults.global.elements.point.hitRadius = 2;
-            Chart.defaults.global.aspectRatio = 1.5;
+            // Chart.defaults.global.aspectRatio = 1.5;
     
             let subjects_pass_fail_overview_chart = new Chart(document.getElementById('subjects_pass_fail_overview').getContext('2d'), {
                 type: 'doughnut',
@@ -272,6 +272,7 @@ function onsuccess_func(event) {
                     ]
                 },
                 options:{
+                    aspectRatio : 1.5,
                     legend:{
                         position:'right'
                     }
@@ -341,6 +342,8 @@ function onsuccess_func(event) {
                     }]
                 },
                 options: {
+                    aspectRatio : 2,
+                    maintainAspectRatio:true,
                     scales: {
                         yAxes: [{
                             scaleLabel: {

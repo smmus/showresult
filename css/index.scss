@@ -20,6 +20,56 @@ $smallFontSize: .875rem;
 
 $zIndexUp: 100;
 $zIndexMiddle: 50;
+/*===== GLOBAL NAIMATIONS =====*/
+@keyframes red {
+    0% {
+      height: 30px;
+      width: 0;
+      border-width: 5px;
+    }
+    55% {
+      height: 13px;
+      width: 27px;
+      border-width: 10px;
+    }
+    
+    70% {
+      height: 20px;
+      width: 20px;
+      border-width: 10px;
+    }
+    
+    85% {
+      height: 15px;
+      width: 25px;
+      border-width: 10px;
+    }
+    
+    100% {
+      height: 20px;
+      width: 20px;
+      border-width: 10px;
+    }
+  }
+  
+  @keyframes green {
+    0% {
+      height: 20px;
+      width: 20px;
+      border-width: 10px;
+    }
+    25%, 55%, 85% {
+      height: 30px;
+      width: 5px;
+      border-width: 5px;
+    }
+    
+    40%, 70%, 100% {
+      height: 30px;
+      width: 0;
+      border-width: 5px;
+    }
+  }
 /*===== GLOBAL CLASSES =====*/
 .btn {
     -webkit-transition: all .3s ease-in-out;
@@ -33,17 +83,157 @@ $zIndexMiddle: 50;
     font-size: 1.1em;
     color: #000;
     padding: .5em .5em;
-
+    
     &:active {
         opacity: 0.5;
     }
-
+    
     &:hover {
         -webkit-transform: translatey(5px);
         transform: translatey(5px);
         box-shadow: none;
     }
 }
+.gate {
+    display: inline-block;
+    width: 215px;
+    padding: 10px 0 10px 15px;
+    font-family: "Open Sans", sans;
+    font-weight: 400;
+    color: #377D6A;
+    background: #efefef;
+    border: 0;
+    border-radius: 3px;
+    outline: 0;
+    text-indent: 65px; // Arbitrary.
+    transition: all .3s ease-in-out;
+    
+    &::-webkit-input-placeholder {
+        color: #efefef;
+        text-indent: 0;
+        font-weight: 300;
+    }
+    
+    + label {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px 15px;
+        text-shadow: 0 1px 0 rgba(19,74,70,.4);
+        background: #7AB893;
+        transition: all .4s ease-in-out;
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+        transform-origin: left bottom;
+        z-index: 99;
+        
+        &:before,
+        &:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            border-radius: 3px;
+            background: #377D6A;
+            transform-origin: left bottom;
+            transition: all .4s ease-in-out;
+            pointer-events: none;
+            z-index: -1;
+        }
+        &:before {
+            background: rgba(3,36,41,.2);
+            z-index: -2;
+            right: 20%;
+        }
+    }
+    &:focus,
+    &:active {
+        color: #377D6A;
+        text-indent: 0;
+        background: #fff;
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+        
+        &::-webkit-input-placeholder {
+            color: #aaa;
+        }
+        + label {
+            transform: rotate(-66deg);
+            border-radius: 3px;
+            
+            &:before {
+                transform: rotate(10deg);
+            }
+        }
+    }
+}
+/*================switch==================*/
+input[type="checkbox"] {
+    display: none;
+}
+.toggleWrapper {
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .2s;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #fe4551;
+    box-shadow: 0 20px 20px 0 rgba(#fe4551, 0.3);
+    
+    &:active {
+      width: 32px;
+      height: 32px;
+      box-shadow: 0 15px 15px 0 rgba(#fe4551, 0.5);
+      
+      .toggle {
+        height: 5px;
+        width: 5px;
+      }
+    }
+    
+    .toggle {
+      transition: all 0.2s ease-in-out;
+      height: 5px;
+      width: 5px;
+      background-color: transparent;
+      border: 5px solid #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      
+      animation: red .7s linear forwards;
+    }
+}
+input[type="checkbox"]:checked {
+    & ~ .background {
+      background-color: #f9faf7;
+    }
+    & + .toggleWrapper {
+      background-color: #48e98a;
+      box-shadow: 0 20px 20px 0 rgba(#48e98a, 0.3);
+      
+      &:active {
+        box-shadow: 0 15px 15px 0 rgba(#48e98a, 0.5);
+      }
+
+      .toggle {
+        width: 0;
+        background-color: #fff;
+        border-color: transparent;
+        border-radius: 30px;
+        animation: green .7s linear forwards !important;
+      }
+    }
+}
+  
+  
+/*===== GLOBAL CLASSES END=====*/
 
 * , *::after, *::before{
     margin: 0;
@@ -53,7 +243,7 @@ $zIndexMiddle: 50;
 
 body {
     font-family: $fontFamily;
-
+    
     header {
         font-weight: 300;
         text-decoration: none;
@@ -234,29 +424,50 @@ body {
             display: flex;
             justify-content: space-evenly;
             align-items: center;
+            flex-wrap: wrap;
+            padding: 1rem 0;
 
-            .card__1{
+            .card{
                 background: $whiteColor;
                 border-radius: 6px;
                 padding: 1em;
-                height: 50vh;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                margin: 0 .5em;
+            }
+            .card__1{
+                height: 50vh;
 
                 .header{
                     display: flex;
                     justify-content: space-between;
                 }
+                .footer{
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    span{
+                        display: inline-block;
+                        padding-right: .1em;
+                    }
+                }
             }
 
             #grade_overview{
-                // flex: 1 1 auto;
+                flex: 1.6;
                 width: 40vw;
             }
             #pass_fail_overview{
-                // flex: 1 1 auto;
+                flex: 1;
                 width: 30vw;
+            }
+            #search{
+                flex:.5;
+                div{
+                    position: relative;
+                }
             }
         }
     }
