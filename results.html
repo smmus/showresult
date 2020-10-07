@@ -92,23 +92,38 @@
         </nav>
     </div>
     <section id="main-container">
-        <div class="chart-1 chart">
-            <p>Mark Overview</p>
-            <canvas id="subjects_mark_overview"></canvas>
-        </div>
-        <div class="chart-2 chart">
-            <p>Search</p>
-            <div class="form__group field">
-                <input type="input" class="form__field" placeholder="3-digit Roll" name="roll" id='std_roll'/>
-                <label for="std_roll" class="form__label">3-digit Roll</label>
+        <div class="row">
+            <div class="card__1" id="grade_overview">
+                <div class="header">
+                    <p>Grade Overview</p>
+                </div>
+                <div class="canvas">
+                    <canvas id="subjects_grade_overview"></canvas>
+                </div>
+                <div class="footer"></div>
             </div>
-            <div class="form__group field">
-                <input type="input" class="form__field" placeholder="(or) Name" name="name" id='std_name'/>
-              <label for="std_name" class="form__label">(or) Name</label>
-            </div>
-            <button id="submit_btn">Go</button>
-            <canvas id="whole_result"></canvas>
-        </div>
+            <div class="card__1" id="pass_fail_overview">
+                <div class="header">
+                    <p>Result</p>
+                    <select id="pass_fail_select">
+                        <option value="0">Promoted</option>
+                        <option value="1" selected>Failed</option>
+                        <option value="2">A+</option>
+                        <option value="3">A</option>
+                        <option value="4">A-</option>
+                        <option value="5">B</option>
+                        <option value="6">C</option>
+                        <option value="7">D</option>
+                        <option value="8">F</option>
+                        <option value="9">No Result</option>
+                    </select>
+                </div>
+                <div class="canvas">
+                    <canvas id="subjects_pass_fail_overview"></canvas>
+                </div>
+                <div class="footer"></div>
+            </div> 
+        </div>  
     </section>
 </body>
 </html>

@@ -13,6 +13,7 @@ $subColor: #B6CEFC;
 $whiteColor: #FFF;
 $primaryColor:#4d7cff;
 $darkoverlayColor:rgba(0,0,0,0.5);
+$containerBgColor : rgb(243, 244, 249);
 
 $normalFontSize: 1rem;
 $smallFontSize: .875rem;
@@ -209,6 +210,7 @@ body {
     #main-container{
         margin-left: $navWidth;
         position: relative;
+        background-color: $containerBgColor;
         &.overlay {
             pointer-events: none;
             transition: all 500ms ease;
@@ -225,6 +227,36 @@ body {
                 height: 100vh;
                 pointer-events: none;
                 z-index:$zIndexMiddle;
+            }
+        }
+
+        .row{
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+
+            .card__1{
+                background: $whiteColor;
+                border-radius: 6px;
+                padding: 1em;
+                height: 50vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+                .header{
+                    display: flex;
+                    justify-content: space-between;
+                }
+            }
+
+            #grade_overview{
+                // flex: 1 1 auto;
+                width: 40vw;
+            }
+            #pass_fail_overview{
+                // flex: 1 1 auto;
+                width: 30vw;
             }
         }
     }

@@ -259,6 +259,7 @@ body .l-navbar nav .nav__link .collapse__sublink:hover {
 body #main-container {
   margin-left: 90px;
   position: relative;
+  background-color: #f3f4f9;
 }
 
 body #main-container.overlay {
@@ -279,5 +280,51 @@ body #main-container.overlay::after {
   height: 100vh;
   pointer-events: none;
   z-index: 50;
+}
+
+body #main-container .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+body #main-container .row .card__1 {
+  background: #FFF;
+  border-radius: 6px;
+  padding: 1em;
+  height: 50vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+body #main-container .row .card__1 .header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+body #main-container .row #grade_overview {
+  width: 40vw;
+}
+
+body #main-container .row #pass_fail_overview {
+  width: 30vw;
 }
 /*# sourceMappingURL=index.css.map */

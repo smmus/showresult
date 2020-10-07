@@ -37,7 +37,11 @@ for (let i = 0; i < linkCollapse.length; i++) {
 }
 // ------------------------ nav functionality ends -----------------------------
 // ------------------------ some global funcs  -----------------------------
-let firstBy=function(){function n(n){return n}function t(n){return"string"==typeof n?n.toLowerCase():n}function r(r,e){if(e="number"==typeof e?{direction:e}:e||{},"function"!=typeof r){var u=r;r=function(n){return n[u]?n[u]:""}}if(1===r.length){var i=r,o=e.ignoreCase?t:n;r=function(n,t){return o(i(n))<o(i(t))?-1:o(i(n))>o(i(t))?1:0}}return-1===e.direction?function(n,t){return-r(n,t)}:r}function e(n,t){return n=r(n,t),n.thenBy=u,n}function u(n,t){var u=this;return n=r(n,t),e(function(t,r){return u(t,r)||n(t,r)})}return e}();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
+let firstBy = function () { function n(n) { return n } function t(n) { return "string" == typeof n ? n.toLowerCase() : n } function r(r, e) { if (e = "number" == typeof e ? { direction: e } : e || {}, "function" != typeof r) { var u = r; r = function (n) { return n[u] ? n[u] : "" } } if (1 === r.length) { var i = r, o = e.ignoreCase ? t : n; r = function (n, t) { return o(i(n)) < o(i(t)) ? -1 : o(i(n)) > o(i(t)) ? 1 : 0 } } return -1 === e.direction ? function (n, t) { return -r(n, t) } : r } function e(n, t) { return n = r(n, t), n.thenBy = u, n } function u(n, t) { var u = this; return n = r(n, t), e(function (t, r) { return u(t, r) || n(t, r) }) } return e }();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
     // modifies global var
@@ -56,18 +60,18 @@ function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) 
 
 function getObjectStore(db, store_name, mode) {
     var tx = db.transaction([store_name], mode);
-    tx.oncomplete = function(e){
-        console.log('[TX CPM :',db.name,store_name,mode,']');
+    tx.oncomplete = function (e) {
+        console.log('[TX CPM :', db.name, store_name, mode, ']');
     }
     return tx.objectStore(store_name);
 }
 
-function createRankList(data, header_index){
-    let rankList = data.split('\n').splice(1).map(line=>{
+function createRankList(data, header_index) {
+    let rankList = data.split('\n').splice(1).map(line => {
         let result = line.split(',');
         // [roll, total, optional, non-optional, name]
         return [
-            parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)), 
+            parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
             parseInt(result[header_index.indexOf('term_total')]),
             result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
             result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
@@ -81,21 +85,21 @@ function createRankList(data, header_index){
     //1. who has the higher marks (desc)
     //2. if marks same? who has low in optional_sub  (asc)
     //3. if both marks same? who has high in non_optional_sub (desc)
-    
+
     rankList.sort(sortingFunc);
 
     console.log('[RANK LIST -]')
     console.log(rankList)
 
     let objStoreRank = getObjectStore(db, OBJ_STORE_RANK, 'readwrite');
-    rankList.forEach((arr, index)=>{
+    rankList.forEach((arr, index) => {
         objStoreRank.add({
-            rank: index+1,
-            name : arr[4],
-            roll : arr[0],
-            total : arr[1], 
-            isPassed : arr[5], //boolean
-            data : arr.slice(2,4) //2 & 3rd index
+            rank: index + 1,
+            name: arr[4],
+            roll: arr[0],
+            total: arr[1],
+            isPassed: arr[5], //boolean
+            data: arr.slice(2, 4) //2 & 3rd index
         })
     })
     // todo: update the main list instead of creating new objStore.
@@ -154,39 +158,41 @@ function onsuccess_func(event) {
                     };
                     let metaData = {
                         total_examnee: 0,
-                        failed_examnee: 0
+                        failed_examnee: 0,
+                        all_sub:{},
+                        sub_code_to_name
                     };
-                    for (let i in sub_code_to_name){
-                        metaData[sub_code_to_name[i]] = {
-                            highest:0, 
-                            avg:0,
-                            min:100,
-                            a_plus:0,
-                            a:0,
-                            a_minus:0,
-                            b:0,
-                            c:0,
-                            d:0,
-                            f:0,
-                            no_res:0
+                    for (let i in sub_code_to_name) {
+                        metaData.all_sub[sub_code_to_name[i]] = {
+                            highest: 0,
+                            avg: 0,
+                            min: 100,
+                            a_plus: 0,
+                            a: 0,
+                            a_minus: 0,
+                            b: 0,
+                            c: 0,
+                            d: 0,
+                            f: 0,
+                            no_res: 0
                         }
                     }
 
                     // getting header_names & indexs
                     let header_names = data.split('\n')[0].split(',');
 
-                    let name_index =  header_names.indexOf('student_name');
-                    let roll_index =  header_names.indexOf('student_roll');
+                    let name_index = header_names.indexOf('student_name');
+                    let roll_index = header_names.indexOf('student_roll');
                     let rank_index = header_names.indexOf('rank');
                     let pass_index = header_names.indexOf('isPassed');
 
                     // opening main_obj_store txn
                     let objStoreMain = getObjectStore(db, OBJ_STORE_MAIN, 'readwrite');
-                    
+
                     // storing main data + calculating info
                     data.split('\n').splice(1).forEach(line => { // header row not needed so splice(1)
                         let result = line.split(',');
-                        
+
                         let name = result[name_index];
 
                         if (name) metaData['total_examnee']++;
@@ -195,59 +201,161 @@ function onsuccess_func(event) {
                         let obj = {
                             roll: parseInt(result[roll_index].slice(ROLL_SLICE)),
                             name: name,
-                            res: result.map(e=> !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
+                            res: result.map(e => !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
                         }
                         if (IS_RANK_GIVEN)
                             obj.rank = parseInt(result[rank_index]);
                         objStoreMain.add(obj);
 
-                        result.forEach((element, index)=>{
-                            for (let i in sub_code_to_name){
-                                if(header_names[index].includes(sub_code_to_name[i])){
-                                    if(header_names[index].includes('mcq') && element!=""){
-                                        metaData[sub_code_to_name[i]]['highest'] = metaData[sub_code_to_name[i]]['highest'] < parseInt(element) ? parseInt(element) : metaData[sub_code_to_name[i]]['highest'];
-                                        parseInt(element) && (metaData[sub_code_to_name[i]]['avg'] += parseInt(element));
-                                        metaData[sub_code_to_name[i]]['min'] = metaData[sub_code_to_name[i]]['min'] > parseInt(element) ? parseInt(element) : metaData[sub_code_to_name[i]]['min'];
+                        result.forEach((element, index) => {
+                            for (let i in sub_code_to_name) {
+                                if (header_names[index].includes(sub_code_to_name[i])) {
+                                    if (header_names[index].includes('mcq') && element != "") {
+                                        metaData.all_sub[sub_code_to_name[i]]['highest'] = metaData.all_sub[sub_code_to_name[i]]['highest'] < parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['highest'];
+                                        parseInt(element) && (metaData.all_sub[sub_code_to_name[i]]['avg'] += parseInt(element));
+                                        metaData.all_sub[sub_code_to_name[i]]['min'] = metaData.all_sub[sub_code_to_name[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['min'];
                                     }
-                                    else if(header_names[index].includes('grade')){
-                                        element.toLowerCase()=='a+' && metaData[sub_code_to_name[i]]['a_plus']++;
-                                        element.toLowerCase()=='a' && metaData[sub_code_to_name[i]]['a']++; 
-                                        element.toLowerCase()=='a-' && metaData[sub_code_to_name[i]]['a_minus']++;
-                                        element.toLowerCase()=='b' && metaData[sub_code_to_name[i]]['b']++;
-                                        element.toLowerCase()=='c' && metaData[sub_code_to_name[i]]['c']++;
-                                        element.toLowerCase()=='d' && metaData[sub_code_to_name[i]]['d']++;
-                                        element.toLowerCase()=='f' && metaData[sub_code_to_name[i]]['f']++;
-                                        element=="" && metaData[sub_code_to_name[i]]['no_res']++;
+                                    else if (header_names[index].includes('grade')) {
+                                        element.toLowerCase() == 'a+' && metaData.all_sub[sub_code_to_name[i]]['a_plus']++;
+                                        element.toLowerCase() == 'a' && metaData.all_sub[sub_code_to_name[i]]['a']++;
+                                        element.toLowerCase() == 'a-' && metaData.all_sub[sub_code_to_name[i]]['a_minus']++;
+                                        element.toLowerCase() == 'b' && metaData.all_sub[sub_code_to_name[i]]['b']++;
+                                        element.toLowerCase() == 'c' && metaData.all_sub[sub_code_to_name[i]]['c']++;
+                                        element.toLowerCase() == 'd' && metaData.all_sub[sub_code_to_name[i]]['d']++;
+                                        element.toLowerCase() == 'f' && metaData.all_sub[sub_code_to_name[i]]['f']++;
+                                        element == "" && metaData.all_sub[sub_code_to_name[i]]['no_res']++;
                                     }
                                 }
                             }
                         })
                     })
-                    for (let i in metaData){
-                        metaData[i].avg = (metaData[i].avg / (metaData.total_examnee - metaData[i].no_res)).toFixed(2); 
+                    for (let i in metaData.all_sub) {
+                        metaData.all_sub[i].avg = (metaData.all_sub[i].avg / (metaData.total_examnee - metaData.all_sub[i].no_res)).toFixed(2);
                     }
 
                     // opening info_obj_store txn for storing info
                     let objStoreInfo = getObjectStore(db, OBJ_STORE_INFO, 'readwrite');
-                    objStoreInfo.add({info:'metaData', metaData});
-                    objStoreInfo.add({info:'sub_code_to_name', sub_code_to_name});
+                    objStoreInfo.add({ info: 'metaData', metaData });
 
 
                     // calculating rank
-                    if(IS_RANK_GIVEN){
+                    if (IS_RANK_GIVEN) {
                         // rank is given in the file
                         console.log('[RANK OK]');
-                    }else{
+                    } else {
                         console.log('[RANK CALCULATING]');
                         createRankList(data, header_names);
                     }
                 })
         }
         // if all data is in db -- show overview
-        /*=========== global vars =============*/
-        Chart.defaults.global.elements.line.tension = 0;
-        Chart.defaults.global.elements.point.hitRadius = 2;
+        // step1: get data from iddb
+        let req = getObjectStore(db,OBJ_STORE_INFO, 'readonly').get('metaData');
+        req.onsuccess = function(e){
+            let metaData = e.target.result.metaData;
+            console.log(metaData)
 
+            /*=========== global vars =============*/
+            Chart.defaults.global.elements.line.tension = 0;
+            Chart.defaults.global.elements.point.hitRadius = 2;
+            Chart.defaults.global.aspectRatio = 1.5;
+    
+            let subjects_pass_fail_overview_chart = new Chart(document.getElementById('subjects_pass_fail_overview').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.values(metaData.sub_code_to_name).map(sub_name=>sub_name.split('_').join(' ').capitalize()),
+                    datasets: [
+                        {
+                            data: Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res),
+                            backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#4BC0C0', '#5A7BFA', '#FF9F40', '#9AD0F5']
+                        },
+                    ]
+                },
+                options:{
+                    legend:{
+                        position:'right'
+                    }
+                }
+            });
+    
+            let subjects_grade_overview_chart = new Chart(document.getElementById('subjects_grade_overview').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: Object.values(metaData.sub_code_to_name).map(sub_name=>sub_name.split('_').join(' ').capitalize()),
+                    datasets: [{
+                        label: 'A+',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.a_plus),
+                        backgroundColor: 'rgba(89, 127, 255,0.2)',
+                        borderColor: '#5A7BFA',
+                        borderWidth: 1,
+                        fill: 6
+                    }, {
+                        label: 'A',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.a),
+                        backgroundColor: 'rgba(89, 127, 255,0.2)',
+                        borderColor: '#5A7BFA',
+                        borderWidth: 1,
+                        fill: 6
+                    }, {
+                        label: 'A-',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.a_minus),
+                        backgroundColor: 'rgba(89, 127, 255,0.2)',
+                        borderColor: '#5A7BFA',
+                        borderWidth: 1,
+                        fill: 6
+                    }, {
+                        label: 'B',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.b),
+                        backgroundColor: 'rgba(89, 127, 255,0.2)',
+                        borderColor: '#5A7BFA',
+                        borderWidth: 1,
+                        fill: 6
+                    }, {
+                        label: 'C',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.c),
+                        backgroundColor: 'rgba(89, 127, 255,0.2)',
+                        borderColor: '#5A7BFA',
+                        borderWidth: 1,
+                        fill: 6
+                    }, {
+                        label: 'D',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.d),
+                        backgroundColor: 'rgba(89, 127, 255,0.2)',
+                        borderColor: '#5A7BFA',
+                        borderWidth: 1,
+                        fill: 6
+                    }, {
+                        label: 'F',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.f),
+                        backgroundColor: 'rgb(237, 26, 59,0.3)',
+                        borderColor: 'rgb(237, 26, 59)',
+                        borderWidth: 1,
+                        fill: 'origin'
+                    }, {
+                        label: 'No Result',
+                        data: Object.values(metaData.all_sub).map(obj=>obj.no_res),
+                        borderColor: 'rgb(253, 111, 113)',
+                        backgroundColor: 'rgba(253, 111, 113,0.2)',
+                        borderWidth: 1,
+                        fill: 'origin'
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            scaleLabel: {
+                                labelString: 'Total Students',
+                                display: false,
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                suggestedMax: 100
+                            }
+                        }]
+                    }
+                }
+            });
+        };
     }
 }
 
