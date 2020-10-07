@@ -121,23 +121,23 @@ const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
 
 const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
-const OBJ_STORE_INFO = `${DB_NAME}_${XM_NAME}_info`;
 const DB_VERSION = 1;
 const ROLL_SLICE = 10;
-const GRADES = ['promoted', 'failed', 'a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_res'];
+const GRADES = ['promoted', 'failed', 'a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result'];
 
 let db;
 
 window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 if (!window.indexedDB) {
-    console.log("Your browser doesn't support a stable version of IndexedDB.");
-    document.body.innerHTML = `Use modern browsers like FireFox or Chrome.`
+    console.log("[Your browser doesn't support a stable version of IndexedDB.]");
+    document.body.innerHTML = `Your browser doesn't support a stable version of IndexedDB. Use modern browsers like FireFox or Chrome.`
     //return;
 }
 
-openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func)
+openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func);
 
 function onsuccess_func(event) {
+    /* sets GLOBAL VAR `db` */
     console.log("[FUNC openDb: DB onsuccess]");
     db = event.target.result;
 
@@ -147,7 +147,7 @@ function onsuccess_func(event) {
         console.log('[OBJ_STORE_MAIN count()]', rollCount);
 
         if (rollCount == 0) {
-            //if the objStore is empty => fetch data and store + calculate
+            //[if the objStore is empty] => fetch data and store + calculate
             fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
                 .then(res => res.text())
                 .then(data => {
@@ -170,7 +170,7 @@ function onsuccess_func(event) {
                     };
                     for (let i in sub_code_to_name) {
                         metaData.all_sub[sub_code_to_name[i]] = {
-                            highest: 0,
+                            max: 0,
                             avg: 0,
                             min: 100,
                             a_plus: 0,
@@ -180,7 +180,9 @@ function onsuccess_func(event) {
                             c: 0,
                             d: 0,
                             f: 0,
-                            no_res: 0
+                            no_result: 0,
+                            promoted:0,
+                            failed:0,
                         }
                     }
 
@@ -202,6 +204,7 @@ function onsuccess_func(event) {
                         let name = result[name_index];
 
                         if (name) metaData['total_examnee']++;
+                        
                         if (result[pass_index].includes('ailed')) metaData['failed_examnee']++; // don't wannna .toLowerCase() :)
 
                         let obj = {
@@ -217,7 +220,7 @@ function onsuccess_func(event) {
                             for (let i in sub_code_to_name) {
                                 if (header_names[index].includes(sub_code_to_name[i])) {
                                     if (header_names[index].includes('mcq') && element != "") {
-                                        metaData.all_sub[sub_code_to_name[i]]['highest'] = metaData.all_sub[sub_code_to_name[i]]['highest'] < parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['highest'];
+                                        metaData.all_sub[sub_code_to_name[i]]['max'] = metaData.all_sub[sub_code_to_name[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['max'];
                                         parseInt(element) && (metaData.all_sub[sub_code_to_name[i]]['avg'] += parseInt(element));
                                         metaData.all_sub[sub_code_to_name[i]]['min'] = metaData.all_sub[sub_code_to_name[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['min'];
                                     }
@@ -229,7 +232,7 @@ function onsuccess_func(event) {
                                         element.toLowerCase() == 'c' && metaData.all_sub[sub_code_to_name[i]]['c']++;
                                         element.toLowerCase() == 'd' && metaData.all_sub[sub_code_to_name[i]]['d']++;
                                         element.toLowerCase() == 'f' && metaData.all_sub[sub_code_to_name[i]]['f']++;
-                                        element == "" && metaData.all_sub[sub_code_to_name[i]]['no_res']++;
+                                        element == "" && metaData.all_sub[sub_code_to_name[i]]['no_result']++;
                                     }
                                 }
                             }
@@ -238,12 +241,13 @@ function onsuccess_func(event) {
 
                     // calculating avg
                     for (let i in metaData.all_sub) {
-                        metaData.all_sub[i].avg = (metaData.all_sub[i].avg / (metaData.total_examnee - metaData.all_sub[i].no_res)).toFixed(2);
+                        metaData.all_sub[i].avg = (metaData.all_sub[i].avg / (metaData.total_examnee - metaData.all_sub[i].no_result)).toFixed(2);
+                        metaData.all_sub[i].promoted = metaData.total_examnee - metaData.all_sub[i].no_result - metaData.all_sub[i].f;
+                        metaData.all_sub[i].failed = metaData.all_sub[i].no_result + metaData.all_sub[i].f;
                     }
 
                     // opening info_obj_store txn for storing info {metaData}
-                    let objStoreInfo = getObjectStore(db, OBJ_STORE_INFO, 'readwrite');
-                    objStoreInfo.add({ info: 'metaData', metaData });
+                    objStoreMain.add({ roll:0, rank:0, metaData });
 
 
                     // calculating rank
@@ -258,7 +262,7 @@ function onsuccess_func(event) {
         }
         // if all data is in db -- show overview
         // step1: get data from iddb
-        let req = getObjectStore(db, OBJ_STORE_INFO, 'readonly').get('metaData');
+        let req = getObjectStore(db, OBJ_STORE_MAIN, 'readonly').get(0);
         req.onsuccess = function (e) {
             console.log('[metaData]', e.target.result);
             let metaData = e.target.result.metaData;
@@ -277,7 +281,7 @@ function onsuccess_func(event) {
                     labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.split('_').join(' ').capitalize()),
                     datasets: [
                         {
-                            data: Object.values(metaData.all_sub).map(obj => obj.f + obj.no_res),
+                            data: Object.values(metaData.all_sub).map(obj => obj.f + obj.no_result),
                             backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5']
                         },
                     ]
@@ -296,72 +300,20 @@ function onsuccess_func(event) {
                 for (let i of GRADES) {
 
                     if (e.target.value != i) continue;
+                    
                     console.log('[Matched From GRADES]');
-
-                    if (e.target.value == 'failed') {
-                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.f + obj.no_res);
-                    } else if (e.target.value == 'promoted') {
-                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => metaData.total_examnee - obj.f - obj.no_res);
-                    } else {
-                        subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
-                    }
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
 
                 }
                 for (let i of subjects) {
 
                     if (e.target.value != i) continue;
+                    
                     console.log('[Matched From Subjects]');
-
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => {
-                        if (metaData.all_sub[e.target.value][grade_name]) return metaData.all_sub[e.target.value][grade_name];
-                        else if (grade_name == 'promoted') return metaData.total_examnee - metaData.all_sub[e.target.value]['f'] - metaData.all_sub[e.target.value]['no_res'];
-                        else if (grade_name == 'failed') return metaData.all_sub[e.target.value]['f'] + metaData.all_sub[e.target.value]['no_res'];
-                    })
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => metaData.all_sub[e.target.value][grade_name])
 
                 }
                 subjects_pass_fail_overview_chart.update();
-                // switch(e.target.value){
-                //     case 'promoted': //passed
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>metaData.total_examnee - obj.f - obj.no_res);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'failed': //failed
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.f+obj.no_res);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'a+': 
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.a_plus);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'a':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.a);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'a-':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.a_minus);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'b':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.b);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'c':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.c);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'd':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.d);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'f':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.f);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                //     case 'no_result':
-                //         subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj=>obj.no_res);
-                //         subjects_pass_fail_overview_chart.update();
-                //         break;
-                // }
             })
             
             //checkbox event listener
@@ -383,8 +335,8 @@ function onsuccess_func(event) {
 
                     subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => {
                         if (metaData.all_sub['bangla_1st'][grade_name]) return metaData.all_sub['bangla_1st'][grade_name];
-                        else if (grade_name == 'promoted') return metaData.total_examnee - metaData.all_sub['bangla_1st']['f'] - metaData.all_sub['bangla_1st']['no_res'];
-                        else if (grade_name == 'failed') return metaData.all_sub['bangla_1st']['f'] + metaData.all_sub['bangla_1st']['no_res'];
+                        else if (grade_name == 'promoted') return metaData.total_examnee - metaData.all_sub['bangla_1st']['f'] - metaData.all_sub['bangla_1st']['no_result'];
+                        else if (grade_name == 'failed') return metaData.all_sub['bangla_1st']['f'] + metaData.all_sub['bangla_1st']['no_result'];
                     })
                     subjects_pass_fail_overview_chart.update();
                 }else {
@@ -398,7 +350,7 @@ function onsuccess_func(event) {
                     // step2: changing chart label + data && updating
                     subjects_pass_fail_overview_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
                     
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.f + obj.no_res);
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.f + obj.no_result);
                     subjects_pass_fail_overview_chart.update();
                 }
             }
@@ -458,7 +410,7 @@ function onsuccess_func(event) {
                         fill: 'origin'
                     }, {
                         label: 'No Result',
-                        data: Object.values(metaData.all_sub).map(obj => obj.no_res),
+                        data: Object.values(metaData.all_sub).map(obj => obj.no_result),
                         borderColor: 'rgb(253, 111, 113)',
                         backgroundColor: 'rgba(253, 111, 113,0.2)',
                         borderWidth: 1,
@@ -494,12 +446,11 @@ function onupgradeneeded_func(event) {
     // creating main object
     let objStoreMain = db.createObjectStore(OBJ_STORE_MAIN, { keyPath: 'roll' });
     let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
-    let objStoreInfo = db.createObjectStore(OBJ_STORE_INFO, { keyPath: 'info' });
 
     if (IS_RANK_GIVEN)
         objStoreMain.createIndex("rank", "rank", { unique: true });
 
-    // delete previous data if version is higher
+    // [TODO] delete previous data if version is higher
 
     // error while fetching and storing here : transaction is not active 
     // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
@@ -509,23 +460,7 @@ function onupgradeneeded_func(event) {
 // fetching data -- done
 // writing to indexdb -- done 
 // calculating all fields -- done
-// showing overviews
+// showing overviews -- ongoing
 // for roll 
 // for compare 
 
-/* ------------  fetch and store data ------------ */
-async function fetchAndStoreIDB(db, object_store_name, mode, fetch_url) {
-    let obj_store = await getObjectStore(db, object_store_name, mode);
-    let response = await fetch(fetch_url);
-    let data = await response.text();
-    data.split('\n').splice(1).forEach(line => { // header row not needed
-        let result = line.split(',')
-        obj_store.add({
-            roll: result[1],
-            name: result[0],
-            result: result.splice(2) // 1st 2 items not needed.
-        })
-    })
-
-}
-/* ------------ indexDb functions------------ */
