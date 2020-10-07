@@ -1,4 +1,4 @@
-/*===== EXPANDER MENU  =====*/
+/*---------- EXPANDER MENU ----------*/
 const showMenu = (toggleId, navbarId, bodyId) => {
     const toggle = document.getElementById(toggleId),
         navbar = document.getElementById(navbarId),
@@ -12,13 +12,12 @@ const showMenu = (toggleId, navbarId, bodyId) => {
 
             document.querySelectorAll('#navbar nav > div >  div+div > div .rotate').forEach(e => e.classList.remove("rotate"));
             document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e => e.classList.remove("showCollapse"))
-
         })
     }
 }
 showMenu('nav-toggle', 'navbar', 'body-pd');
 
-/*===== LINK ACTIVE  =====*/
+/*----------- LINK ACTIVE  ------------*/
 const linkColor = document.querySelectorAll('.nav__link')
 function colorLink() {
     linkColor.forEach(l => l.classList.remove('active'))
@@ -27,7 +26,7 @@ function colorLink() {
 linkColor.forEach(l => l.addEventListener('click', colorLink))
 
 
-/*===== COLLAPSE MENU  =====*/
+/*------------- COLLAPSE MENU  --------------*/
 const linkCollapse = document.getElementsByClassName('collapse__link')
 for (let i = 0; i < linkCollapse.length; i++) {
     linkCollapse[i].addEventListener('click', function () {
@@ -81,7 +80,7 @@ function createRankList(data, header_index){
     let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1)
         .thenBy(function (arr1, arr2) { return arr1[2] - arr2[2]; },)
         .thenBy(function (arr1, arr2) { return arr1[3] - arr2[3]; }, -1);
-    //1. who has the highest mark (desc)
+    //1. who has the higher marks (desc)
     //2. if marks same? who has low in optional_sub  (asc)
     //3. if both marks same? who has high in non_optional_sub (desc)
     
@@ -101,7 +100,7 @@ function createRankList(data, header_index){
             data : arr.slice(2,4) //2 & 3rd index
         })
     })
-    // todo: update the main list instead of creting new objStore.
+    // todo: update the main list instead of creating new objStore.
 }
 // ------------------------ some global funcs ends -----------------------------
 // ------------------------ main fetching starts ------------------------------
@@ -130,7 +129,7 @@ if (!window.indexedDB) {
 
 openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func)
 
-async function onsuccess_func(event) {
+function onsuccess_func(event) {
     console.log("[FUNC openDb: DB onsuccess]");
     db = event.target.result;
 
@@ -138,8 +137,9 @@ async function onsuccess_func(event) {
     getObjectStore(db, OBJ_STORE_MAIN, 'readonly').count().onsuccess = function () {
         let rollCount = this.result;
         console.log('[OBJ_STORE_MAIN count()]', rollCount);
+
         if (rollCount == 0) {
-            //fetch data
+            //if the objStore is empty => fetch data and store + calculate
             fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
                 .then(res => res.text())
                 .then(data => {
@@ -229,10 +229,10 @@ async function onsuccess_func(event) {
                         metaData[i].avg = (metaData[i].avg / (metaData.total_examnee - metaData[i].no_res)).toFixed(2); 
                     }
 
-                    // opening info_obj_store txn
+                    // opening info_obj_store txn for storing info
                     let objStoreInfo = getObjectStore(db, OBJ_STORE_INFO, 'readwrite');
-                    objStoreInfo.add({info:'metaData', metaData})
-                    objStoreInfo.add({info:'sub_code_to_name', sub_code_to_name})
+                    objStoreInfo.add({info:'metaData', metaData});
+                    objStoreInfo.add({info:'sub_code_to_name', sub_code_to_name});
 
 
                     // calculating rank
@@ -243,13 +243,11 @@ async function onsuccess_func(event) {
                         console.log('[RANK CALCULATING]');
                         createRankList(data, header_names);
                     }
-
-                    // calculating info
-
                 })
         }
+        // if all data is in db -- show overview
+        
     }
-
 }
 
 function onupgradeneeded_func(event) {
@@ -265,17 +263,17 @@ function onupgradeneeded_func(event) {
     if (IS_RANK_GIVEN)
         objStoreMain.createIndex("rank", "rank", { unique: true });
 
+    // delete previous data if version is higher
+
     // error while fetching and storing here : transaction is not active 
     // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
 }
+
 // checking index db if contains -- done
-
-
 // fetching data -- done
 // writing to indexdb -- done 
-// calculating all fields
+// calculating all fields -- done
 // showing overviews
-
 // for roll 
 // for compare 
 
