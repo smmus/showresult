@@ -48,7 +48,7 @@ $zIndexMiddle: 50;
 }
 .gate {
     display: inline-block;
-    width: 215px;
+    width: 100%;
     padding: 10px 0 10px 15px;
     font-family: "Open Sans", sans;
     font-weight: 400;
@@ -78,7 +78,7 @@ $zIndexMiddle: 50;
         border-top-left-radius: 3px;
         border-bottom-left-radius: 3px;
         transform-origin: left bottom;
-        z-index: 99;
+        z-index: $zIndexMiddle;
         
         &:before,
         &:after {
@@ -305,22 +305,6 @@ body {
             justify-content: space-between;
             overflow: hidden;
 
-            
-            /*=======Show collapse==========*/
-            .showCollapse{
-                display: block;
-                grid-column: 1 / 4;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                align-items: flex-start;
-            }
-            /*========Rotate icon=========*/
-            .rotate{
-                transform: rotate(180deg);
-            }
-            /*===== COLLAPSE END =====*/
-
             a {
                 text-decoration: none;
             }
@@ -389,7 +373,22 @@ body {
                 .collapse__sublink:hover{
                     color: var(--white-color);
                 }
-            }
+                /*=======Show collapse==========*/
+                // writting them at the end so collpse doen't overlap them
+                .showCollapse{
+                    display: block;
+                    grid-column: 1 / 4;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: flex-start;
+                }
+                /*========Rotate icon=========*/
+                .rotate{
+                    transform: rotate(180deg);
+                }
+                /*===== COLLAPSE END =====*/
+                }
         }
     }
 
@@ -410,7 +409,7 @@ body {
                 right: 0;
                 bottom: 0;
                 left: 0;
-                height: 100vh;
+                height: 100%;
                 pointer-events: none;
                 z-index:$zIndexMiddle;
             }
@@ -431,24 +430,33 @@ body {
                 flex-direction: column;
                 justify-content: space-between;
                 margin: 0 .5em;
-            }
-            .header{
-                display: flex;
-                justify-content: space-between;
-            }
-            .footer{
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-
-                span{
-                    display: inline-block;
-                    padding-right: .3em;
+                .header{
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .footer{
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+    
+                    span{
+                        display: inline-block;
+                        padding-right: .3em;
+                    }
+                }
+                .colg_name{
+                    text-align: center;
+                }
+                .img{
+                    // object-fit: cover;
+                    svg{
+                        width: 100%;
+                        height: 50%;
+                    }
                 }
             }
             .card__1{
                 height: 50vh;
-
             }
 
             #grade_overview{

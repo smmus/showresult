@@ -43,8 +43,7 @@ String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 String.prototype.underscrore_to_capitalize = function () {
-    let splited = this.split('_').join(' ');
-    return splited.charAt(0).toUpperCase() + splited.slice(1);
+    return this.split('_').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' ');
 }
 
 function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
@@ -278,10 +277,10 @@ function onsuccess_func(event) {
             let subjects_pass_fail_overview_chart = new Chart(document.getElementById('subjects_pass_fail_overview').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.split('_').join(' ').capitalize()),
+                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.underscrore_to_capitalize()),
                     datasets: [
                         {
-                            data: Object.values(metaData.all_sub).map(obj => obj.f + obj.no_result),
+                            data: Object.values(metaData.all_sub).map(obj => obj.failed),
                             backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5']
                         },
                     ]
@@ -333,24 +332,20 @@ function onsuccess_func(event) {
                     // step2: changing chart label + data && updating
                     subjects_pass_fail_overview_chart.data.labels = GRADES.map(e =>e.underscrore_to_capitalize());
 
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => {
-                        if (metaData.all_sub['bangla_1st'][grade_name]) return metaData.all_sub['bangla_1st'][grade_name];
-                        else if (grade_name == 'promoted') return metaData.total_examnee - metaData.all_sub['bangla_1st']['f'] - metaData.all_sub['bangla_1st']['no_result'];
-                        else if (grade_name == 'failed') return metaData.all_sub['bangla_1st']['f'] + metaData.all_sub['bangla_1st']['no_result'];
-                    })
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
                     subjects_pass_fail_overview_chart.update();
                 }else {
                     // step1: changing select options
                     let change = "";
                     GRADES.forEach(el => {
-                        change += `<option value="${el}" ${el.includes('ailed') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>`
+                        change += `<option value="${el}" ${el.includes('ailed') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>` //`failed`
                     })
                     select_element.innerHTML = change;
                     // console.log(change);
                     // step2: changing chart label + data && updating
                     subjects_pass_fail_overview_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
                     
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.f + obj.no_result);
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.failed);
                     subjects_pass_fail_overview_chart.update();
                 }
             }
@@ -358,7 +353,7 @@ function onsuccess_func(event) {
             let subjects_grade_overview_chart = new Chart(document.getElementById('subjects_grade_overview').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.split('_').join(' ').capitalize()),
+                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.underscrore_to_capitalize()),
                     datasets: [{
                         label: 'A+',
                         data: Object.values(metaData.all_sub).map(obj => obj.a_plus),
@@ -419,7 +414,7 @@ function onsuccess_func(event) {
                 },
                 options: {
                     aspectRatio: 2,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: true, //default: true
                     scales: {
                         yAxes: [{
                             scaleLabel: {
@@ -434,6 +429,26 @@ function onsuccess_func(event) {
                     }
                 }
             });
+
+            let whole_result_chart = new Chart(document.getElementById('total_pass_fail').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels:['Promoted','Failed'],
+                    datasets:[
+                        {   
+                            data: [metaData.total_examnee-metaData.failed_examnee, metaData.failed_examnee],
+                            backgroundColor:['#4d7cff','#FF4651']
+                        },
+                    ]
+                },
+                options:{
+                    aspectRatio:1,
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            });
+            document.getElementById('total_failed').innerText += metaData.failed_examnee;
         };
     }
 }
