@@ -167,7 +167,8 @@ function storeMainData(db, store_name, mode, data) {
 
         let name_index = header_names.indexOf('student_name');
         let roll_index = header_names.indexOf('student_roll');
-        let rank_index = header_names.indexOf('rank');
+        let rank_index = header_names.indexOf('rank')==-1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank'); 
+        /** if rank is the last field (so last element of the arr) it will be 'rank\r' chrome doesn't show it, firefox does. wasted 1h :( */
         let pass_index = header_names.indexOf('isPassed');
         data.split('\n').splice(1).forEach(line => { // header row not needed so splice(1)
             let result = line.split(',');

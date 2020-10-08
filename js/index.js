@@ -106,160 +106,56 @@ async function main() {
 
         /**fetching from db */
         let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0);
-            
+
         /** update main ui (overview of full res) if std is not searching for specific roll **/
-        if(!STD_ROLL){
+        if (!STD_ROLL) {
             updateMainUi(metaData);
             return;
         }
 
         /*else show secific res*/
         response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLL));
-        let fields = metaData.header_names.filter(e=> e.toLowerCase().includes('ict')).map(e=>e.split('_')[1].toUpperCase())
+        let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1].toUpperCase())
+        let fields = ['Subject Code', 'Subject Name', ...per_sub_fields, 'Exam Highest']
         // console.log('h_names', metaData.header_names)
-        console.log('fields', fields)
-        console.log('response', response)
+        console.log('fields', fields);
+        console.log('response', response);
 
-        document.querySelector('#overview_main .canvas').innerHTML = `
-        <div style="width:100%" class='chart'>
-        <table style="background-color: white;" border="1">
+        let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
                 <tbody>
                     <tr>
-                        <td colspan="7"><b>Name: </b>${result[0]}</td>
-                        <td colspan="4"><b>Class Roll: </b>${result[1]}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="11"><b>Exam Name: </b>20-Aug-2020 To 12-Sep-2020&nbsp;&nbsp;&nbsp;Year Final Exam (1st
+                        <td colspan="${fields.length}"><b>Exam Name: </b>20-Aug-2020 To 12-Sep-2020&nbsp;&nbsp;&nbsp;Year Final Exam (1st
                             Year&nbsp;&nbsp;&nbsp;HSC - Science&nbsp;&nbsp;&nbsp; Session :2019-2020)</td>
                     </tr>
                     <tr style="background-color: #59B899;color: #F4F5F8">
-                        <td style="width: 95px"><b>Subject Code</b></td>
-                        <td><b>Subject Name</b></td>
-                        <td style="width: 20px"><b>CQ</b></td>
-                        <td style="width: 20px"><b>MCQ</b></td>
-                        <td style="width: 45px"><b>Practical</b></td>
-                        <td style="width: 80px"><b>Term Total</b></td>
-                        <td style="width: 65px"><b>CT Total</b></td>
-                        <td style="width: 80px"><b>Exam Total</b></td>
-                        <td style="width: 40px"><b>Grade</b></td>
-                        <td style="width: 40px"><b>GP</b></td>
-                        <td style="width: 95px"><b>Exam Highest</b></td>
+                        ${fields.map(e => `<td><b>${e}</b></td>`).join('')}
                     </tr>
-                    <tr>
-                        <td>101</td>
-                        <td>Bangla 1st paper</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[2]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[2]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[2]}</td>
-                        <td style="text-align: right">${result[3]}</td>
-                        <td style="text-align: right">${result[4]}</td>
-                        <td style="text-align: right">92</td>
-                    </tr>
-                    <tr>
-                        <td>107</td>
-                        <td>English 1st paper</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[5]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[5]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[5]}</td>
-                        <td style="text-align: right">${result[6]}</td>
-                        <td style="text-align: right">${result[7]}</td>
-                        <td style="text-align: right">90</td>
-                    </tr>
-                    <tr>
-                        <td>178</td>
-                        <td>Biology 1st paper ${result[77] == 'biology' ? '(4th Subject)' : ''}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[8]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[8]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[8]}</td>
-                        <td style="text-align: right">${result[9]}</td>
-                        <td style="text-align: right">${result[10]}</td>
-                        <td style="text-align: right">90</td>
-                    </tr>
-                    <tr>
-                        <td>174</td>
-                        <td>Physics 1st paper</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[11]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[11]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[11]}</td>
-                        <td style="text-align: right">${result[12]}</td>
-                        <td style="text-align: right">${result[13]}</td>
-                        <td style="text-align: right">90</td>
-                    </tr>
-                    <tr>
-                        <td>176</td>
-                        <td>Chemistry 1st paper</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[14]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[14]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[14]}</td>
-                        <td style="text-align: right">${result[15]}</td>
-                        <td style="text-align: right">${result[16]}</td>
-                        <td style="text-align: right">92</td>
-                    </tr>
-                    <tr>
-                        <td>265</td>
-                        <td>Higher Math 1st paper ${result[77] != 'biology' ? '(4th Subject)' : ''}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[17]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[17]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[17]}</td>
-                        <td style="text-align: right">${result[18]}</td>
-                        <td style="text-align: right">${result[19]}</td>
-                        <td style="text-align: right">96</td>
-                    </tr>
-                    <tr>
-                        <td>275</td>
-                        <td>ICT</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[20]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[20]}</td>
-                        <td style="text-align: right">0</td>
-                        <td style="text-align: right">${result[20]}</td>
-                        <td style="text-align: right">${result[21]}</td>
-                        <td style="text-align: right">${result[22]}</td>
-                        <td style="text-align: right">98</td>
-                    </tr>
+                    ${Object.keys(metaData.sub_code_to_name).map(sub_code => `
+                        <tr>
+                            <td>${sub_code}</td>
+                            <td>${metaData.sub_code_to_name[sub_code].underscrore_to_capitalize()}</td>
+                            ${per_sub_fields.map(e => `<td>${response.res[metaData.header_names.indexOf(metaData.sub_code_to_name[sub_code] + '_' + e.to_camel_case())] || '0'}</td>`).join('')}
+                            <td>${metaData.all_sub[metaData.sub_code_to_name[sub_code]].max}</td>
+
+                        </tr>
+                    `).join('')}
                     <tr style="background-color: #59B899;color: #F4F5F8">
-                        <td colspan="5"><b>Total</b></td>
-                        <td style="text-align: right"><b>${result[23]}</b></td>
-                        <td style="text-align: right"><b>0</b></td>
-                        <td style="text-align: right"><b>${result[23]}</b></td>
-                        <td style="text-align: right"><b></b></td>
-                        <td style="text-align: right"><b></b></td>
-                        <td></td>
+                        <td colspan="2"><b>Total</b></td>
+                        <td colspan="${fields.length-2}" style="text-align: right"><b>${response.res[23]}</b></td>
                     </tr>
                     <tr>
-                        <td colspan="2">${result[25]}</td>
-                        <td colspan="4" ${result[27]=='Failed' ? 'style="color:red"' : ''}>${result[27]}</td>
-                        <td colspan="5">Rank : ${result[28]} (304 examinees)</td>
+                        <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') || metaData.header_names.indexOf('grade')]}</td>
+                        <td colspan="${fields.length-2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[27]}</b></td>
                     </tr>
                 </tbody>
-            </table></div>
-            <div style="width:100%" class="chart">
-                    <p>Overview</p>
-                    <canvas id="student_mark_overview"></canvas>
-            </div>`
+            </table>`;
+        document.querySelector('#overview_main .canvas').innerHTML = tableData;
+        document.querySelector('#overview_main .header').innerHTML = `<span>${response.name}</span><span>1201920010${response.roll}</span><button class="hover-expand v-s">RANK: ${response.rank}</button>`;
+        // console.log(tableData)
 
-        
-        console.log('result :',response)
-        
+
+        console.log('result :', response)
+
 
     } catch (error) {
         console.error(error);
