@@ -383,7 +383,7 @@ function onsuccess_func(event) {
                         backgroundColor: 'rgba(89, 127, 255,0.1)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
-                        hidden: grade=='promoted', // promoted will be hidden by default
+                        hidden: grade=='promoted' || grade=='f' || grade=='no_result', // promoted,f,no_result will be hidden by default
                         fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
                     }));
                     // console.log(this.labels)
@@ -449,8 +449,8 @@ function onsuccess_func(event) {
                        backgroundColor: 'rgba(89, 127, 255,0.1)',
                        borderColor: '#5A7BFA',
                        borderWidth: 1,
-                       hidden: grade=='promoted', // promoted will be hidden by default
-                       fill: 'origin' || GRADES.indexOf('f') // [TODO]
+                       hidden: grade=='promoted' || grade=='f' || grade=='no_result', // promoted,f,no_result will be hidden by default
+                        fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
                     }));
                 }
                 subjects_grade_overview_chart.update();
