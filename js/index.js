@@ -39,9 +39,9 @@ for (let i = 0; i < linkCollapse.length; i++) {
 // ------------------------ global vars ends -----------------------------
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
-const STD_ROLL = new URLSearchParams(window.location.search).get('roll');
+const STD_ROLL = new URLSearchParams(window.location.search).get('r');
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
-const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('r');
+const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('s'); // serial
 const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
 
 const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
@@ -105,221 +105,160 @@ async function main() {
         /**if all data is in db -- show overview */
 
         /**fetching from db */
-        let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0),
-            subjects = Object.values(metaData.sub_code_to_name)
-
-
-        /** charts */
-
-        /** ============================================= main chart starts =============================================== */
-        let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
-            type: 'line',
-            data: new function () {
-                /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-                this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-                /*array of objects 
-                        return an obj forEach line (GRADES)
-                        data => array (1 element forEach sub_name) (len=lenof labels)
-                */
-                this.datasets = GRADES.map(grade => ({
-                    label: grade.underscrore_to_capitalize(),
-                    data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
-                    backgroundColor: 'rgba(89, 127, 255,0.1)',
-                    borderColor: '#5A7BFA',
-                    borderWidth: 1,
-                    hidden: grade=='promoted' || grade=='f' || grade=='no_result', // promoted,f,no_result will be hidden by default
-                    fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
-                }));
-                // console.log(this.labels)
-                // console.log(this.datasets)
-            },
-            options: {
-                aspectRatio: 2,
-                maintainAspectRatio: true, //default: true
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            labelString: 'Total Students',
-                            display: false,
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            suggestedMax: 100
-                        }
-                    }]
-                }
-            }
-        });
-        // elevent listener of subjects_grade_overview_checkbox
-        document.getElementById('overview_main_checkbox').onchange = e => {
-            // this change axis is defferent from the other one (not like the pie)
-            // change datasets --> x-axis
-            console.log("[CheckBox overview_main] :", e.target.checked);
-
-            if (e.target.checked) {
-                // step1: changing labels arr (x-axis)
-                let new_labels = overview_main_chart.data.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted');
-                // console.log(new_labels)
-                // step2: changing main datasets for new data
-                let new_datatsets = overview_main_chart.data.labels.map((label, i) => ({ //label=sub_name
-                    label,
-                    data: new_labels.map((e, i) => metaData.all_sub[label.to_camel_case()][e.to_camel_case()]),
-                    backgroundColor: 'rgba(89, 127, 255, 0.1)',
-                    borderColor: '#5A7BFA',
-                    borderWidth: 1,
-                    fill: 'origin'
-                }))
-
-                // updating chart
-                overview_main_chart.data.labels = new_labels;
-                overview_main_chart.data.datasets = new_datatsets;
-                overview_main_chart.update();
-                return;
-            }
-            // else do the same think while loading the page
-            // [TODO] : create a function not to repeating same code
+        let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0);
             
-            // copied from above
-            overview_main_chart.data = new function () {
-                /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-                this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-                /*array of objects 
-                return an obj forEach line (GRADES)
-                data => array (1 element forEach sub_name) (len=lenof labels)
-                */
-               this.datasets = GRADES.map(grade => ({
-                   label: grade.underscrore_to_capitalize(),
-                   data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
-                   backgroundColor: 'rgba(89, 127, 255,0.1)',
-                   borderColor: '#5A7BFA',
-                   borderWidth: 1,
-                   hidden: grade=='promoted' || grade=='f' || grade=='no_result', // promoted,f,no_result will be hidden by default
-                    fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
-                }));
-            }
-            overview_main_chart.update();
-
+        /** update main ui (overview of full res) if std is not searching for specific roll **/
+        if(!STD_ROLL){
+            updateMainUi(metaData);
+            return;
         }
-        /** ============================================= main chart ends ============================================= */
-        /** ============================================= secondary chart starts ============================================= */
-        let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: subjects.map(sub_name => sub_name.underscrore_to_capitalize()),
-                datasets: [
-                    {
-                        data: Object.values(metaData.all_sub).map(obj => obj.failed),  // first time render failed (failed is selected in the html by default)
-                        backgroundColor: GRAPH_BG_COLORS
-                    },
-                ]
-            },
-            options: {
-                aspectRatio: 1.5,
-                legend: {
-                    position: 'right'
-                }
-            }
-        });
-        // select event event listener 
-        document.getElementById('overview_secondary_select').addEventListener('change', e => {
-            console.log('[SELECT overview_secondary] :', e.target.value);
 
-            for (let i of GRADES) {
+        /*else show secific res*/
+        response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLL));
+        let fields = metaData.header_names.filter(e=> e.toLowerCase().includes('ict')).map(e=>e.split('_')[1].toUpperCase())
+        // console.log('h_names', metaData.header_names)
+        console.log('fields', fields)
+        console.log('response', response)
 
-                if (e.target.value != i) continue;
+        document.querySelector('#overview_main .canvas').innerHTML = `
+        <div style="width:100%" class='chart'>
+        <table style="background-color: white;" border="1">
+                <tbody>
+                    <tr>
+                        <td colspan="7"><b>Name: </b>${result[0]}</td>
+                        <td colspan="4"><b>Class Roll: </b>${result[1]}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="11"><b>Exam Name: </b>20-Aug-2020 To 12-Sep-2020&nbsp;&nbsp;&nbsp;Year Final Exam (1st
+                            Year&nbsp;&nbsp;&nbsp;HSC - Science&nbsp;&nbsp;&nbsp; Session :2019-2020)</td>
+                    </tr>
+                    <tr style="background-color: #59B899;color: #F4F5F8">
+                        <td style="width: 95px"><b>Subject Code</b></td>
+                        <td><b>Subject Name</b></td>
+                        <td style="width: 20px"><b>CQ</b></td>
+                        <td style="width: 20px"><b>MCQ</b></td>
+                        <td style="width: 45px"><b>Practical</b></td>
+                        <td style="width: 80px"><b>Term Total</b></td>
+                        <td style="width: 65px"><b>CT Total</b></td>
+                        <td style="width: 80px"><b>Exam Total</b></td>
+                        <td style="width: 40px"><b>Grade</b></td>
+                        <td style="width: 40px"><b>GP</b></td>
+                        <td style="width: 95px"><b>Exam Highest</b></td>
+                    </tr>
+                    <tr>
+                        <td>101</td>
+                        <td>Bangla 1st paper</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[2]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[2]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[2]}</td>
+                        <td style="text-align: right">${result[3]}</td>
+                        <td style="text-align: right">${result[4]}</td>
+                        <td style="text-align: right">92</td>
+                    </tr>
+                    <tr>
+                        <td>107</td>
+                        <td>English 1st paper</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[5]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[5]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[5]}</td>
+                        <td style="text-align: right">${result[6]}</td>
+                        <td style="text-align: right">${result[7]}</td>
+                        <td style="text-align: right">90</td>
+                    </tr>
+                    <tr>
+                        <td>178</td>
+                        <td>Biology 1st paper ${result[77] == 'biology' ? '(4th Subject)' : ''}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[8]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[8]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[8]}</td>
+                        <td style="text-align: right">${result[9]}</td>
+                        <td style="text-align: right">${result[10]}</td>
+                        <td style="text-align: right">90</td>
+                    </tr>
+                    <tr>
+                        <td>174</td>
+                        <td>Physics 1st paper</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[11]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[11]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[11]}</td>
+                        <td style="text-align: right">${result[12]}</td>
+                        <td style="text-align: right">${result[13]}</td>
+                        <td style="text-align: right">90</td>
+                    </tr>
+                    <tr>
+                        <td>176</td>
+                        <td>Chemistry 1st paper</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[14]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[14]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[14]}</td>
+                        <td style="text-align: right">${result[15]}</td>
+                        <td style="text-align: right">${result[16]}</td>
+                        <td style="text-align: right">92</td>
+                    </tr>
+                    <tr>
+                        <td>265</td>
+                        <td>Higher Math 1st paper ${result[77] != 'biology' ? '(4th Subject)' : ''}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[17]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[17]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[17]}</td>
+                        <td style="text-align: right">${result[18]}</td>
+                        <td style="text-align: right">${result[19]}</td>
+                        <td style="text-align: right">96</td>
+                    </tr>
+                    <tr>
+                        <td>275</td>
+                        <td>ICT</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[20]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[20]}</td>
+                        <td style="text-align: right">0</td>
+                        <td style="text-align: right">${result[20]}</td>
+                        <td style="text-align: right">${result[21]}</td>
+                        <td style="text-align: right">${result[22]}</td>
+                        <td style="text-align: right">98</td>
+                    </tr>
+                    <tr style="background-color: #59B899;color: #F4F5F8">
+                        <td colspan="5"><b>Total</b></td>
+                        <td style="text-align: right"><b>${result[23]}</b></td>
+                        <td style="text-align: right"><b>0</b></td>
+                        <td style="text-align: right"><b>${result[23]}</b></td>
+                        <td style="text-align: right"><b></b></td>
+                        <td style="text-align: right"><b></b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">${result[25]}</td>
+                        <td colspan="4" ${result[27]=='Failed' ? 'style="color:red"' : ''}>${result[27]}</td>
+                        <td colspan="5">Rank : ${result[28]} (304 examinees)</td>
+                    </tr>
+                </tbody>
+            </table></div>
+            <div style="width:100%" class="chart">
+                    <p>Overview</p>
+                    <canvas id="student_mark_overview"></canvas>
+            </div>`
 
-                console.log('[Matched From GRADES]');
-                overview_secondary_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
-
-            }
-            for (let i of subjects) {
-
-                if (e.target.value != i) continue;
-
-                console.log('[Matched From Subjects]');
-                overview_secondary_chart.data.datasets[0].data = GRADES.map(grade_name => (grade_name != 'failed' && grade_name != 'promoted') ? metaData.all_sub[e.target.value][grade_name] : null)
-                overview_secondary_chart.data.datasets[1].data = GRADES.map(grade_name => (grade_name != 'failed' && grade_name != 'promoted') ? null : metaData.all_sub[e.target.value][grade_name]);
-
-            }
-            overview_secondary_chart.update();
-        })
-
-        // checkbox event listener
-        document.getElementById('overview_secondary_checkbox').onchange = e => {
-            let select_element = document.getElementById('overview_secondary_select');
-
-            console.log("[CheckBox overview_secondary] :", e.target.checked);
-
-            if (e.target.checked) {
-                // step1: changing select options
-                let change = "";
-                subjects.forEach(el => {
-                    change += `<option value="${el}" ${el.includes('bangla') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>`
-                })
-                select_element.innerHTML = change;
-                // console.log(change);
-                // step2: changing chart label + data && updating
-                overview_secondary_chart.data.labels = GRADES.map(e => e.underscrore_to_capitalize());
-                let sub_name = select_element.options[select_element.selectedIndex].value;
-                overview_secondary_chart.data.datasets = [
-                    {
-                        data: GRADES.map(e => (e != 'failed' && e != 'promoted') ? metaData.all_sub[sub_name][e] : null),
-                        backgroundColor: GRAPH_BG_COLORS
-                    },
-                    {
-                        data: GRADES.map(e => (e != 'failed' && e != 'promoted') ? null : metaData.all_sub[sub_name][e]),
-                        backgroundColor: GRAPH_BG_COLORS
-                    }
-                ];
-                overview_secondary_chart.update();
-            } else {
-                // step1: changing select options
-                let change = "";
-                GRADES.forEach(el => {
-                    change += `<option value="${el}" ${el.includes('ailed') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>` //`failed`
-                })
-                select_element.innerHTML = change;
-                // console.log(change);
-
-                // step2: changing chart label + data && updating
-
-                overview_secondary_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
-                overview_secondary_chart.data.datasets = [{
-                    data: Object.values(metaData.all_sub).map(obj => obj.failed), // 'failed' is selected 
-                    backgroundColor: GRAPH_BG_COLORS
-                }];
-                overview_secondary_chart.update();
-            }
-        }
-        /** ============================================= secondary chart ends ============================================= */
-        /** ============================================= overview_total chart starts ============================================= */
-        let overview_total_chart = new Chart(document.getElementById('overview_total_canvas').getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Promoted', 'Failed'],
-                datasets: [
-                    {
-                        data: [metaData.total_examnee - metaData.failed_examnee, metaData.failed_examnee],
-                        backgroundColor: ['#4d7cff', '#FF4651']
-                    },
-                ]
-            },
-            options: {
-                aspectRatio: 1.5,
-                legend: {
-                    position: 'right'
-                },
-                layout: { padding: { top: 20 } }
-            }
-        });
-        document.getElementById('total_failed').innerText += metaData.failed_examnee;
-        /** ============================================= overview_total chart ends ============================================= */
-        /** ============================================= search roll func ============================================= */
-        let roll_element = document.getElementById('std_roll')
-        let name_element = document.getElementById('std_name')
-        let submit_btn_element = document.getElementById('search_result')
-
-        submit_btn_element.onclick = e => search_result(roll_element.value, name_element.value);
+        
+        console.log('result :',response)
         
 
     } catch (error) {
