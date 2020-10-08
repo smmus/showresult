@@ -45,6 +45,9 @@ String.prototype.capitalize = function () {
 String.prototype.underscrore_to_capitalize = function () {
     return this.split('_').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' ');
 }
+String.prototype.to_camel_case = function () {
+    return this.toLowerCase().split(' ').join('_');
+}
 
 function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
     // modifies global var
@@ -355,7 +358,7 @@ function onsuccess_func(event) {
                 data: {
                     labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.underscrore_to_capitalize()),
                     datasets: [{
-                        label: 'A+',
+                        label: 'A Plus',
                         data: Object.values(metaData.all_sub).map(obj => obj.a_plus),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
@@ -369,7 +372,7 @@ function onsuccess_func(event) {
                         borderWidth: 1,
                         fill: 6
                     }, {
-                        label: 'A-',
+                        label: 'A Minus',
                         data: Object.values(metaData.all_sub).map(obj => obj.a_minus),
                         backgroundColor: 'rgba(89, 127, 255,0.2)',
                         borderColor: '#5A7BFA',
@@ -429,6 +432,27 @@ function onsuccess_func(event) {
                     }
                 }
             });
+            // elevent listener of subjects_grade_overview_checkbox
+            document.getElementById('subjects_grade_overview_checkbox').onchange = e =>{
+                // this change axix is defferent from the other one
+                // change datasets --> x-axis
+                console.log("[CheckBox] :", e.target.checked);
+
+                // step1: changing labels arr (x-axis)
+                let new_labels = subjects_grade_overview_chart.data.datasets.map(obj=>obj.label);
+                console.log(new_labels)
+                // step2: changing main datasets for new data
+                let new_datatsets = subjects_grade_overview_chart.data.labels.map((label,i)=>({ //label=sub_name
+                    label,
+                    data : new_labels.map((e,i)=>metaData.all_sub[label.to_camel_case()][e.to_camel_case()])
+                }))
+
+                // updating chart
+                subjects_grade_overview_chart.data.labels = new_labels;
+                subjects_grade_overview_chart.data.datasets = new_datatsets;
+                subjects_grade_overview_chart.update();
+                
+            }
 
             let whole_result_chart = new Chart(document.getElementById('total_pass_fail').getContext('2d'), {
                 type: 'doughnut',
@@ -442,10 +466,11 @@ function onsuccess_func(event) {
                     ]
                 },
                 options:{
-                    aspectRatio:1,
+                    aspectRatio:1.5,
                     legend: {
-                        position: 'top'
-                    }
+                        position: 'right'
+                    },
+                    layout:{padding:{top:20}}
                 }
             });
             document.getElementById('total_failed').innerText += metaData.failed_examnee;
