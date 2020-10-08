@@ -515,6 +515,7 @@ body #main-container {
   margin-left: 90px;
   position: relative;
   background-color: #f3f4f9;
+  padding: .4em;
   height: calc(100% - 3rem);
   display: -ms-grid;
   display: grid;

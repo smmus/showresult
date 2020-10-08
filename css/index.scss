@@ -408,6 +408,7 @@ body {
         margin-left: $navWidth;
         position: relative;
         background-color: $containerBgColor;
+        padding: .4em;
 
         height: calc(100% - 3rem);
         display: grid;
@@ -449,7 +450,7 @@ body {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                // margin: 0 .5em;
+                // margin: .5em .5em;
                 .header{
                     display: flex;
                     justify-content: space-between;

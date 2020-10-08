@@ -68,7 +68,7 @@ function createRankList(db, store_name, data, header_index) {
     })
 }
 
-/* async function for manupulating index db */
+/* ===============async function for manupulating index db ==================*/
 function openiddb(db_name, db_version) {
     /**
      * uses Global consts : OBJ_STORE_MAIN, OBJ_STORE_RANK, IS_RANK_GIVEN
@@ -219,4 +219,20 @@ function storeMainData(db, store_name, mode, data) {
         /* storing info {metaData} in the first place (roll=0) */
         obj_store.add({ roll: 0, rank: 0, metaData });
     })
+}
+
+/**=================== search result func ================= */
+function search_result(roll, name){
+    console.log('[SUBMIT]')
+    if(!roll && !name){
+        throw Error('No Input');
+    }
+
+    if(roll && parseInt(roll) && parseInt(roll)>0){
+        /**search via roll */
+        window.location.search = '?fuckingpola'
+    }
+    else{
+        /**search via name */
+    }
 }

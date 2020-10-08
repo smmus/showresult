@@ -314,6 +314,13 @@ async function main() {
         });
         document.getElementById('total_failed').innerText += metaData.failed_examnee;
         /** ============================================= overview_total chart ends ============================================= */
+        /** ============================================= search roll func ============================================= */
+        let roll_element = document.getElementById('std_roll')
+        let name_element = document.getElementById('std_name')
+        let submit_btn_element = document.getElementById('search_result')
+
+        submit_btn_element.onclick = e => search_result(roll_element.value, name_element.value);
+        
 
     } catch (error) {
         console.error(error);
