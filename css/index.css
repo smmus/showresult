@@ -522,7 +522,7 @@ body #main-container {
   -ms-grid-rows: (1fr)[8];
   -ms-grid-columns: (1fr)[12];
       grid-template: repeat(8, 1fr)/repeat(12, 1fr);
-      grid-template-areas: "m m m m m m c c c c s s" "m m m m m m c c c c s s" "m m m m m m c c c c s s" "m m m m m m c c c c s s" "m m m m m m c c c c s s" "b b b a a a a a a a a a" "b b b a a a a a a a a a" "b b b a a a a a a a a a";
+      grid-template-areas: "m m m m m m c c c c s s" "m m m m m m c c c c s s" "m m m m m m c c c c s s" "m m m m m m c c c c s s" "m m m m m m c c c c s s" "t t t a a a a a a a a a" "t t t a a a a a a a a a" "t t t a a a a a a a a a";
 }
 
 body #main-container.overlay {
@@ -600,7 +600,7 @@ body #main-container .card__1 {
   height: 100%;
 }
 
-body #main-container #grade_overview {
+body #main-container #overview_main {
   -ms-grid-row: 1;
   -ms-grid-row-span: 5;
   -ms-grid-column: 1;
@@ -608,7 +608,7 @@ body #main-container #grade_overview {
   grid-area: m;
 }
 
-body #main-container #pass_fail_overview {
+body #main-container #overview_secondary {
   -ms-grid-row: 1;
   -ms-grid-row-span: 5;
   -ms-grid-column: 7;
@@ -628,12 +628,12 @@ body #main-container #search div {
   position: relative;
 }
 
-body #main-container #total_pass_fail_el {
+body #main-container #overview_total {
   -ms-grid-row: 6;
   -ms-grid-row-span: 3;
   -ms-grid-column: 1;
   -ms-grid-column-span: 3;
-  grid-area: b;
+  grid-area: t;
 }
 
 body #main-container #extra {
