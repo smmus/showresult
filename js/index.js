@@ -36,15 +36,7 @@ for (let i = 0; i < linkCollapse.length; i++) {
     })
 }
 // ------------------------ nav functionality ends -----------------------------
-// ------------------------ some global funcs  -----------------------------
-
-
-
-
-// ------------------------ some global funcs ends -----------------------------
-// ------------------------ main fetching starts ------------------------------
-// for overview
-// checking url-params
+// ------------------------ global vars ends -----------------------------
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLL = new URLSearchParams(window.location.search).get('roll');
@@ -56,386 +48,60 @@ const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const DB_VERSION = 1;
 const ROLL_SLICE = 10;
-const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
 const GRAPH_BG_COLORS = ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5', '#FF9F40', '#9AD0F5', '#FFCD56'];
+const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
+const SUB_CODE_TO_NAME = {
+    '101': 'bangla_1st',
+    '107': 'eng_1st',
+    '178': 'biology_1st',
+    '179': 'biology_2nd',
+    '174': 'physics_1st',
+    '176': 'chemistry_1st',
+    '265': 'higher_math_1st',
+    '275': 'ict'
+};
 
 let IS_CREATED = false;
-let db;
+// ------------------------ main kaam starts ------------------------------
+async function main() {
+    let db;
 
-window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-if (!window.indexedDB) {
-    console.log("[Your browser doesn't support a stable version of IndexedDB.]");
-    document.body.innerHTML = `Your browser doesn't support a stable version of IndexedDB. Use modern browsers like FireFox or Chrome.`
-    //return;
-}
-
-db = await openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func);
-
-function onsuccess_func(event) {
-    /* sets GLOBAL VAR `db` */
-    console.log("[FUNC openDb: DB onsuccess]");
-    db = event.target.result;
-
-    // checking if main objectStore is empty
-    getObjectStore(db, OBJ_STORE_MAIN, 'readonly').count().onsuccess = function () {
-        let rollCount = this.result;
-        console.log('[OBJ_STORE_MAIN count()]', rollCount);
-
-        if (rollCount == 0) {
-            //[if the objStore is empty] => fetch data and store + calculate
-            fetch(`data/${DB_NAME}_${XM_NAME}.csv`)
-                .then(res => res.text())
-                .then(data => {
-                    // imp vars
-                    let sub_code_to_name = {
-                        '101': 'bangla_1st',
-                        '107': 'eng_1st',
-                        '178': 'biology_1st',
-                        '179': 'biology_2nd',
-                        '174': 'physics_1st',
-                        '176': 'chemistry_1st',
-                        '265': 'higher_math_1st',
-                        '275': 'ict'
-                    };
-                    let metaData = {
-                        total_examnee: 0,
-                        failed_examnee: 0,
-                        all_sub: {},
-                        sub_code_to_name
-                    };
-                    for (let i in sub_code_to_name) {
-                        metaData.all_sub[sub_code_to_name[i]] = {
-                            max: 0,
-                            avg: 0,
-                            min: 100,
-                            a_plus: 0,
-                            a: 0,
-                            a_minus: 0,
-                            b: 0,
-                            c: 0,
-                            d: 0,
-                            f: 0,
-                            no_result: 0,
-                            promoted: 0,
-                            failed: 0,
-                        }
-                    }
-
-                    // getting header_names & indexs
-                    let header_names = data.split('\n')[0].split(',');
-
-                    let name_index = header_names.indexOf('student_name');
-                    let roll_index = header_names.indexOf('student_roll');
-                    let rank_index = header_names.indexOf('rank');
-                    let pass_index = header_names.indexOf('isPassed');
-
-                    // opening main_obj_store txn
-                    let objStoreMain = getObjectStore(db, OBJ_STORE_MAIN, 'readwrite');
-
-                    // storing main data + calculating info
-                    data.split('\n').splice(1).forEach(line => { // header row not needed so splice(1)
-                        let result = line.split(',');
-
-                        let name = result[name_index];
-
-                        if (name) metaData['total_examnee']++;
-
-                        if (result[pass_index].includes('ailed')) metaData['failed_examnee']++; // don't wannna .toLowerCase() :)
-
-                        let obj = {
-                            roll: parseInt(result[roll_index].slice(ROLL_SLICE)),
-                            name: name,
-                            res: result.map(e => !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
-                        }
-                        if (IS_RANK_GIVEN)
-                            obj.rank = parseInt(result[rank_index]);
-                        objStoreMain.add(obj);
-
-                        result.forEach((element, index) => {
-                            for (let i in sub_code_to_name) {
-                                if (header_names[index].includes(sub_code_to_name[i])) {
-                                    if (header_names[index].includes('mcq') && element != "") {
-                                        metaData.all_sub[sub_code_to_name[i]]['max'] = metaData.all_sub[sub_code_to_name[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['max'];
-                                        parseInt(element) && (metaData.all_sub[sub_code_to_name[i]]['avg'] += parseInt(element));
-                                        metaData.all_sub[sub_code_to_name[i]]['min'] = metaData.all_sub[sub_code_to_name[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[sub_code_to_name[i]]['min'];
-                                    }
-                                    else if (header_names[index].includes('grade')) {
-                                        element.toLowerCase() == 'a+' && metaData.all_sub[sub_code_to_name[i]]['a_plus']++;
-                                        element.toLowerCase() == 'a' && metaData.all_sub[sub_code_to_name[i]]['a']++;
-                                        element.toLowerCase() == 'a-' && metaData.all_sub[sub_code_to_name[i]]['a_minus']++;
-                                        element.toLowerCase() == 'b' && metaData.all_sub[sub_code_to_name[i]]['b']++;
-                                        element.toLowerCase() == 'c' && metaData.all_sub[sub_code_to_name[i]]['c']++;
-                                        element.toLowerCase() == 'd' && metaData.all_sub[sub_code_to_name[i]]['d']++;
-                                        element.toLowerCase() == 'f' && metaData.all_sub[sub_code_to_name[i]]['f']++;
-                                        element == "" && metaData.all_sub[sub_code_to_name[i]]['no_result']++;
-                                    }
-                                }
-                            }
-                        })
-                    })
-
-                    // calculating avg
-                    for (let i in metaData.all_sub) {
-                        metaData.all_sub[i].avg = (metaData.all_sub[i].avg / (metaData.total_examnee - metaData.all_sub[i].no_result)).toFixed(2);
-                        metaData.all_sub[i].promoted = metaData.total_examnee - metaData.all_sub[i].no_result - metaData.all_sub[i].f;
-                        metaData.all_sub[i].failed = metaData.all_sub[i].no_result + metaData.all_sub[i].f;
-                    }
-
-                    // opening info_obj_store txn for storing info {metaData}
-                    objStoreMain.add({ roll: 0, rank: 0, metaData });
-
-
-                    // calculating rank
-                    if (IS_RANK_GIVEN) {
-                        // rank is given in the file
-                        console.log('[RANK OK]');
-                    } else {
-                        console.log('[RANK CALCULATING]');
-                        createRankList(data, header_names);
-                    }
-                })
-        }
-        // if all data is in db -- show overview
-        // step1: get data from iddb
-        let req = getObjectStore(db, OBJ_STORE_MAIN, 'readonly').get(0);
-        req.onsuccess = function (e) {
-            console.log('[metaData]', e.target.result);
-            let metaData = e.target.result.metaData;
-            // [TODO] [ERROR] e.target.result is undefined for the first time
-
-            
-            let subjects = Object.values(metaData.sub_code_to_name);
-            /*=========== global vars =============*/
-            Chart.defaults.global.elements.line.tension = 0;
-            Chart.defaults.global.elements.point.hitRadius = 2;
-            // Chart.defaults.global.aspectRatio = 1.5;
-
-            let subjects_pass_fail_overview_chart = new Chart(document.getElementById('subjects_pass_fail_overview').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: subjects.map(sub_name => sub_name.underscrore_to_capitalize()),
-                    datasets: [
-                        {
-                            data: Object.values(metaData.all_sub).map(obj => obj.failed),  // first time render failed (failed is selected in the html by default)
-                            backgroundColor: GRAPH_BG_COLORS
-                        },
-                    ]
-                },
-                options: {
-                    aspectRatio: 1.5,
-                    legend: {
-                        position: 'right'
-                    }
-                }
-            });
-            // event listener for select event
-            document.getElementById('pass_fail_select').addEventListener('change', e => {
-                console.log('[SELECT OptionVal]', e.target.value);
-
-                for (let i of GRADES) {
-
-                    if (e.target.value != i) continue;
-
-                    console.log('[Matched From GRADES]');
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
-
-                }
-                for (let i of subjects) {
-
-                    if (e.target.value != i) continue;
-
-                    console.log('[Matched From Subjects]');
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => (grade_name!='failed' && grade_name!='promoted') ? metaData.all_sub[e.target.value][grade_name] : null)
-                    subjects_pass_fail_overview_chart.data.datasets[1].data = GRADES.map(grade_name => (grade_name!='failed' && grade_name!='promoted') ? null : metaData.all_sub[e.target.value][grade_name]);
-
-                }
-                subjects_pass_fail_overview_chart.update();
-            })
-
-            //checkbox event listener
-            document.getElementById('subjects_pass_fail_overview_checkbox').onchange = e => {
-                let select_element = document.getElementById('pass_fail_select');
-
-                console.log("[CheckBox] :", e.target.checked);
-
-                if (e.target.checked) {
-                    // step1: changing select options
-                    let change = "";
-                    subjects.forEach(el => {
-                        change += `<option value="${el}" ${el.includes('bangla') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>`
-                    })
-                    select_element.innerHTML = change;
-                    // console.log(change);
-                    // step2: changing chart label + data && updating
-                    subjects_pass_fail_overview_chart.data.labels = GRADES.map(e =>e.underscrore_to_capitalize());
-                    let sub_name = select_element.options[select_element.selectedIndex].value;
-                    subjects_pass_fail_overview_chart.data.datasets = [
-                        {
-                            data: GRADES.map(e=> (e!='failed' && e!='promoted') ? metaData.all_sub[sub_name][e] : null),
-                            backgroundColor: GRAPH_BG_COLORS
-                        },
-                        {
-                            data: GRADES.map(e=> (e!='failed' && e!='promoted') ? null : metaData.all_sub[sub_name][e]),
-                            backgroundColor: GRAPH_BG_COLORS
-                        }
-                    ];
-                    subjects_pass_fail_overview_chart.update();
-                } else {
-                    // step1: changing select options
-                    let change = "";
-                    GRADES.forEach(el => {
-                        change += `<option value="${el}" ${el.includes('ailed') ? 'selected' : ''}>${el.underscrore_to_capitalize()}</option>` //`failed`
-                    })
-                    select_element.innerHTML = change;
-                    // console.log(change);
-
-                    // step2: changing chart label + data && updating
-                    
-                    subjects_pass_fail_overview_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
-                    subjects_pass_fail_overview_chart.data.datasets = [{
-                        data: Object.values(metaData.all_sub).map(obj => obj.failed), // 'failed' is selected 
-                        backgroundColor: GRAPH_BG_COLORS
-                    }];
-                    subjects_pass_fail_overview_chart.update();
-                }
-            }
-
-            let subjects_grade_overview_chart = new Chart(document.getElementById('subjects_grade_overview').getContext('2d'), {
-                type: 'line',
-                data: new function () {
-                    /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-                    this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-                    /*array of objects 
-                            return an obj forEach line (GRADES)
-                            data => array (1 element forEach sub_name) (len=lenof labels)
-                    */
-                    this.datasets = GRADES.map(grade => ({
-                        label: grade.underscrore_to_capitalize(),
-                        data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
-                        backgroundColor: 'rgba(89, 127, 255,0.1)',
-                        borderColor: '#5A7BFA',
-                        borderWidth: 1,
-                        hidden: grade=='promoted' || grade=='f' || grade=='no_result', // promoted,f,no_result will be hidden by default
-                        fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
-                    }));
-                    // console.log(this.labels)
-                    // console.log(this.datasets)
-                },
-                options: {
-                    aspectRatio: 2,
-                    maintainAspectRatio: true, //default: true
-                    scales: {
-                        yAxes: [{
-                            scaleLabel: {
-                                labelString: 'Total Students',
-                                display: false,
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                suggestedMax: 100
-                            }
-                        }]
-                    }
-                }
-            });
-            // elevent listener of subjects_grade_overview_checkbox
-            document.getElementById('subjects_grade_overview_checkbox').onchange = e => {
-                // this change axis is defferent from the other one (not like the pie)
-                // change datasets --> x-axis
-                console.log("[CheckBox] :", e.target.checked);
-
-                if (e.target.checked) {
-                    // step1: changing labels arr (x-axis)
-                    let new_labels = subjects_grade_overview_chart.data.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted');
-                    // console.log(new_labels)
-                    // step2: changing main datasets for new data
-                    let new_datatsets = subjects_grade_overview_chart.data.labels.map((label, i) => ({ //label=sub_name
-                        label,
-                        data: new_labels.map((e, i) => metaData.all_sub[label.to_camel_case()][e.to_camel_case()]),
-                        backgroundColor: 'rgba(89, 127, 255,0.1)',
-                        borderColor: '#5A7BFA',
-                        borderWidth: 1,
-                        fill: 'origin'
-                    }))
-
-                    // updating chart
-                    subjects_grade_overview_chart.data.labels = new_labels;
-                    subjects_grade_overview_chart.data.datasets = new_datatsets;
-                    subjects_grade_overview_chart.update();
-                    return;
-                }
-                // else do the same think while loading the page
-                // [TODO] : create a function not to repeating same code
-                
-                // copied from above
-                subjects_grade_overview_chart.data = new function () {
-                    /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-                    this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-                    /*array of objects 
-                    return an obj forEach line (GRADES)
-                    data => array (1 element forEach sub_name) (len=lenof labels)
-                    */
-                   this.datasets = GRADES.map(grade => ({
-                       label: grade.underscrore_to_capitalize(),
-                       data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
-                       backgroundColor: 'rgba(89, 127, 255,0.1)',
-                       borderColor: '#5A7BFA',
-                       borderWidth: 1,
-                       hidden: grade=='promoted' || grade=='f' || grade=='no_result', // promoted,f,no_result will be hidden by default
-                        fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
-                    }));
-                }
-                subjects_grade_overview_chart.update();
-
-            }
-
-            let whole_result_chart = new Chart(document.getElementById('total_pass_fail').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Promoted', 'Failed'],
-                    datasets: [
-                        {
-                            data: [metaData.total_examnee - metaData.failed_examnee, metaData.failed_examnee],
-                            backgroundColor: ['#4d7cff', '#FF4651']
-                        },
-                    ]
-                },
-                options: {
-                    aspectRatio: 1.5,
-                    legend: {
-                        position: 'right'
-                    },
-                    layout: { padding: { top: 20 } }
-                }
-            });
-            document.getElementById('total_failed').innerText += metaData.failed_examnee;
-        };
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    if (!window.indexedDB) {
+        console.log("[Your browser doesn't support a stable version of IndexedDB.]");
+        document.body.innerHTML = `Your browser doesn't support a stable version of IndexedDB. Use modern browsers like FireFox or Chrome.`
+        return;
     }
+
+    try {
+        db = await openiddb(DB_NAME, DB_VERSION);
+
+        if (IS_CREATED) {
+            /** will run if new obj_stores are created */
+            /** fetch data from csv file and store them */
+
+            let response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
+            let data = await response.text();
+
+            /**storing data in the iddb */
+            await storeMainData(db, OBJ_STORE_MAIN, 'readwrite', data);
+
+            /** getting header_names & indexs */
+            let header_names = data.split('\n')[0].split(',');
+
+            // calculating rank */
+            if (IS_RANK_GIVEN) {
+                // rank is given in the file */
+                console.log('[RANK OK]');
+            } else {
+                console.log('[RANK CALCULATING]');
+                createRankList(data, header_names);
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+
 }
-
-function onupgradeneeded_func(event) {
-    console.log("[FUNC openDb: onupgradeneeded]");
-
-    let db = event.target.result;
-
-    // creating main object
-    let objStoreMain = db.createObjectStore(OBJ_STORE_MAIN, { keyPath: 'roll' });
-    let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
-
-    if (IS_RANK_GIVEN)
-        objStoreMain.createIndex("rank", "rank", { unique: true });
-
-    // [TODO] delete previous data if version is higher
-
-    // error while fetching and storing here : transaction is not active 
-    // [ERROR] Uncaught (in promise) DOMException: Failed to execute 'add' on 'IDBObjectStore': The transaction is not active.
-}
-
-// checking index db if contains -- done
-// fetching data -- done
-// writing to indexdb -- done 
-// calculating all fields -- done
-// showing overviews -- ongoing
-// for roll 
-// for compare 
-
+main();

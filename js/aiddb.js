@@ -101,14 +101,112 @@ function openiddb(db_name, db_version) {
 }
 
 function getObjectStore(db, store_name, mode) {
+
+    let tx = db.transaction([store_name], mode);
+
+    tx.oncomplete = function () {
+        console.log('[TX CPM :', db.name, store_name, mode, ']');
+    }
+
+    res(tx.objectStore(store_name));
+
+}
+
+function storeMainData(db, store_name, mode, data) {
     return new Promise((res, rej) => {
-        let tx = db.transaction([store_name], mode);
-        
-        tx.oncomplete = function () {
-            console.log('[TX CPM :', db.name, store_name, mode, ']');
-            res(tx.objectStore(store_name));
+
+        /** crating vars to store metaData */
+        let metaData = {
+            total_examnee: 0,
+            failed_examnee: 0,
+            all_sub: {},
+            SUB_CODE_TO_NAME
+        };
+        for (let i in SUB_CODE_TO_NAME) {
+            metaData.all_sub[SUB_CODE_TO_NAME[i]] = {
+                max: 0,
+                avg: 0,
+                min: 100,
+                a_plus: 0,
+                a: 0,
+                a_minus: 0,
+                b: 0,
+                c: 0,
+                d: 0,
+                f: 0,
+                no_result: 0,
+                promoted: 0,
+                failed: 0,
+            }
         }
 
-        tx.onerror = e => rej(e);
+        /* opening txn */
+        let tx = db.transaction([store_name], mode);
+
+        tx.oncomplete = function () {
+            console.log('[TX CPM :', db.name, store_name, mode, ']');
+            res(true);
+        }
+        tx.onerror = e => { rej(e) };
+        let obj_store = tx.objectStore(store_name);
+
+        // getting header_names & indexs
+        let header_names = data.split('\n')[0].split(',');
+
+        let name_index = header_names.indexOf('student_name');
+        let roll_index = header_names.indexOf('student_roll');
+        let rank_index = header_names.indexOf('rank');
+        let pass_index = header_names.indexOf('isPassed');
+        data.split('\n').splice(1).forEach(line => { // header row not needed so splice(1)
+            let result = line.split(',');
+
+            let name = result[name_index];
+
+            if (name) metaData['total_examnee']++;
+
+            if (result[pass_index].includes('ailed')) metaData['failed_examnee']++; // don't wannna .toLowerCase() :)
+
+            let obj = {
+                roll: parseInt(result[roll_index].slice(ROLL_SLICE)),
+                name: name,
+                res: result.map(e => !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
+            }
+            if (IS_RANK_GIVEN)
+                obj.rank = parseInt(result[rank_index]);
+
+            obj_store.add(obj);
+
+            result.forEach((element, index) => {
+                for (let i in SUB_CODE_TO_NAME) {
+                    if (header_names[index].includes(SUB_CODE_TO_NAME[i])) {
+                        if (header_names[index].includes('mcq') && element != "") {
+                            metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'];
+                            parseInt(element) && (metaData.all_sub[SUB_CODE_TO_NAME[i]]['avg'] += parseInt(element));
+                            metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'];
+                        }
+                        else if (header_names[index].includes('grade')) {
+                            element.toLowerCase() == 'a+' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_plus']++;
+                            element.toLowerCase() == 'a' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a']++;
+                            element.toLowerCase() == 'a-' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_minus']++;
+                            element.toLowerCase() == 'b' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['b']++;
+                            element.toLowerCase() == 'c' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['c']++;
+                            element.toLowerCase() == 'd' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['d']++;
+                            element.toLowerCase() == 'f' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['f']++;
+                            element == "" && metaData.all_sub[SUB_CODE_TO_NAME[i]]['no_result']++;
+                        }
+                    }
+                }
+            })
+        })
+
+        /* calculating avg */
+        for (let i in metaData.all_sub) {
+            metaData.all_sub[i].avg = (metaData.all_sub[i].avg / (metaData.total_examnee - metaData.all_sub[i].no_result)).toFixed(2);
+            metaData.all_sub[i].promoted = metaData.total_examnee - metaData.all_sub[i].no_result - metaData.all_sub[i].f;
+            metaData.all_sub[i].failed = metaData.all_sub[i].no_result + metaData.all_sub[i].f;
+        }
+
+        /* storing info {metaData} in the first place (roll=0) */
+        obj_store.add({ roll: 0, rank: 0, metaData });
     })
 }
