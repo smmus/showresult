@@ -292,6 +292,28 @@ async function main() {
             }
         }
         /** ============================================= secondary chart ends ============================================= */
+        /** ============================================= overview_total chart starts ============================================= */
+        let overview_total_chart = new Chart(document.getElementById('overview_total_canvas').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Promoted', 'Failed'],
+                datasets: [
+                    {
+                        data: [metaData.total_examnee - metaData.failed_examnee, metaData.failed_examnee],
+                        backgroundColor: ['#4d7cff', '#FF4651']
+                    },
+                ]
+            },
+            options: {
+                aspectRatio: 1.5,
+                legend: {
+                    position: 'right'
+                },
+                layout: { padding: { top: 20 } }
+            }
+        });
+        document.getElementById('total_failed').innerText += metaData.failed_examnee;
+        /** ============================================= overview_total chart ends ============================================= */
 
     } catch (error) {
         console.error(error);
