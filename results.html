@@ -157,10 +157,10 @@
     </div>
     <section id="main-container">
 
-        <div class="card__1 card" id="grade_overview">
+        <div class="card__1 card" id="overview_main">
             <div class="header">
                 <p>Grade Overview</p>
-                <button class="bubbly-button hover-expand v-s">Mark Overview</button>
+                <button class="hover-expand v-s">Mark Overview</button>
                 <select id="change_graph_select">
                     <option value="null" selected disabled>Change Graph Style</option>
                     <option value="line">Line</option>
@@ -169,7 +169,7 @@
                 </select>
             </div>
             <div class="canvas">
-                <canvas id="subjects_grade_overview"></canvas>
+                <canvas id="overview_main_canvas"></canvas>
             </div>
             <div class="footer">
                 <span>
@@ -181,10 +181,10 @@
                 <span>Change Axis</span>
             </div>
         </div>
-        <div class="card__1 card" id="pass_fail_overview">
+        <div class="card__1 card" id="overview_secondary">
             <div class="header">
                 <p>Result</p>
-                <select id="pass_fail_select">
+                <select id="overview_secondary_select">
                     <option value="promoted">Promoted</option>
                     <option value="failed" selected>Failed</option>
                     <option value="a_plus">A plus</option>
@@ -198,12 +198,12 @@
                 </select>
             </div>
             <div class="canvas">
-                <canvas id="subjects_pass_fail_overview"></canvas>
+                <canvas id="overview_secondary_canvas"></canvas>
             </div>
             <div class="footer">
                 <span>
                     <label class="switch">
-                        <input type="checkbox" id="subjects_pass_fail_overview_checkbox">
+                        <input type="checkbox" id="overview_secondary_checkbox">
                         <span></span>
                     </label>
                 </span>
@@ -251,13 +251,13 @@
         </div>
 
 
-        <div class="card" id="total_pass_fail_el">
+        <div class="card" id="overview_total">
             <div class="header">
                 <p>Promoted vs Failed</p>
                 <p id="total_failed" style="color:#FF4651">Failed &nbsp;</p>
             </div>
             <div class="canvas">
-                <canvas id="total_pass_fail"></canvas>
+                <canvas id="overview_total_canvas"></canvas>
             </div>
         </div>
 

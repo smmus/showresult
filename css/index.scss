@@ -479,10 +479,10 @@ body {
             height: 100%;
         }
 
-        #grade_overview{
+        #overview_main{
             grid-area: m;
         }
-        #pass_fail_overview{
+        #overview_secondary{
             grid-area: c;
         }
         #search{
@@ -491,7 +491,7 @@ body {
                 position: relative;
             }
         }
-        #total_pass_fail_el{
+        #overview_total{
             grid-area: b;
         }
         #extra{

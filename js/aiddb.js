@@ -13,49 +13,59 @@ String.prototype.to_camel_case = function () {
     return this.toLowerCase().split(' ').join('_');
 }
 
-async function createRankList(data, header_index) {
-    let rankList = data.split('\n').splice(1).map(line => {
+function createRankList(db, store_name, data, header_index) {
+    return new Promise((res, rej) => {
 
-        let result = line.split(',');
-        // [roll, total, optional, non-optional, name]
-        return [
-            parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
-            parseInt(result[header_index.indexOf('term_total')]),
-            result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
-            result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
-            result[header_index.indexOf('student_name')],
-            result[header_index.indexOf('isPassed')].toLowerCase().includes('fail') ? false : true
-        ]
+        let rankList = data.split('\n').splice(1).map(line => {
 
-    })
+            let result = line.split(',');
+            // [roll, total, optional, non-optional, name]
+            return [
+                parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
+                parseInt(result[header_index.indexOf('term_total')]),
+                result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
+                result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
+                result[header_index.indexOf('student_name')],
+                result[header_index.indexOf('isPassed')].toLowerCase().includes('fail') ? false : true
+            ]
 
-    let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1)
-        .thenBy(function (arr1, arr2) { return arr1[2] - arr2[2]; },)
-        .thenBy(function (arr1, arr2) { return arr1[3] - arr2[3]; }, -1);
-    /*
-    *1. who has the higher marks (desc)
-    *2. if marks same? who has low in optional_sub  (asc)
-    *3. if both marks same? who has high in non_optional_sub (desc)
-    */
-
-    /*sorting the main array*/
-    rankList.sort(sortingFunc);
-
-    console.log('[RANK LIST -]')
-    console.log(rankList)
-
-    let objStoreRank = await getObjectStore(db, OBJ_STORE_RANK, 'readwrite');
-    rankList.forEach((arr, index) => {
-        objStoreRank.add({
-            rank: index + 1, // non-zero
-            name: arr[4],
-            roll: arr[0],
-            total: arr[1],
-            isPassed: arr[5], //boolean
-            data: arr.slice(2, 4) //2 & 3rd index (optional, non-optional)
         })
+
+        let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1)
+            .thenBy(function (arr1, arr2) { return arr1[2] - arr2[2]; },)
+            .thenBy(function (arr1, arr2) { return arr1[3] - arr2[3]; }, -1);
+        /*
+        *1. who has the higher marks (desc)
+        *2. if marks same? who has low in optional_sub  (asc)
+        *3. if both marks same? who has high in non_optional_sub (desc)
+        */
+
+        /*sorting the main array*/
+        rankList.sort(sortingFunc);
+
+        console.log('[RANK LIST -]')
+        console.log(rankList)
+
+        let tx = db.transaction([store_name], 'readwrite');
+        tx.oncomplete = function () {
+            console.log('[TX CPM :', db.name, store_name, mode, ']');
+            res(true);
+        }
+        tx.onerror = e => {rej(e)};
+        let objStoreRank = tx.objectStore(store_name);
+
+        rankList.forEach((arr, index) => {
+            objStoreRank.add({
+                rank: index + 1, // non-zero
+                name: arr[4],
+                roll: arr[0],
+                total: arr[1],
+                isPassed: arr[5], //boolean
+                data: arr.slice(2, 4) //2 & 3rd index (optional, non-optional)
+            })
+        })
+        // [TODO]: update the main list instead of creating new objStore.
     })
-    // [TODO]: update the main list instead of creating new objStore.
 }
 
 /* async function for manupulating index db */
@@ -100,16 +110,16 @@ function openiddb(db_name, db_version) {
     );
 }
 
-function getObjectStore(db, store_name, mode) {
-
-    let tx = db.transaction([store_name], mode);
-
-    tx.oncomplete = function () {
-        console.log('[TX CPM :', db.name, store_name, mode, ']');
-    }
-
-    res(tx.objectStore(store_name));
-
+function getDataByKey(db, store_name, key) {
+    return new Promise((res, rej)=>{
+        let tx = db.transaction([store_name], 'readonly');
+        tx.oncomplete = function () {
+            console.log('[TX CPM :', db.name, store_name, 'readonly', ']');
+        }
+        tx.onerror = e => rej(e);
+        let req = tx.objectStore(store_name).get(key);
+        req.onsuccess = e => res(e.target.result);
+    })
 }
 
 function storeMainData(db, store_name, mode, data) {
@@ -120,7 +130,7 @@ function storeMainData(db, store_name, mode, data) {
             total_examnee: 0,
             failed_examnee: 0,
             all_sub: {},
-            SUB_CODE_TO_NAME
+            sub_code_to_name : SUB_CODE_TO_NAME
         };
         for (let i in SUB_CODE_TO_NAME) {
             metaData.all_sub[SUB_CODE_TO_NAME[i]] = {
