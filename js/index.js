@@ -125,7 +125,8 @@ const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const DB_VERSION = 1;
 const ROLL_SLICE = 10;
-const GRADES = ['promoted', 'a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'failed', 'f', 'no_result'];
+const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
+const GRAPH_BG_COLORS = ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5', '#FF9F40', '#9AD0F5', '#FFCD56'];
 
 let db;
 
@@ -270,8 +271,8 @@ function onsuccess_func(event) {
             let metaData = e.target.result.metaData;
             // [TODO] [ERROR] e.target.result is undefined for the first time
 
+            
             let subjects = Object.values(metaData.sub_code_to_name);
-
             /*=========== global vars =============*/
             Chart.defaults.global.elements.line.tension = 0;
             Chart.defaults.global.elements.point.hitRadius = 2;
@@ -280,11 +281,11 @@ function onsuccess_func(event) {
             let subjects_pass_fail_overview_chart = new Chart(document.getElementById('subjects_pass_fail_overview').getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: Object.values(metaData.sub_code_to_name).map(sub_name => sub_name.underscrore_to_capitalize()),
+                    labels: subjects.map(sub_name => sub_name.underscrore_to_capitalize()),
                     datasets: [
                         {
-                            data: Object.values(metaData.all_sub).map(obj => obj.failed),
-                            backgroundColor: ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5']
+                            data: Object.values(metaData.all_sub).map(obj => obj.failed),  // first time render failed (failed is selected in the html by default)
+                            backgroundColor: GRAPH_BG_COLORS
                         },
                     ]
                 },
@@ -312,7 +313,8 @@ function onsuccess_func(event) {
                     if (e.target.value != i) continue;
 
                     console.log('[Matched From Subjects]');
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => metaData.all_sub[e.target.value][grade_name])
+                    subjects_pass_fail_overview_chart.data.datasets[0].data = GRADES.map(grade_name => (grade_name!='failed' && grade_name!='promoted') ? metaData.all_sub[e.target.value][grade_name] : null)
+                    subjects_pass_fail_overview_chart.data.datasets[1].data = GRADES.map(grade_name => (grade_name!='failed' && grade_name!='promoted') ? null : metaData.all_sub[e.target.value][grade_name]);
 
                 }
                 subjects_pass_fail_overview_chart.update();
@@ -333,9 +335,18 @@ function onsuccess_func(event) {
                     select_element.innerHTML = change;
                     // console.log(change);
                     // step2: changing chart label + data && updating
-                    subjects_pass_fail_overview_chart.data.labels = GRADES.map(e => e.underscrore_to_capitalize());
-
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj[e.target.value]);
+                    subjects_pass_fail_overview_chart.data.labels = GRADES.map(e =>e.underscrore_to_capitalize());
+                    let sub_name = select_element.options[select_element.selectedIndex].value;
+                    subjects_pass_fail_overview_chart.data.datasets = [
+                        {
+                            data: GRADES.map(e=> (e!='failed' && e!='promoted') ? metaData.all_sub[sub_name][e] : null),
+                            backgroundColor: GRAPH_BG_COLORS
+                        },
+                        {
+                            data: GRADES.map(e=> (e!='failed' && e!='promoted') ? null : metaData.all_sub[sub_name][e]),
+                            backgroundColor: GRAPH_BG_COLORS
+                        }
+                    ];
                     subjects_pass_fail_overview_chart.update();
                 } else {
                     // step1: changing select options
@@ -345,10 +356,14 @@ function onsuccess_func(event) {
                     })
                     select_element.innerHTML = change;
                     // console.log(change);
-                    // step2: changing chart label + data && updating
-                    subjects_pass_fail_overview_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
 
-                    subjects_pass_fail_overview_chart.data.datasets[0].data = Object.values(metaData.all_sub).map(obj => obj.failed);
+                    // step2: changing chart label + data && updating
+                    
+                    subjects_pass_fail_overview_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
+                    subjects_pass_fail_overview_chart.data.datasets = [{
+                        data: Object.values(metaData.all_sub).map(obj => obj.failed), // 'failed' is selected 
+                        backgroundColor: GRAPH_BG_COLORS
+                    }];
                     subjects_pass_fail_overview_chart.update();
                 }
             }
