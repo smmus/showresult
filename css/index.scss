@@ -419,9 +419,9 @@ body {
             "m m m m m m c c c c s s"
             "m m m m m m c c c c s s"
             "m m m m m m c c c c s s"
-            "b b b a a a a a a a a a"
-            "b b b a a a a a a a a a"
-            "b b b a a a a a a a a a";
+            "t t t a a a a a a a a a"
+            "t t t a a a a a a a a a"
+            "t t t a a a a a a a a a";
 
         &.overlay {
             pointer-events: none;
@@ -492,7 +492,7 @@ body {
             }
         }
         #overview_total{
-            grid-area: b;
+            grid-area: t;
         }
         #extra{
             grid-area: a;

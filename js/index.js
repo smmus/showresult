@@ -245,7 +245,7 @@ async function main() {
         })
 
         // checkbox event listener
-        document.getElementById('subjects_pass_fail_overview_checkbox').onchange = e => {
+        document.getElementById('overview_secondary_checkbox').onchange = e => {
             let select_element = document.getElementById('overview_secondary_select');
 
             console.log("[CheckBox overview_secondary] :", e.target.checked);
