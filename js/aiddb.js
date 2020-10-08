@@ -133,6 +133,7 @@ function storeMainData(db, store_name, mode, data) {
             header_names : data.split('\n')[0].split(','),
             sub_code_to_name: SUB_CODE_TO_NAME
         };
+        console.log(metaData.header_names)
         for (let i in SUB_CODE_TO_NAME) {
             metaData.all_sub[SUB_CODE_TO_NAME[i]] = {
                 max: 0,
