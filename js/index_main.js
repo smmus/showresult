@@ -37,10 +37,79 @@ for (let i = 0; i < linkCollapse.length; i++) {
 }
 // ------------------------ nav functionality ends -----------------------------
 // ------------------------ some global funcs  -----------------------------
+let firstBy = function () { function n(n) { return n } function t(n) { return "string" == typeof n ? n.toLowerCase() : n } function r(r, e) { if (e = "number" == typeof e ? { direction: e } : e || {}, "function" != typeof r) { var u = r; r = function (n) { return n[u] ? n[u] : "" } } if (1 === r.length) { var i = r, o = e.ignoreCase ? t : n; r = function (n, t) { return o(i(n)) < o(i(t)) ? -1 : o(i(n)) > o(i(t)) ? 1 : 0 } } return -1 === e.direction ? function (n, t) { return -r(n, t) } : r } function e(n, t) { return n = r(n, t), n.thenBy = u, n } function u(n, t) { var u = this; return n = r(n, t), e(function (t, r) { return u(t, r) || n(t, r) }) } return e }();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
 
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+String.prototype.underscrore_to_capitalize = function () {
+    return this.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+String.prototype.to_camel_case = function () {
+    return this.toLowerCase().split(' ').join('_');
+}
 
+function openDb(idb, db_name, db_version, onupgradeneeded_func, onsuccess_func) {
+    // modifies global var
+    console.log("[FUNC openDb]");
+    let req = idb.open(db_name, db_version);
 
+    req.onsuccess = onsuccess_func;
 
+    req.onerror = function (evt) {
+        console.log("[FUNC openDb: ERROR]");
+        console.error(evt.target.errorCode);
+    };
+
+    req.onupgradeneeded = onupgradeneeded_func;
+}
+
+function getObjectStore(db, store_name, mode) {
+    var tx = db.transaction([store_name], mode);
+    tx.oncomplete = function (e) {
+        console.log('[TX CPM :', db.name, store_name, mode, ']');
+    }
+    return tx.objectStore(store_name);
+}
+
+function createRankList(data, header_index) {
+    let rankList = data.split('\n').splice(1).map(line => {
+        let result = line.split(',');
+        // [roll, total, optional, non-optional, name]
+        return [
+            parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
+            parseInt(result[header_index.indexOf('term_total')]),
+            result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
+            result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
+            result[header_index.indexOf('student_name')],
+            result[header_index.indexOf('isPassed')].toLowerCase().includes('failed') ? false : true
+        ]
+    })
+    let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1)
+        .thenBy(function (arr1, arr2) { return arr1[2] - arr2[2]; },)
+        .thenBy(function (arr1, arr2) { return arr1[3] - arr2[3]; }, -1);
+    //1. who has the higher marks (desc)
+    //2. if marks same? who has low in optional_sub  (asc)
+    //3. if both marks same? who has high in non_optional_sub (desc)
+
+    rankList.sort(sortingFunc);
+
+    console.log('[RANK LIST -]')
+    console.log(rankList)
+
+    let objStoreRank = getObjectStore(db, OBJ_STORE_RANK, 'readwrite');
+    rankList.forEach((arr, index) => {
+        objStoreRank.add({
+            rank: index + 1,
+            name: arr[4],
+            roll: arr[0],
+            total: arr[1],
+            isPassed: arr[5], //boolean
+            data: arr.slice(2, 4) //2 & 3rd index
+        })
+    })
+    // todo: update the main list instead of creating new objStore.
+}
 // ------------------------ some global funcs ends -----------------------------
 // ------------------------ main fetching starts ------------------------------
 // for overview
@@ -59,7 +128,6 @@ const ROLL_SLICE = 10;
 const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
 const GRAPH_BG_COLORS = ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5', '#FF9F40', '#9AD0F5', '#FFCD56'];
 
-let IS_CREATED = false;
 let db;
 
 window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -69,7 +137,7 @@ if (!window.indexedDB) {
     //return;
 }
 
-db = await openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func);
+openDb(window.indexedDB, DB_NAME, DB_VERSION, onupgradeneeded_func, onsuccess_func);
 
 function onsuccess_func(event) {
     /* sets GLOBAL VAR `db` */
