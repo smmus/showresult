@@ -383,7 +383,8 @@ function onsuccess_func(event) {
                         backgroundColor: 'rgba(89, 127, 255,0.1)',
                         borderColor: '#5A7BFA',
                         borderWidth: 1,
-                        fill: 'origin' || GRADES.indexOf('f')
+                        hidden: grade=='promoted', // promoted will be hidden by default
+                        fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
                     }));
                     // console.log(this.labels)
                     // console.log(this.datasets)
@@ -414,7 +415,7 @@ function onsuccess_func(event) {
                 if (e.target.checked) {
                     // step1: changing labels arr (x-axis)
                     let new_labels = subjects_grade_overview_chart.data.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted');
-                    console.log(new_labels)
+                    // console.log(new_labels)
                     // step2: changing main datasets for new data
                     let new_datatsets = subjects_grade_overview_chart.data.labels.map((label, i) => ({ //label=sub_name
                         label,
@@ -448,7 +449,8 @@ function onsuccess_func(event) {
                        backgroundColor: 'rgba(89, 127, 255,0.1)',
                        borderColor: '#5A7BFA',
                        borderWidth: 1,
-                       fill: 'origin' || GRADES.indexOf('f')
+                       hidden: grade=='promoted', // promoted will be hidden by default
+                       fill: 'origin' || GRADES.indexOf('f') // [TODO]
                     }));
                 }
                 subjects_grade_overview_chart.update();
