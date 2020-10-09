@@ -318,6 +318,10 @@ function updateMainUi(metaData) {
                         suggestedMax: 100
                     }
                 }]
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true
             }
         }
     });
@@ -328,17 +332,14 @@ function updateMainUi(metaData) {
         console.log("[CheckBox overview_main] :", e.target.checked);
 
         if (e.target.checked) {
-
-            // updating chart
+            // updating data
             overview_main_chart.data = overview_main_chart_data_after;
-            overview_main_chart.update();
-            return;
+        }else{
+            // else do the same think while loading the page
+            overview_main_chart.data = overview_main_chart_data_before;
         }
-        // else do the same think while loading the page
-        // [TODO] : create a function not to repeating same code
+        //! [ERROR]: ANimation is not working while changing data 
 
-        // copied from above
-        overview_main_chart.data = overview_main_chart_data_before;
         overview_main_chart.update();
 
     }
