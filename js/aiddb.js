@@ -299,8 +299,8 @@ function updateMainUi(metaData) {
             fill: 'origin'
         }))
     }
-    console.log('before', overview_main_chart_data_before)
-    console.log('after', overview_main_chart_data_after)
+    console.log('before', overview_main_chart_data_before);
+    console.log('after', overview_main_chart_data_after);
     let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
         type: 'line',
         data: overview_main_chart_data_before,
@@ -325,6 +325,8 @@ function updateMainUi(metaData) {
             }
         }
     });
+
+    console.log('chart', overview_main_chart)
     // elevent listener of subjects_grade_overview_checkbox
     document.getElementById('overview_main_checkbox').onchange = e => {
         // this change axis is defferent from the other one (not like the pie)
