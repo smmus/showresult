@@ -138,7 +138,7 @@ async function main() {
         document.querySelector('#overview_secondary .header').lastElementChild.remove();
         // editing text
         document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
-        document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph' 
+        document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph'
         document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
 
         let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
@@ -151,15 +151,18 @@ async function main() {
                 return an obj forEach line ([max, student_result, min, passmark(nofill)])
                 data => array (1 element forEach sub_name) (len=lenof labels)
                 */
-                datasets: all_students_results.map((result, i) => ({
-                    label: result.name,
-                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
-                    backgroundColor: GRAPH_BG_COLORS[i],
-                    borderColor: GRAPH_BG_COLORS[i].slice(0 ,GRAPH_BG_COLORS[i].length-2),
-                    borderWidth: 1,
-                    hidden: false, 
-                    fill: false
-                }))
+                datasets: all_students_results.map((result, i) => {
+                    let random_color = GRAPH_BG_COLORS[Math.floor(Math.random() * GRAPH_BG_COLORS.length)];
+                    return {
+                        label: result.name,
+                        data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
+                        backgroundColor: random_color,
+                        borderColor: random_color.slice(0, random_color.length - 2),
+                        borderWidth: 1,
+                        hidden: false,
+                        fill: false
+                    }
+                })
             },
             options: {
                 aspectRatio: 2,
@@ -180,7 +183,7 @@ async function main() {
         // checkbox event listenaer
         document.getElementById('overview_main_checkbox').onclick = e => {
             console.log('[CHECKBOX MAIN]:', e.target.checked)
-            
+
             if (!e.target.checked) overview_main_chart.config.type = 'bar';
             else overview_main_chart.config.type = 'line';
 
@@ -195,13 +198,13 @@ async function main() {
             type: 'polarArea',
             data: {
                 /** labels are the students name */
-                labels: all_students_results.map(res=>res.name),
+                labels: all_students_results.map(res => res.name),
                 /*array of objects 
                 return an obj forEach line ([max, student_result, min, passmark(nofill)])
                 data => array (1 element forEach sub_name) (len=lenof labels)
                 */
                 datasets: [{
-                    data: all_students_results.map(res=>res.res[metaData.header_names.indexOf('term_total')]),
+                    data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
                     backgroundColor: GRAPH_BG_COLORS
                 }]
             },

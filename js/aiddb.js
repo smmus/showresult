@@ -519,11 +519,11 @@ function view_specific_result(metaData, response){
                 `).join('')}
                 <tr style="background-color: #59B899;color: #F4F5F8">
                     <td colspan="2"><b>Total</b></td>
-                    <td colspan="${fields.length - 2}" style="text-align: right"><b>${response.res[23]}</b></td>
+                    <td colspan="${fields.length - 2}" style="text-align: right"><b>${response.res[metaData.header_names.indexOf('term_total')]}</b></td>
                 </tr>
                 <tr>
-                    <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') || metaData.header_names.indexOf('grade')]}</td>
-                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[27]}</b></td>
+                    <td colspan="2">${response.res[metaData.header_names.indexOf('gpa')==-1 ? metaData.header_names.indexOf('grade') : metaData.header_names.indexOf('gpa')]}</td>
+                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[metaData.header_names.indexOf('isPassed')]}</b></td>
                 </tr>
             </tbody>
         </table>`;
@@ -604,16 +604,5 @@ function view_specific_result(metaData, response){
 
     /**step: 4 ; DOM manupulation*/
     // deleteing svg image
-    document.querySelector('#search').removeChild(document.querySelector('#search .img'));
-    // adding compare btn
-    let newDiv= document.createElement('div');
-    newDiv.style.textAlign = 'center';
-    let newBtn = document.createElement('button');
-    newBtn.innerText = 'COMPARE';
-    newBtn.id = 'compare_result';
-    newBtn.classList.add("hover-expand");
-    newDiv.appendChild(newBtn)
-    document.querySelector('#search').appendChild(newDiv)
-    //adding elent listener to all
-    search_compare_event_listener();
+    document.querySelector('#search .img').remove();
 }
