@@ -39,8 +39,8 @@ for (let i = 0; i < linkCollapse.length; i++) {
 // ------------------------ global vars ends -----------------------------
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
-const STD_ROLL = new URLSearchParams(window.location.search).get('r') && new URLSearchParams(window.location.search).get('r').split('-').map(e=>parseInt(e)); // array of rolls(int)
-console.log('STD_ROLL', STD_ROLL);
+const STD_ROLLS = new URLSearchParams(window.location.search).get('r') && new URLSearchParams(window.location.search).get('r').split('-').map(e => parseInt(e)); // array of rolls(int)
+console.log('STD_ROLLS', STD_ROLLS);
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
 const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('s'); // serial
 const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
@@ -49,7 +49,7 @@ const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const DB_VERSION = 1;
 const MAIN_ROLL_DIGITS = parseInt(new URLSearchParams(window.location.search).get('mr'));
-const GRAPH_BG_COLORS = ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5', '#FF9F40', '#9AD0F5', '#FFCD56'];
+const GRAPH_BG_COLORS = ['#EF53504D', '#BA68C84D', '#64B5F64D', '#81C7844D', '#4DD0E14D', '#FFAB914D', '#FFB74D4D', '#B0BEC54D', '#9FA8DA4D', '#FFAB914D'];
 const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
 const SUB_CODE_TO_NAME = {
     '101': 'bangla_1st',
@@ -109,24 +109,121 @@ async function main() {
         let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0);
 
         /** update main ui (overview of full res) if std is not searching for specific roll **/
-        if (!STD_ROLL) {
+        if (!STD_ROLLS) {
             updateMainUi(metaData);
             return;
         }
 
         /* else show secific res if student passes only 1 roll */
-        if(STD_ROLL.length == 1){
-            response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLL[0]));
+        if (STD_ROLLS.length == 1) {
+            response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLLS[0]));
             view_specific_result(metaData, response);
             return;
         }
         /* else show COMPARE result if student passes more than 1 roll */
+        /*step 1: get all their result*/
+        let all_students_results = [];
+        for (let roll of STD_ROLLS) {
+            response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
+            all_students_results.push(response);
+        }
+        /*step 2: draw in the main graph */
+        // removing last 2 child
+        document.querySelector('#overview_main .header').removeChild(document.querySelector('#overview_main .header').lastElementChild);
+        document.querySelector('#overview_main .header').removeChild(document.querySelector('#overview_main .header').lastElementChild);
+        // editing text
+        document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
+        document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Bar Graph' 
 
-        
+        let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
+        let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
+            type: 'bar',
+            data: {
+                /** labels are the subjects name */
+                labels: all_subjects_name,
+                /*array of objects 
+                return an obj forEach line ([max, student_result, min, passmark(nofill)])
+                data => array (1 element forEach sub_name) (len=lenof labels)
+                */
+                datasets: all_students_results.map((result, i) => ({
+                    label: result.name,
+                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
+                    backgroundColor: GRAPH_BG_COLORS[i],
+                    borderColor: GRAPH_BG_COLORS[i].slice(0 ,GRAPH_BG_COLORS[i].length-2),
+                    borderWidth: 1,
+                    hidden: false, 
+                    fill: false
+                }))
+            },
+            options: {
+                aspectRatio: 2,
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            labelString: 'Total Number',
+                            display: true,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            suggestedMax: 100
+                        }
+                    }]
+                }
+            }
+        });
+        // checkbox event listenaer
+        document.getElementById('overview_main_checkbox').onclick = e => {
+            console.log('[CHECKBOX MAIN]:', e.target.checked)
+            
+            if (!e.target.checked) overview_main_chart.config.type = 'bar';
+            else overview_main_chart.config.type = 'line';
+
+            overview_main_chart.update();
+            /** after some research I find out that --> `chart.type` wont work like `chart.data`. use `chart.confog.type` */
+            // console.log('updated', overview_main_chart.type)
+            // console.log('updated', overview_main_chart.config)
+        }
+        /*step 3: draw in the secondary graph */
+        let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
+            type: 'bar',
+            data: {
+                /** labels are the subjects name */
+                labels: all_subjects_name,
+                /*array of objects 
+                return an obj forEach line ([max, student_result, min, passmark(nofill)])
+                data => array (1 element forEach sub_name) (len=lenof labels)
+                */
+                datasets: all_students_results.map((result, i) => ({
+                    label: result.name,
+                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
+                    backgroundColor: GRAPH_BG_COLORS[i],
+                    borderColor: GRAPH_BG_COLORS[i].slice(0 ,GRAPH_BG_COLORS[i].length-2),
+                    borderWidth: 1,
+                    hidden: false, 
+                    fill: false
+                }))
+            },
+            options: {
+                aspectRatio: 1.7,
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            labelString: 'Total Number',
+                            display: true,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            suggestedMax: 100
+                        }
+                    }]
+                }
+            }
+        });
+
+
+
+        console.log('ALL RESULT', all_students_results);
         console.log('done');
-
-
-
 
     } catch (error) {
         console.error(error);
