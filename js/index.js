@@ -133,7 +133,7 @@ async function main() {
         document.querySelector('#overview_main .header').removeChild(document.querySelector('#overview_main .header').lastElementChild);
         // editing text
         document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
-        document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Bar Graph' 
+        document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph' 
 
         let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
         let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
@@ -184,38 +184,25 @@ async function main() {
             // console.log('updated', overview_main_chart.config)
         }
         /*step 3: draw in the secondary graph */
+        /* thsi graph shows per students total mark */
         let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
-            type: 'bar',
+            type: 'polarArea',
             data: {
-                /** labels are the subjects name */
-                labels: all_subjects_name,
+                /** labels are the students name */
+                labels: all_students_results.map(res=>res.name),
                 /*array of objects 
                 return an obj forEach line ([max, student_result, min, passmark(nofill)])
                 data => array (1 element forEach sub_name) (len=lenof labels)
                 */
-                datasets: all_students_results.map((result, i) => ({
-                    label: result.name,
-                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
-                    backgroundColor: GRAPH_BG_COLORS[i],
-                    borderColor: GRAPH_BG_COLORS[i].slice(0 ,GRAPH_BG_COLORS[i].length-2),
-                    borderWidth: 1,
-                    hidden: false, 
-                    fill: false
-                }))
+                datasets: [{
+                    data: all_students_results.map(res=>res.res[metaData.header_names.indexOf('term_total')]),
+                    backgroundColor: GRAPH_BG_COLORS
+                }]
             },
             options: {
-                aspectRatio: 1.7,
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            labelString: 'Total Number',
-                            display: true,
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            suggestedMax: 100
-                        }
-                    }]
+                aspectRatio: 1.5,
+                legend: {
+                    position: 'right'
                 }
             }
         });
