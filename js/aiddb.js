@@ -240,8 +240,8 @@ function search_result(roll, name) {
 
     if (roll && parseInt(roll) && parseInt(roll) > 0) {
         /**search via roll */
-        if(!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
-        else window.location.search = window.location.search.split('&').map(e=>e.includes('roll=') ? `roll=${roll}` : e).join('&');
+        if (!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
+        else window.location.search = window.location.search.split('&').map(e => e.includes('roll=') ? `roll=${roll}` : e).join('&');
     }
     else {
         /**search via name */
@@ -256,8 +256,8 @@ function compare_result(roll, name) {
 
     if (roll && parseInt(roll) && parseInt(roll) > 0) {
         /**search via roll */
-        if(!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
-        else window.location.search = window.location.search.split('&').map(e=>e.includes('roll=') ? e+"-"+roll : e).join('&')
+        if (!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
+        else window.location.search = window.location.search.split('&').map(e => e.includes('roll=') ? e + "-" + roll : e).join('&')
     }
     else {
         /**search via name */
@@ -269,27 +269,41 @@ function updateMainUi(metaData) {
     /** charts */
 
     /** ============================================= main chart starts =============================================== */
+    let overview_main_chart_data_before = new function () {
+        /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
+        this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
+        /*array of objects 
+                return an obj forEach line (GRADES)
+                data => array (1 element forEach sub_name) (len=lenof labels)
+        */
+        this.datasets = GRADES.map(grade => ({
+            label: grade.underscrore_to_capitalize(),
+            data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
+            backgroundColor: 'rgba(89, 127, 255,0.1)',
+            borderColor: '#5A7BFA',
+            borderWidth: 1,
+            hidden: grade == 'promoted' || grade == 'f' || grade == 'no_result', // promoted,f,no_result will be hidden by default
+            fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
+        }));
+        // console.log(this.labels)
+        // console.log(this.datasets)
+    }
+    let overview_main_chart_data_after = new function (){
+        this.labels =  overview_main_chart_data_before.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted'),
+        this.datasets =  overview_main_chart_data_before.labels.map((label, i) => ({ //label=sub_name
+            label,
+            data: this.labels.map((e, i) => metaData.all_sub[label.to_camel_case()][e.to_camel_case()]),
+            backgroundColor: 'rgba(89, 127, 255, 0.1)',
+            borderColor: '#5A7BFA',
+            borderWidth: 1,
+            fill: 'origin'
+        }))
+    }
+    console.log('before', overview_main_chart_data_before)
+    console.log('after', overview_main_chart_data_after)
     let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
         type: 'line',
-        data: new function () {
-            /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-            this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-            /*array of objects 
-                    return an obj forEach line (GRADES)
-                    data => array (1 element forEach sub_name) (len=lenof labels)
-            */
-            this.datasets = GRADES.map(grade => ({
-                label: grade.underscrore_to_capitalize(),
-                data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
-                backgroundColor: 'rgba(89, 127, 255,0.1)',
-                borderColor: '#5A7BFA',
-                borderWidth: 1,
-                hidden: grade == 'promoted' || grade == 'f' || grade == 'no_result', // promoted,f,no_result will be hidden by default
-                fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
-            }));
-            // console.log(this.labels)
-            // console.log(this.datasets)
-        },
+        data: overview_main_chart_data_before,
         options: {
             aspectRatio: 2,
             maintainAspectRatio: true, //default: true
@@ -297,7 +311,7 @@ function updateMainUi(metaData) {
                 yAxes: [{
                     scaleLabel: {
                         labelString: 'Total Students',
-                        display: false,
+                        display: true,
                     },
                     ticks: {
                         beginAtZero: true,
@@ -314,22 +328,9 @@ function updateMainUi(metaData) {
         console.log("[CheckBox overview_main] :", e.target.checked);
 
         if (e.target.checked) {
-            // step1: changing labels arr (x-axis)
-            let new_labels = overview_main_chart.data.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted');
-            // console.log(new_labels)
-            // step2: changing main datasets for new data
-            let new_datatsets = overview_main_chart.data.labels.map((label, i) => ({ //label=sub_name
-                label,
-                data: new_labels.map((e, i) => metaData.all_sub[label.to_camel_case()][e.to_camel_case()]),
-                backgroundColor: 'rgba(89, 127, 255, 0.1)',
-                borderColor: '#5A7BFA',
-                borderWidth: 1,
-                fill: 'origin'
-            }))
 
             // updating chart
-            overview_main_chart.data.labels = new_labels;
-            overview_main_chart.data.datasets = new_datatsets;
+            overview_main_chart.data = overview_main_chart_data_after;
             overview_main_chart.update();
             return;
         }
@@ -337,25 +338,13 @@ function updateMainUi(metaData) {
         // [TODO] : create a function not to repeating same code
 
         // copied from above
-        overview_main_chart.data = new function () {
-            /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-            this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-            /*array of objects 
-            return an obj forEach line (GRADES)
-            data => array (1 element forEach sub_name) (len=lenof labels)
-            */
-            this.datasets = GRADES.map(grade => ({
-                label: grade.underscrore_to_capitalize(),
-                data: this.labels.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
-                backgroundColor: 'rgba(89, 127, 255,0.1)',
-                borderColor: '#5A7BFA',
-                borderWidth: 1,
-                hidden: grade == 'promoted' || grade == 'f' || grade == 'no_result', // promoted,f,no_result will be hidden by default
-                fill: 'origin' || GRADES.indexOf('f') // [TODO: fix it]
-            }));
-        }
+        overview_main_chart.data = overview_main_chart_data_before;
         overview_main_chart.update();
 
+    }
+    /** mark overview  button event listener **/
+    document.querySelector('#overview_main .header button').onclick = e => {
+        e.target.textContent = e.target.textContent.toLowerCase().includes('mark') ? 'grade overview' : 'mark overview';
     }
     /** ============================================= main chart ends ============================================= */
     /** ============================================= secondary chart starts ============================================= */
@@ -490,7 +479,7 @@ function search_compare_event_listener() {
     document.querySelector('.colg_name').textContent = (DB_NAME == 'rc') ? "RAJSHAHI COLLEGE" : "DHAKA COLLEGE";
 }
 
-function view_specific_result(metaData, response){
+function view_specific_result(metaData, response) {
 
     let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1].toUpperCase())
     let fields = ['Subject Code', 'Subject Name', ...per_sub_fields, 'Exam Highest']
@@ -522,7 +511,7 @@ function view_specific_result(metaData, response){
                     <td colspan="${fields.length - 2}" style="text-align: right"><b>${response.res[metaData.header_names.indexOf('term_total')]}</b></td>
                 </tr>
                 <tr>
-                    <td colspan="2">${response.res[metaData.header_names.indexOf('gpa')==-1 ? metaData.header_names.indexOf('grade') : metaData.header_names.indexOf('gpa')]}</td>
+                    <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') == -1 ? metaData.header_names.indexOf('grade') : metaData.header_names.indexOf('gpa')]}</td>
                     <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[metaData.header_names.indexOf('isPassed')]}</b></td>
                 </tr>
             </tbody>
@@ -541,8 +530,8 @@ function view_specific_result(metaData, response){
     /**step:1 expanding area for line graph */
     document.body.style.height = '120vh';
     // document.getElementById('main-container').style.gridTemplate = 
-    document.getElementById('main-container').style.gridTemplateAreas = 
-    '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a"';
+    document.getElementById('main-container').style.gridTemplateAreas =
+        '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a"';
     /**step:2 drawing line graph in that area */
     let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
         type: 'line',
@@ -557,10 +546,10 @@ function view_specific_result(metaData, response){
                 label: grade.underscrore_to_capitalize(),
                 data: grade == response.name ? std_marks_per_sub : all_subjects_name.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
                 backgroundColor: grade == 'min' ? 'rgba(253, 111, 113,.3)' : 'rgba(89, 127, 255,0.1)',
-                borderColor: grade=='min'? 'rgb(253, 111, 113)' : '#5A7BFA',
+                borderColor: grade == 'min' ? 'rgb(253, 111, 113)' : '#5A7BFA',
                 borderWidth: 1,
                 hidden: grade == 'promoted' || grade == 'f' || grade == 'no_result', // promoted,f,no_result will be hidden by default
-                fill: grade != 'max' && (grade=='min' ? 'origin' : 2) // if grade=='max' then --> no fill, else fill to 'origin'
+                fill: grade != 'max' && (grade == 'min' ? 'origin' : 2) // if grade=='max' then --> no fill, else fill to 'origin'
             }))
         },
         options: {
