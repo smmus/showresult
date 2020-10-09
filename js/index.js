@@ -39,7 +39,7 @@ for (let i = 0; i < linkCollapse.length; i++) {
 // ------------------------ global vars ends -----------------------------
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
-const STD_ROLLS = new URLSearchParams(window.location.search).get('r') && new URLSearchParams(window.location.search).get('r').split('-').map(e => parseInt(e)); // array of rolls(int)
+const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
 console.log('STD_ROLLS', STD_ROLLS);
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
 const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('s'); // serial
@@ -105,6 +105,9 @@ async function main() {
 
         /**if all data is in db -- show overview */
 
+        /** global event listener */
+        search_compare_event_listener()
+
         /**fetching from db */
         let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0);
 
@@ -129,11 +132,14 @@ async function main() {
         }
         /*step 2: draw in the main graph */
         // removing last 2 child
-        document.querySelector('#overview_main .header').removeChild(document.querySelector('#overview_main .header').lastElementChild);
-        document.querySelector('#overview_main .header').removeChild(document.querySelector('#overview_main .header').lastElementChild);
+        document.querySelector('#overview_main .header').lastElementChild.remove();
+        document.querySelector('#overview_main .header').lastElementChild.remove();
+        document.querySelector('#overview_secondary').lastElementChild.remove();
+        document.querySelector('#overview_secondary .header').lastElementChild.remove();
         // editing text
         document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
         document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph' 
+        document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
 
         let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
         let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
@@ -200,7 +206,7 @@ async function main() {
                 }]
             },
             options: {
-                aspectRatio: 1.5,
+                aspectRatio: 1.2,
                 legend: {
                     position: 'right'
                 }

@@ -240,13 +240,14 @@ function search_result(roll, name) {
 
     if (roll && parseInt(roll) && parseInt(roll) > 0) {
         /**search via roll */
-        window.location.search = `${window.location.search}&r=${roll}`
+        if(!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
+        else window.location.search = window.location.search.split('&').map(e=>e.includes('roll=') ? `roll=${roll}` : e).join('&');
     }
     else {
         /**search via name */
     }
 }
-/**=================== search result func ================= */
+/**=================== compare result func ================= */
 function compare_result(roll, name) {
     console.log('[SUBMIT]')
     if (!roll && !name) {
@@ -255,7 +256,8 @@ function compare_result(roll, name) {
 
     if (roll && parseInt(roll) && parseInt(roll) > 0) {
         /**search via roll */
-        window.location.search = `${window.location.search}&r=${roll}`
+        if(!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
+        else window.location.search = window.location.search.split('&').map(e=>e.includes('roll=') ? e+"-"+roll : e).join('&')
     }
     else {
         /**search via name */
@@ -481,8 +483,8 @@ function search_compare_event_listener() {
     let submit_btn_element = document.getElementById('search_result');
     let compare_btn_element = document.getElementById('compare_result');
 
-    if (submit_btn_element) submit_btn_element.onclick = e => search_result(roll_element.value, name_element.value);
-    if (compare_btn_element) compare_btn_element.onclick = e => compare_result(roll_element.value, name_element.value);
+    if (submit_btn_element) submit_btn_element.onclick = e => search_result(roll_element && roll_element.value, name_element && name_element.value);
+    if (compare_btn_element) compare_btn_element.onclick = e => compare_result(roll_element && roll_element.value, name_element && name_element.value);
 
     /** ============================ update collge name ========================= */
     document.querySelector('.colg_name').textContent = (DB_NAME == 'rc') ? "RAJSHAHI COLLEGE" : "DHAKA COLLEGE";
