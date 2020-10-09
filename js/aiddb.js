@@ -21,7 +21,7 @@ function createRankList(db, store_name, data, header_index) {
             let result = line.split(',');
             // [roll, total, optional, non-optional, name]
             return [
-                parseInt(result[header_index.indexOf('student_roll')].slice(ROLL_SLICE)),
+                parseInt(result[header_index.indexOf('student_roll')].slice(this.length - MAIN_ROLL_DIGITS)),
                 parseInt(result[header_index.indexOf('term_total')]),
                 result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
                 result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
@@ -130,7 +130,7 @@ function storeMainData(db, store_name, mode, data) {
             total_examnee: 0,
             failed_examnee: 0,
             all_sub: {},
-            header_names : data.split('\n')[0].split(','),
+            header_names: data.split('\n')[0].split(','),
             sub_code_to_name: SUB_CODE_TO_NAME
         };
         console.log(metaData.header_names)
@@ -167,22 +167,28 @@ function storeMainData(db, store_name, mode, data) {
 
         let name_index = header_names.indexOf('student_name');
         let roll_index = header_names.indexOf('student_roll');
-        let rank_index = header_names.indexOf('rank')==-1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank'); 
+        let rank_index = header_names.indexOf('rank') == -1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank');
         /** if rank is the last field (so last element of the arr) it will be 'rank\r' chrome doesn't show it, firefox does. wasted 1h :( */
         let pass_index = header_names.indexOf('isPassed');
+
+        /**storing the main roll */
+        let is_main_roll_stored = false;
+
         data.split('\n').splice(1).forEach(line => { // header row not needed so splice(1)
             let result = line.split(',');
 
             let name = result[name_index];
+            if (!name) return; // no student exists
 
-            if (!name) return;
+            let roll = parseInt(result[roll_index].slice(this.length - MAIN_ROLL_DIGITS));
 
             metaData['total_examnee']++;
+            if (!is_main_roll_stored) metaData['main_roll'] = parseInt(result[roll_index]) - roll;
 
             if (result[pass_index].includes('ailed')) metaData['failed_examnee']++; // don't wannna .toLowerCase() :)
 
             let obj = {
-                roll: parseInt(result[roll_index].slice(ROLL_SLICE)),
+                roll,
                 name: name,
                 res: result.map(e => !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
             }
@@ -225,9 +231,23 @@ function storeMainData(db, store_name, mode, data) {
         obj_store.add({ roll: 0, rank: 0, metaData });
     })
 }
-
 /**=================== search result func ================= */
 function search_result(roll, name) {
+    console.log('[SUBMIT]')
+    if (!roll && !name) {
+        throw Error('No Input');
+    }
+
+    if (roll && parseInt(roll) && parseInt(roll) > 0) {
+        /**search via roll */
+        window.location.search = `${window.location.search}&r=${roll}`
+    }
+    else {
+        /**search via name */
+    }
+}
+/**=================== search result func ================= */
+function compare_result(roll, name) {
     console.log('[SUBMIT]')
     if (!roll && !name) {
         throw Error('No Input');
@@ -450,11 +470,148 @@ function updateMainUi(metaData) {
     document.getElementById('total_failed').innerText += metaData.failed_examnee;
     /** ============================================= overview_total chart ends ============================================= */
     /** ============================================= search roll func ============================================= */
-    let roll_element = document.getElementById('std_roll')
-    let name_element = document.getElementById('std_name')
-    let submit_btn_element = document.getElementById('search_result')
+    search_compare_event_listener()
+}
 
-    submit_btn_element.onclick = e => search_result(roll_element.value, name_element.value);
-    /** ============================================= collge name ============================================= */
+
+function search_compare_event_listener() {
+
+    let roll_element = document.getElementById('std_roll');
+    let name_element = document.getElementById('std_name');
+    let submit_btn_element = document.getElementById('search_result');
+    let compare_btn_element = document.getElementById('compare_result');
+
+    if (submit_btn_element) submit_btn_element.onclick = e => search_result(roll_element.value, name_element.value);
+    if (compare_btn_element) compare_btn_element.onclick = e => compare_result(roll_element.value, name_element.value);
+
+    /** ============================ update collge name ========================= */
     document.querySelector('.colg_name').textContent = (DB_NAME == 'rc') ? "RAJSHAHI COLLEGE" : "DHAKA COLLEGE";
+}
+
+function view_specific_result(metaData, response){
+
+    let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1].toUpperCase())
+    let fields = ['Subject Code', 'Subject Name', ...per_sub_fields, 'Exam Highest']
+    // console.log('h_names', metaData.header_names)
+    console.log('fields', fields);
+    console.log('response', response);
+
+    /** displaying result in table */
+    let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
+            <tbody>
+                <tr>
+                    <td colspan="${fields.length}"><b>Exam Name: </b>20-Aug-2020 To 12-Sep-2020&nbsp;&nbsp;&nbsp;Year Final Exam (1st
+                        Year&nbsp;&nbsp;&nbsp;HSC - Science&nbsp;&nbsp;&nbsp; Session :2019-2020)</td>
+                </tr>
+                <tr style="background-color: #59B899;color: #F4F5F8">
+                    ${fields.map(e => `<td><b>${e}</b></td>`).join('')}
+                </tr>
+                ${Object.keys(metaData.sub_code_to_name).map(sub_code => `
+                    <tr>
+                        <td>${sub_code}</td>
+                        <td>${metaData.sub_code_to_name[sub_code].underscrore_to_capitalize()}</td>
+                        ${per_sub_fields.map(e => `<td>${response.res[metaData.header_names.indexOf(metaData.sub_code_to_name[sub_code] + '_' + e.to_camel_case())] || '0'}</td>`).join('')}
+                        <td>${metaData.all_sub[metaData.sub_code_to_name[sub_code]].max}</td>
+
+                    </tr>
+                `).join('')}
+                <tr style="background-color: #59B899;color: #F4F5F8">
+                    <td colspan="2"><b>Total</b></td>
+                    <td colspan="${fields.length - 2}" style="text-align: right"><b>${response.res[23]}</b></td>
+                </tr>
+                <tr>
+                    <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') || metaData.header_names.indexOf('grade')]}</td>
+                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[27]}</b></td>
+                </tr>
+            </tbody>
+        </table>`;
+    document.querySelector('#overview_main .canvas').innerHTML = tableData;
+    document.querySelector('#overview_main .header').innerHTML = `<span>Name: ${response.name}</span><span>Roll: ${metaData.main_roll + response.roll}</span>`;
+    document.querySelector('#overview_main .footer').innerHTML = `<button class="hover-expand v-s">RANK: ${response.rank + " (Out of " + metaData.total_examnee + ")"}</button>`;
+    // console.log(tableData)
+
+    /** displaying result in graph:  */
+
+    /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
+    let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
+    let std_marks_per_sub = all_subjects_name.map(sub_name => response.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]);
+
+    /**step:1 expanding area for line graph */
+    document.body.style.height = '120vh';
+    // document.getElementById('main-container').style.gridTemplate = 
+    document.getElementById('main-container').style.gridTemplateAreas = 
+    '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a"';
+    /**step:2 drawing line graph in that area */
+    let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
+        type: 'line',
+        data: {
+            /** labels are the subjects name */
+            labels: all_subjects_name,
+            /*array of objects 
+            return an obj forEach line ([max, student_result, min, passmark(nofill)])
+            data => array (1 element forEach sub_name) (len=lenof labels)
+            */
+            datasets: ['max', response.name, 'min'].map(grade => ({
+                label: grade.underscrore_to_capitalize(),
+                data: grade == response.name ? std_marks_per_sub : all_subjects_name.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
+                backgroundColor: grade == 'min' ? 'rgba(253, 111, 113,.3)' : 'rgba(89, 127, 255,0.1)',
+                borderColor: grade=='min'? 'rgb(253, 111, 113)' : '#5A7BFA',
+                borderWidth: 1,
+                hidden: grade == 'promoted' || grade == 'f' || grade == 'no_result', // promoted,f,no_result will be hidden by default
+                fill: grade != 'max' && (grade=='min' ? 'origin' : 2) // if grade=='max' then --> no fill, else fill to 'origin'
+            }))
+        },
+        options: {
+            aspectRatio: 2,
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        labelString: 'Total Number',
+                        display: true,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        suggestedMax: 100
+                    }
+                }]
+            }
+        }
+    });
+    /**step:3 drawing line graph in that area */
+    new Chart(document.getElementById('overview_total_canvas').getContext('2d'), {
+        type: 'polarArea',
+        data: {
+            /** labels are the subjects name */
+            labels: all_subjects_name,
+            /*array of objects 
+            return an obj forEach line ([max, student_result, min, passmark(nofill)])
+            data => array (1 element forEach sub_name) (len=lenof labels)
+            */
+            datasets: [{
+                data: std_marks_per_sub,
+                backgroundColor: GRAPH_BG_COLORS
+            }]
+        },
+        options: {
+            aspectRatio: 1.5,
+            legend: {
+                position: 'right'
+            }
+        }
+    });
+
+    /**step: 4 ; DOM manupulation*/
+    // deleteing svg image
+    document.querySelector('#search').removeChild(document.querySelector('#search .img'));
+    // adding compare btn
+    let newDiv= document.createElement('div');
+    newDiv.style.textAlign = 'center';
+    let newBtn = document.createElement('button');
+    newBtn.innerText = 'COMPARE';
+    newBtn.id = 'compare_result';
+    newBtn.classList.add("hover-expand");
+    newDiv.appendChild(newBtn)
+    document.querySelector('#search').appendChild(newDiv)
+    //adding elent listener to all
+    search_compare_event_listener();
 }

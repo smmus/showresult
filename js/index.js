@@ -39,7 +39,8 @@ for (let i = 0; i < linkCollapse.length; i++) {
 // ------------------------ global vars ends -----------------------------
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
-const STD_ROLL = new URLSearchParams(window.location.search).get('r');
+const STD_ROLL = new URLSearchParams(window.location.search).get('r') && new URLSearchParams(window.location.search).get('r').split('-').map(e=>parseInt(e)); // array of rolls(int)
+console.log('STD_ROLL', STD_ROLL);
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
 const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('s'); // serial
 const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
@@ -47,7 +48,7 @@ const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
 const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const DB_VERSION = 1;
-const ROLL_SLICE = 10;
+const MAIN_ROLL_DIGITS = parseInt(new URLSearchParams(window.location.search).get('mr'));
 const GRAPH_BG_COLORS = ['#FFCD56', 'rgb(253, 111, 113)', '#36A2EB', '#48E98A', '#5A7BFA', '#FF9F40', '#9AD0F5', '#FF9F40', '#9AD0F5', '#FFCD56'];
 const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
 const SUB_CODE_TO_NAME = {
@@ -113,48 +114,18 @@ async function main() {
             return;
         }
 
-        /*else show secific res*/
-        response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLL));
-        let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1].toUpperCase())
-        let fields = ['Subject Code', 'Subject Name', ...per_sub_fields, 'Exam Highest']
-        // console.log('h_names', metaData.header_names)
-        console.log('fields', fields);
-        console.log('response', response);
+        /* else show secific res if student passes only 1 roll */
+        if(STD_ROLL.length == 1){
+            response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLL[0]));
+            view_specific_result(metaData, response);
+            return;
+        }
+        /* else show COMPARE result if student passes more than 1 roll */
 
-        let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
-                <tbody>
-                    <tr>
-                        <td colspan="${fields.length}"><b>Exam Name: </b>20-Aug-2020 To 12-Sep-2020&nbsp;&nbsp;&nbsp;Year Final Exam (1st
-                            Year&nbsp;&nbsp;&nbsp;HSC - Science&nbsp;&nbsp;&nbsp; Session :2019-2020)</td>
-                    </tr>
-                    <tr style="background-color: #59B899;color: #F4F5F8">
-                        ${fields.map(e => `<td><b>${e}</b></td>`).join('')}
-                    </tr>
-                    ${Object.keys(metaData.sub_code_to_name).map(sub_code => `
-                        <tr>
-                            <td>${sub_code}</td>
-                            <td>${metaData.sub_code_to_name[sub_code].underscrore_to_capitalize()}</td>
-                            ${per_sub_fields.map(e => `<td>${response.res[metaData.header_names.indexOf(metaData.sub_code_to_name[sub_code] + '_' + e.to_camel_case())] || '0'}</td>`).join('')}
-                            <td>${metaData.all_sub[metaData.sub_code_to_name[sub_code]].max}</td>
-
-                        </tr>
-                    `).join('')}
-                    <tr style="background-color: #59B899;color: #F4F5F8">
-                        <td colspan="2"><b>Total</b></td>
-                        <td colspan="${fields.length-2}" style="text-align: right"><b>${response.res[23]}</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') || metaData.header_names.indexOf('grade')]}</td>
-                        <td colspan="${fields.length-2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[27]}</b></td>
-                    </tr>
-                </tbody>
-            </table>`;
-        document.querySelector('#overview_main .canvas').innerHTML = tableData;
-        document.querySelector('#overview_main .header').innerHTML = `<span>${response.name}</span><span>1201920010${response.roll}</span><button class="hover-expand v-s">RANK: ${response.rank}</button>`;
-        // console.log(tableData)
+        
+        console.log('done');
 
 
-        console.log('result :', response)
 
 
     } catch (error) {
