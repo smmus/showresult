@@ -576,7 +576,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
     console.log('fields', fields);
     console.log('response', response);
 
-    /** displaying result in table */
+    /**==============step 1: displaying result in table */
     let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
             <tbody>
                 <tr>
@@ -616,9 +616,9 @@ function view_specific_result(metaData, response, freinds_result_html) {
     let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
     let std_marks_per_sub = all_subjects_name.map(sub_name => response.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]);
 
-    /**step:1 expanding area for line graph */
+    /**===========step:1 expanding area for line graph */
     document.getElementById('main-container').style.gridTemplateAreas =
-        '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s"';
+        '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a d d" "t t t t t a a a a a d d"';
     /**step:2 drawing line graph in that area */
     let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
         type: 'line',
@@ -655,7 +655,12 @@ function view_specific_result(metaData, response, freinds_result_html) {
             }
         }
     });
-    /**step:3 drawing palar graph for subjects total marks */
+    /**remove the select element of #overview_secondary header*/ 
+    document.querySelector('#overview_secondary .header').lastElementChild.remove();
+    /**remove the switch of #overview_secondary*/ 
+    document.getElementById('overview_secondary').lastElementChild.remove();
+
+    /**==========step:3 drawing palar graph for subjects total marks */
     new Chart(document.getElementById('overview_total_canvas').getContext('2d'), {
         type: 'polarArea',
         data: {
@@ -677,8 +682,10 @@ function view_specific_result(metaData, response, freinds_result_html) {
             }
         }
     });
+    /** modify the textContent of #overview_total header */
+    document.querySelector('#overview_total .header p').textContent = 'Total Mark Overview';
 
-    /**step: 4 ; DOM manupulation*/
+    /**==========step: 4 ; DOM manupulation*/
     // deleteing svg image
     document.querySelector('#search .img').remove();
     // deleteing toppers-list image
@@ -695,6 +702,10 @@ function view_specific_result(metaData, response, freinds_result_html) {
         console.log('[compare with]', roll);
         compare_result(roll, null);
     }
+    /** lessen the area of #search && add another card */
+    /** AREA has been lessen by changing GRID-TEMPLATE-AREAS */
+    // adding new elelment to the #main-container
+    document.getElementById('developer').style.display = 'flex'; 
 }
 
 function view_compared_result(metaData, all_students_results) {
