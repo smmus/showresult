@@ -269,7 +269,12 @@ function updateMainUi(metaData) {
     /** charts */
 
     /** ============================================= main chart starts =============================================== */
-    let overview_main_chart_data_before = new function () {
+    let overview_main_chart_data_before,
+        overview_main_chart_data_after,
+        overview_main_chart_config,
+        overview_main_chart;
+
+    overview_main_chart_data_before = new function () {
         /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
         this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
         /*array of objects 
@@ -288,20 +293,20 @@ function updateMainUi(metaData) {
         // console.log(this.labels)
         // console.log(this.datasets)
     }
-    let overview_main_chart_data_after = new function (){
-        this.labels =  overview_main_chart_data_before.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted'),
-        this.datasets =  overview_main_chart_data_before.labels.map((label, i) => ({ //label=sub_name
-            label,
-            data: this.labels.map((e, i) => metaData.all_sub[label.to_camel_case()][e.to_camel_case()]),
-            backgroundColor: 'rgba(89, 127, 255, 0.1)',
-            borderColor: '#5A7BFA',
-            borderWidth: 1,
-            fill: 'origin'
-        }))
+    overview_main_chart_data_after = new function () {
+        this.labels = overview_main_chart_data_before.datasets.map(obj => obj.label).filter(e => e.toLowerCase() != 'promoted'),
+            this.datasets = overview_main_chart_data_before.labels.map((label, i) => ({ //label=sub_name
+                label,
+                data: this.labels.map((e, i) => metaData.all_sub[label.to_camel_case()][e.to_camel_case()]),
+                backgroundColor: 'rgba(89, 127, 255, 0.1)',
+                borderColor: '#5A7BFA',
+                borderWidth: 1,
+                fill: 'origin'
+            }))
     }
-    console.log('before', overview_main_chart_data_before);
-    console.log('after', overview_main_chart_data_after);
-    let overview_main_chart_config = {
+    // console.log('before', overview_main_chart_data_before);
+    // console.log('after', overview_main_chart_data_after);
+    overview_main_chart_config = {
         type: 'line',
         data: overview_main_chart_data_before,
         options: {
@@ -325,35 +330,30 @@ function updateMainUi(metaData) {
             }
         }
     }
-    let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
+    /** Drawing chart for the first time */
+    overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
 
-    console.log('chart', overview_main_chart)
-    // elevent listener of subjects_grade_overview_checkbox
+    console.log('[overview_main_chart]', overview_main_chart);
+
+    // ======== elevent listener of subjects_grade_overview_checkbox
     document.getElementById('overview_main_checkbox').onchange = e => {
-        // this change axis is defferent from the other one (not like the pie)
-        // change datasets --> x-axis
         console.log("[CheckBox overview_main] :", e.target.checked);
 
+        /**step 1: destroy the previous chart */
+        overview_main_chart.destroy();
         if (e.target.checked) {
             // updating data
             // overview_main_chart.config.data = overview_main_chart_data_after;
-            
-            overview_main_chart.destroy();
+
             overview_main_chart_config.data = overview_main_chart_data_after;
-            overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
-            
-            
-        }else{
+        } else {
             // else do the same think while loading the page
             // overview_main_chart.config.data = overview_main_chart_data_before;
 
-            overview_main_chart.destroy();
             overview_main_chart_config.data = overview_main_chart_data_before;
-            overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
         }
-        //! [ERROR]: ANimation is not working while changing data -- [SOLVED] {destroying previous chart and creating it again}
-
-        // overview_main_chart.update();
+        overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
+        //! [ERROR]: ANimation is not working while changing data -- [SOLVED] {destroying previous chart and creating it again based on new CONFIG}
     }
     /** mark overview  button event listener **/
     document.querySelector('#overview_main .header button').onclick = e => {
