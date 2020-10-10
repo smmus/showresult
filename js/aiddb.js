@@ -709,8 +709,8 @@ function view_specific_result(metaData, response, freinds_result_html) {
 }
 
 function view_compared_result(metaData, all_students_results) {
-
-    /*step 2: draw in the main graph */
+    
+    /*==========step 1: editing dom and layout */
     // removing last  childs
     document.querySelector('#overview_main .header').lastElementChild.remove();
     document.querySelector('#overview_secondary').lastElementChild.remove();
@@ -719,7 +719,19 @@ function view_compared_result(metaData, all_students_results) {
     document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
     document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph'
     document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
-
+    // layout
+    document.getElementById('main-container').style.gridTemplateAreas = 
+    `"m m m m m m c c c c s s"
+    "m m m m m m c c c c s s"
+    "m m m m m m c c c c s s"
+    "m m m m m m c c c c s s"
+    "m m m m m m c c c c s s"
+    "t t t t t t t a a a e e"
+    "t t t t t t t a a a e e"
+    "t t t t t t t a a a e e"
+    "t t t t t t t a a a e e"`
+    
+    /*==============step 2: draw in the main graph */
     let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
     let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
         type: 'bar',
@@ -771,8 +783,8 @@ function view_compared_result(metaData, all_students_results) {
         // console.log('updated', overview_main_chart.type)
         // console.log('updated', overview_main_chart.config)
     }
-    /*step 3: draw in the secondary graph */
-    /* thsi graph shows per students total mark */
+    /*==================step 3: draw in the secondary graph */
+    /* this graph shows per students total mark */
     let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
         type: 'polarArea',
         data: {
@@ -782,9 +794,9 @@ function view_compared_result(metaData, all_students_results) {
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
             */
-            datasets: [{
-                data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
-                backgroundColor: GRAPH_BG_COLORS
+           datasets: [{
+               data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
+               backgroundColor: GRAPH_BG_COLORS
             }]
         },
         options: {
@@ -794,6 +806,8 @@ function view_compared_result(metaData, all_students_results) {
             }
         }
     });
+    /*==================step 3: draw the table */
+    document.querySelector('#overview_total .canvas')
 }
 
 function view_failed_students_chart(failed_students_results) {
