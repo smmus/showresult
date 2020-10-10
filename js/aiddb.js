@@ -265,18 +265,26 @@ function compare_result(roll, name) {
 }
 /**=================== update main ui func ================= */
 function updateMainUi(metaData) {
+    /**
+     * subjects vs all_subject_names
+     * [all_subject_names] contains those subjects's where max_number > 0 && subjects' names are capitalized for title.
+     * [subjects] just contains all the subject in metadata && not capitalized.
+     */
     let subjects = Object.values(metaData.sub_code_to_name)
+    let all_subject_names = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null)
     /** charts */
 
     /** ============================================= main chart starts =============================================== */
     let overview_main_chart_data_before,
         overview_main_chart_data_after,
+        overview_main_chart_data_mark_overview,
         overview_main_chart_config,
-        overview_main_chart;
+        overview_main_chart,
+        overview_main_chart_context = document.getElementById('overview_main_canvas').getContext('2d');
 
     overview_main_chart_data_before = new function () {
         /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-        this.labels = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
+        this.labels = all_subject_names;
         /*array of objects 
                 return an obj forEach line (GRADES)
                 data => array (1 element forEach sub_name) (len=lenof labels)
@@ -303,6 +311,22 @@ function updateMainUi(metaData) {
                 borderWidth: 1,
                 fill: 'origin'
             }))
+    }
+
+    overview_main_chart_data_mark_overview = new function(){
+        /** [labels] => subject_names */
+        this.labels = all_subject_names;
+
+        /** [datasets] (simple) => max,min,avg,passmark for each subject_names */
+        // [TODO: add passmark field]
+        this.datasets = ['min','max', 'avg'].map(grade=>({
+            label: grade.underscrore_to_capitalize(),
+            data: all_subject_names.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
+            backgroundColor: 'rgba(89, 127, 255,0.1)',
+            borderColor: '#5A7BFA',
+            borderWidth: 1,
+            fill: grade!='pass_mark' ? 'origin' : false 
+        }))
     }
     // console.log('before', overview_main_chart_data_before);
     // console.log('after', overview_main_chart_data_after);
@@ -331,7 +355,7 @@ function updateMainUi(metaData) {
         }
     }
     /** Drawing chart for the first time */
-    overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
+    overview_main_chart = new Chart(overview_main_chart_context, overview_main_chart_config);
 
     console.log('[overview_main_chart]', overview_main_chart);
 
@@ -352,12 +376,22 @@ function updateMainUi(metaData) {
 
             overview_main_chart_config.data = overview_main_chart_data_before;
         }
-        overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
+        overview_main_chart = new Chart(overview_main_chart_context, overview_main_chart_config);
         //! [ERROR]: ANimation is not working while changing data -- [SOLVED] {destroying previous chart and creating it again based on new CONFIG}
     }
     /** mark overview  button event listener **/
     document.querySelector('#overview_main .header button').onclick = e => {
-        e.target.textContent = e.target.textContent.toLowerCase().includes('mark') ? 'grade overview' : 'mark overview';
+        let is_mark = e.target.textContent.toLowerCase().includes('mark');
+        e.target.textContent = is_mark ? 'grade overview' : 'mark overview';
+        
+        overview_secondary_chart.destroy()
+        if(is_mark){
+            overview_main_chart_config.data = overview_main_chart_data_mark_overview;
+            /**making the footer display none so that user can't use the switch of changing axis */
+        }else{
+            overview_main_chart_config.data = overview_main_chart_data_before;
+        }
+        overview_main_chart = new Chart(overview_main_chart_context, overview_main_chart_config);
     }
     /** ============================================= main chart ends ============================================= */
     /** ============================================= secondary chart starts ============================================= */
