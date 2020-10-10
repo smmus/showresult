@@ -78,9 +78,14 @@ async function main() {
     }
 
     try {
-        db = await openiddb(DB_NAME, DB_VERSION);
+        /**
+         * only if u pass DB_NAME and XM_NAME it will run
+         * if u visit 'result.html' without any query, it wont run (wont creat 'null' db)
+         */
+        if(DB_NAME && XM_NAME)
+            db = await openiddb(DB_NAME, DB_VERSION);
 
-        if (IS_CREATED) {
+        if (IS_CREATED && DB_NAME && XM_NAME) {
             /** will run if new obj_stores are created */
             /** fetch data from csv file and store them */
 

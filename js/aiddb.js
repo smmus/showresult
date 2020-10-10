@@ -301,7 +301,7 @@ function updateMainUi(metaData) {
     }
     console.log('before', overview_main_chart_data_before);
     console.log('after', overview_main_chart_data_after);
-    let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
+    let overview_main_chart_config = {
         type: 'line',
         data: overview_main_chart_data_before,
         options: {
@@ -324,7 +324,8 @@ function updateMainUi(metaData) {
                 animateScale: true
             }
         }
-    });
+    }
+    let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
 
     console.log('chart', overview_main_chart)
     // elevent listener of subjects_grade_overview_checkbox
@@ -335,15 +336,24 @@ function updateMainUi(metaData) {
 
         if (e.target.checked) {
             // updating data
-            overview_main_chart.data = overview_main_chart_data_after;
+            // overview_main_chart.config.data = overview_main_chart_data_after;
+            
+            overview_main_chart.destroy();
+            overview_main_chart_config.data = overview_main_chart_data_after;
+            overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
+            
+            
         }else{
             // else do the same think while loading the page
-            overview_main_chart.data = overview_main_chart_data_before;
+            // overview_main_chart.config.data = overview_main_chart_data_before;
+
+            overview_main_chart.destroy();
+            overview_main_chart_config.data = overview_main_chart_data_before;
+            overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), overview_main_chart_config);
         }
-        //! [ERROR]: ANimation is not working while changing data 
+        //! [ERROR]: ANimation is not working while changing data -- [SOLVED] {destroying previous chart and creating it again}
 
-        overview_main_chart.update();
-
+        // overview_main_chart.update();
     }
     /** mark overview  button event listener **/
     document.querySelector('#overview_main .header button').onclick = e => {
