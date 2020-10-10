@@ -413,13 +413,14 @@ body {
         height: calc(100% - 3rem);
         display: grid;
         grid-gap: .5rem;
-        grid-template:repeat(8, 120px) / repeat(12, 1fr); /* row / column */
+        grid-template:repeat(9, 120px) / repeat(12, 1fr); /* row / column */
         grid-template-areas: 
             "m m m m m m c c c c s s"
             "m m m m m m c c c c s s"
             "m m m m m m c c c c s s"
             "m m m m m m c c c c s s"
             "m m m m m m c c c c s s"
+            "t t t a a a a a a a e e"
             "t t t a a a a a a a e e"
             "t t t a a a a a a a e e"
             "t t t a a a a a a a e e";

@@ -131,7 +131,8 @@ function storeMainData(db, store_name, mode, data) {
             failed_examnee: 0,
             all_sub: {},
             header_names: data.split('\n')[0].split(','),
-            sub_code_to_name: SUB_CODE_TO_NAME
+            sub_code_to_name: SUB_CODE_TO_NAME,
+            failed_examnees : [] //array of rolls
         };
         console.log(metaData.header_names)
         for (let i in SUB_CODE_TO_NAME) {
@@ -185,7 +186,10 @@ function storeMainData(db, store_name, mode, data) {
             metaData['total_examnee']++;
             if (!is_main_roll_stored) metaData['main_roll'] = parseInt(result[roll_index]) - roll;
 
-            if (result[pass_index].includes('ailed')) metaData['failed_examnee']++; // don't wannna .toLowerCase() :)
+            if (result[pass_index].includes('ailed')){ // don't wannna 'Failed'.toLowerCase() :)
+                metaData['failed_examnee']++;
+                metaData['failed_examnees'].push(roll);
+            }  
 
             let obj = {
                 roll,

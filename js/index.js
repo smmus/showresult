@@ -82,10 +82,10 @@ async function main() {
          * only if u pass DB_NAME and XM_NAME it will run
          * if u visit 'result.html' without any query, it wont run (wont creat 'null' db)
          */
-        if(DB_NAME && XM_NAME)
+        if (DB_NAME && XM_NAME)
             db = await openiddb(DB_NAME, DB_VERSION);
 
-        // let response;
+        let response;
         if (IS_CREATED && DB_NAME && XM_NAME) {
             /** will run if new obj_stores are created */
             /** fetch data from csv file and store them */
@@ -99,7 +99,7 @@ async function main() {
             /** getting header_names & indexs */
             let header_names = data.split('\n')[0].split(',');
 
-            // calculating rank */
+            /* calculating rank */
             if (IS_RANK_GIVEN) {
                 // rank is given in the file */
                 console.log('[RANK OK]');
@@ -107,6 +107,9 @@ async function main() {
                 console.log('[RANK CALCULATING]');
                 await createRankList(db, OBJ_STORE_RANK, data, header_names);
             }
+
+            /** creating failed students list*/
+
         }
 
         /**if all data is in db -- show overview */
@@ -120,6 +123,54 @@ async function main() {
         /** update main ui (overview of full res) if std is not searching for specific roll **/
         if (!STD_ROLLS) {
             updateMainUi(metaData);
+
+            /** ========showing failed students======== */
+            /**step1 : getting their result */
+            let failed_students_results = [];
+            for (let roll of metaData.failed_examnees) {
+                response = await getDataByKey(db, OBJ_STORE_MAIN, roll);
+                failed_students_results.push({
+                    roll,
+                    name: response.name,
+                    rank: response.rank,
+                    total_mark: response.res[metaData.header_names.indexOf('term_total')],
+                });
+            }
+            console.log(failed_students_results);
+            /**step1 : drawing graph */
+            let overview_total_failed_context = document.getElementById('overview_total_failed_canvas').getContext('2d'),
+                overview_total_failed_config,
+                overview_total_failed_chart;
+
+            overview_total_failed_config ={
+                type: 'line',
+                data:  {
+                    labels: failed_students_results.map(obj => obj.name),
+                    datasets: [{
+                        label: 'Total Marks',
+                        data: failed_students_results.map(obj=>obj.total_mark),
+                        backgroundColor: 'rgba(89, 127, 255,0.1)',
+                        borderColor: '#5A7BFA',
+                        fill: 'origin'
+                    }]
+                },
+                options: {
+                    aspectRatio: 2.5,
+                    scales: {
+                        yAxes: [{
+                            scaleLabel: {
+                                labelString: 'Total Marks',
+                                display: true,
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                suggestedMin: 100
+                            }
+                        }]
+                    }
+                }
+            }
+            overview_total_failed_chart = new Chart(overview_total_failed_context, overview_total_failed_config)
             return;
         }
 
@@ -130,7 +181,7 @@ async function main() {
             return;
         }
         /* else show COMPARE result if student passes more than 1 roll */
-        if (STD_ROLLS.length > 1){
+        if (STD_ROLLS.length > 1) {
             let all_students_results = [];
             for (let roll of STD_ROLLS) {
                 response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
