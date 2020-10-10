@@ -502,6 +502,14 @@ body {
         }
         #e{
             grid-area: e;
+            .list-toppers{
+                font-weight: 300;
+                cursor: pointer;
+                & > div{
+                    display: flex;
+                    justify-content: space-between;
+                }
+            }
         }
         
     }

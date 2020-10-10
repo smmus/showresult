@@ -121,6 +121,18 @@ function getDataByKey(db, store_name, key) {
         req.onsuccess = e => res(e.target.result);
     })
 }
+function getDataByIndexKey(db, store_name, index_name, key) {
+    return new Promise((res, rej) => {
+        let tx = db.transaction([store_name], 'readonly');
+        tx.oncomplete = function () {
+            console.log('[TX CPM :', db.name, store_name, 'readonly', ']');
+        }
+        tx.onerror = e => rej(e);
+        let req = tx.objectStore(store_name).index(index_name).get(key);
+        req.onsuccess = e => res(e.target.result);
+    })
+}
+
 
 function storeMainData(db, store_name, mode, data) {
     return new Promise((res, rej) => {
@@ -132,7 +144,7 @@ function storeMainData(db, store_name, mode, data) {
             all_sub: {},
             header_names: data.split('\n')[0].split(','),
             sub_code_to_name: SUB_CODE_TO_NAME,
-            failed_examnees : [] //array of rolls
+            failed_examnees: [] //array of rolls
         };
         console.log(metaData.header_names)
         for (let i in SUB_CODE_TO_NAME) {
@@ -186,10 +198,10 @@ function storeMainData(db, store_name, mode, data) {
             metaData['total_examnee']++;
             if (!is_main_roll_stored) metaData['main_roll'] = parseInt(result[roll_index]) - roll;
 
-            if (result[pass_index].includes('ailed')){ // don't wannna 'Failed'.toLowerCase() :)
+            if (result[pass_index].includes('ailed')) { // don't wannna 'Failed'.toLowerCase() :)
                 metaData['failed_examnee']++;
                 metaData['failed_examnees'].push(roll);
-            }  
+            }
 
             let obj = {
                 roll,
@@ -674,7 +686,7 @@ function view_specific_result(metaData, response) {
 }
 
 async function view_compared_result(metaData, all_students_results) {
-    
+
     /*step 2: draw in the main graph */
     // removing last  childs
     document.querySelector('#overview_main .header').lastElementChild.remove();
@@ -759,4 +771,40 @@ async function view_compared_result(metaData, all_students_results) {
             }
         }
     });
+}
+
+function view_failed_students_chart(failed_students_results) {
+    let overview_total_failed_context = document.getElementById('overview_total_failed_canvas').getContext('2d'),
+        overview_total_failed_config,
+        overview_total_failed_chart;
+
+    overview_total_failed_config = {
+        type: 'line',
+        data: {
+            labels: failed_students_results.map(obj => obj.name),
+            datasets: [{
+                label: 'Total Marks',
+                data: failed_students_results.map(obj => obj.total_mark),
+                backgroundColor: 'rgba(89, 127, 255,0.1)',
+                borderColor: '#5A7BFA',
+                fill: 'origin'
+            }]
+        },
+        options: {
+            aspectRatio: 2.5,
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        labelString: 'Total Marks',
+                        display: true,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        suggestedMin: 100
+                    }
+                }]
+            }
+        }
+    }
+    overview_total_failed_chart = new Chart(overview_total_failed_context, overview_total_failed_config)
 }

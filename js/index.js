@@ -133,44 +133,29 @@ async function main() {
                     roll,
                     name: response.name,
                     rank: response.rank,
-                    total_mark: response.res[metaData.header_names.indexOf('term_total')],
+                    total_mark: response.res[metaData.header_names.indexOf('term_total')]
                 });
             }
-            console.log(failed_students_results);
-            /**step1 : drawing graph */
-            let overview_total_failed_context = document.getElementById('overview_total_failed_canvas').getContext('2d'),
-                overview_total_failed_config,
-                overview_total_failed_chart;
+            console.log('[failed_students_results]',failed_students_results);
+            /**step2 : drawing graph */
+            view_failed_students_chart(failed_students_results)
 
-            overview_total_failed_config ={
-                type: 'line',
-                data:  {
-                    labels: failed_students_results.map(obj => obj.name),
-                    datasets: [{
-                        label: 'Total Marks',
-                        data: failed_students_results.map(obj=>obj.total_mark),
-                        backgroundColor: 'rgba(89, 127, 255,0.1)',
-                        borderColor: '#5A7BFA',
-                        fill: 'origin'
-                    }]
-                },
-                options: {
-                    aspectRatio: 2.5,
-                    scales: {
-                        yAxes: [{
-                            scaleLabel: {
-                                labelString: 'Total Marks',
-                                display: true,
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                suggestedMin: 100
-                            }
-                        }]
-                    }
-                }
+            /** ========showing top students======== */
+            /**step 1: get their results & deisplay them*/
+            for (let i=1; i < 22; i++){
+                let response = await getDataByIndexKey(db, OBJ_STORE_MAIN, 'rank', i);
+
+                let div = document.createElement('div');
+                let s1 = document.createElement('span');
+                s1.textContent = response.name;
+                let s2 = document.createElement('span');
+                s2.textContent = response.res[metaData.header_names.indexOf('term_total')];
+                div.appendChild(s1);
+                div.appendChild(s2);
+                document.querySelector('#e .list-toppers').appendChild(div);
+
+                console.log(response.res[metaData.header_names.indexOf('term_total')])
             }
-            overview_total_failed_chart = new Chart(overview_total_failed_context, overview_total_failed_config)
             return;
         }
 
