@@ -807,7 +807,44 @@ function view_compared_result(metaData, all_students_results) {
         }
     });
     /*==================step 3: draw the table */
-    document.querySelector('#overview_total .canvas')
+    function drawTable(field_name){
+        let fields = ['Subject Code', 'Subject Name', field_name]
+        let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
+                <tbody>
+                    <tr>
+                        <td colspan=2></td>
+                        ${all_students_results.map(result=>`<td>${result.name.capitalize()}</td>`).join('')}
+                    </tr>
+                    <tr style="background-color: #59B899;color: #F4F5F8">
+                        <td><b>${fields[0]}</b></td>
+                        <td><b>${fields[1]}</b></td>
+                        ${all_students_results.map(e => `<td><b>${fields[2].toUpperCase()}</b></td>`).join('')}
+                    </tr>
+                    ${Object.keys(metaData.sub_code_to_name).map(sub_code => `
+                        <tr>
+                            <td>${sub_code}</td>
+                            <td>${metaData.sub_code_to_name[sub_code].underscrore_to_capitalize()}</td>
+                            ${all_students_results.map(result => `<td>${result.res[metaData.header_names.indexOf(metaData.sub_code_to_name[sub_code] + '_' + fields[2])] || '0'}</td>`).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>`;
+        document.querySelector('#overview_total .canvas').innerHTML = tableData;
+        // console.log('tableData',tableData)
+    }
+
+    drawTable('mcq');
+    /** adding select element for changing */
+    let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1])
+    document.querySelector('#overview_total .header').innerHTML += 
+    `<select>
+        ${per_sub_fields.map(field_name => `<option value=${field_name} ${field_name=='mcq' && 'selected'}>${field_name.toUpperCase()}</option>`)}
+    </select>`
+    // onchange event for select element
+    document.querySelector('#overview_total .header select').onchange = e => {
+        console.log(e.target.value)
+        drawTable(e.target.value);
+    }
 }
 
 function view_failed_students_chart(failed_students_results) {
