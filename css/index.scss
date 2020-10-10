@@ -502,15 +502,22 @@ body {
         }
         #e{
             grid-area: e;
-            .list-toppers{
-                font-weight: 300;
-                cursor: pointer;
-                & > div{
-                    display: flex;
-                    justify-content: space-between;
-                }
+        }
+        .list-1{
+            font-weight: 300;
+            cursor: pointer;
+            & > div{
+                display: flex;
+                padding: 5px 0;
+                justify-content: space-between;
             }
         }
-        
+        table{
+            width: 100%;
+            td{
+                font-weight: 300;
+                padding: .3em;
+            }
+        }
     }
 }

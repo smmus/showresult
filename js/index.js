@@ -136,25 +136,25 @@ async function main() {
                     total_mark: response.res[metaData.header_names.indexOf('term_total')]
                 });
             }
-            console.log('[failed_students_results]',failed_students_results);
+            console.log('[failed_students_results]', failed_students_results);
             /**step2 : drawing graph */
             view_failed_students_chart(failed_students_results)
 
             /** ========showing top students======== */
             /**step 1: get their results & deisplay them*/
-            for (let i=1; i < 22; i++){
+            for (let i = 1; i < 16; i++) {
                 let response = await getDataByIndexKey(db, OBJ_STORE_MAIN, 'rank', i);
 
                 let div = document.createElement('div');
                 let s1 = document.createElement('span');
-                s1.textContent = response.name;
+                s1.textContent = response.name.capitalize();
                 let s2 = document.createElement('span');
                 s2.textContent = response.res[metaData.header_names.indexOf('term_total')];
                 div.appendChild(s1);
                 div.appendChild(s2);
                 document.querySelector('#e .list-toppers').appendChild(div);
 
-                console.log(response.res[metaData.header_names.indexOf('term_total')])
+                // console.log(response.res[metaData.header_names.indexOf('term_total')])
             }
             return;
         }
@@ -162,7 +162,20 @@ async function main() {
         /* else show secific res if student passes only 1 roll */
         if (STD_ROLLS.length == 1) {
             response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLLS[0]));
-            view_specific_result(metaData, response);
+            let freinds_result_html = '<tr style="font-weight:500"><td>RANK</td><td>NAME</td><td>ROLL</td><td>TOTAL</td><td>COMPARE</td></tr>',
+                total_std_to_show = 15,
+                search_roll = STD_ROLLS[0] - parseInt(total_std_to_show/2);
+            while(total_std_to_show > 0) {
+                if (search_roll < 1) continue;
+
+                let response = await getDataByKey(db, OBJ_STORE_MAIN, search_roll);
+                if (!response) continue;
+                
+                freinds_result_html += `<tr><td>${response.rank}</td><td>${response.name.capitalize()}</td><td>${response.roll}</td><td>${response.res[metaData.header_names.indexOf('term_total')]}</td><td><button class="hover-expand v-s" data-roll=${response.roll}>Compare</button></td></tr>`;
+                total_std_to_show--;
+                search_roll++;
+            }
+            view_specific_result(metaData, response, freinds_result_html);
             return;
         }
         /* else show COMPARE result if student passes more than 1 roll */

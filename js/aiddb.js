@@ -2,7 +2,7 @@
 var firstBy = function () { function n(n) { return n } function t(n) { return "string" == typeof n ? n.toLowerCase() : n } function r(r, e) { if (e = "number" == typeof e ? { direction: e } : e || {}, "function" != typeof r) { var u = r; r = function (n) { return n[u] ? n[u] : "" } } if (1 === r.length) { var i = r, o = e.ignoreCase ? t : n; r = function (n, t) { return o(i(n)) < o(i(t)) ? -1 : o(i(n)) > o(i(t)) ? 1 : 0 } } return -1 === e.direction ? function (n, t) { return -r(n, t) } : r } function e(n, t) { return n = r(n, t), n.thenBy = u, n } function u(n, t) { var u = this; return n = r(n, t), e(function (t, r) { return u(t, r) || n(t, r) }) } return e }();/*** Copyright 2013 Teun Duynstee Licensed under the Apache License, Version 2.0 ***/
 
 String.prototype.capitalize = function () {
-    return this.charAt(0).toUpperCase() + this.slice(1);
+    return this.toLocaleLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
 
 String.prototype.underscrore_to_capitalize = function () {
@@ -568,7 +568,7 @@ function search_compare_event_listener() {
     document.querySelector('.colg_name').textContent = (DB_NAME == 'rc') ? "RAJSHAHI COLLEGE" : "DHAKA COLLEGE";
 }
 
-function view_specific_result(metaData, response) {
+function view_specific_result(metaData, response, freinds_result_html) {
 
     let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1].toUpperCase())
     let fields = ['Subject Code', 'Subject Name', ...per_sub_fields, 'Exam Highest']
@@ -617,10 +617,8 @@ function view_specific_result(metaData, response) {
     let std_marks_per_sub = all_subjects_name.map(sub_name => response.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]);
 
     /**step:1 expanding area for line graph */
-    document.body.style.height = '120vh';
-    // document.getElementById('main-container').style.gridTemplate = 
     document.getElementById('main-container').style.gridTemplateAreas =
-        '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a" "t t t t t s s s a a a a"';
+        '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s"';
     /**step:2 drawing line graph in that area */
     let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
         type: 'line',
@@ -657,7 +655,7 @@ function view_specific_result(metaData, response) {
             }
         }
     });
-    /**step:3 drawing line graph in that area */
+    /**step:3 drawing palar graph for subjects total marks */
     new Chart(document.getElementById('overview_total_canvas').getContext('2d'), {
         type: 'polarArea',
         data: {
@@ -683,9 +681,23 @@ function view_specific_result(metaData, response) {
     /**step: 4 ; DOM manupulation*/
     // deleteing svg image
     document.querySelector('#search .img').remove();
+    // deleteing toppers-list image
+    document.getElementById('e').remove();
+    // displaying near roll students
+    document.querySelector('#extra .header').firstElementChild.textContent = 'Friends Around You';
+    document.querySelector('#extra .canvas').remove()
+    document.querySelector('#extra').appendChild(document.createElement('table'));
+    document.querySelector('#extra table').innerHTML = freinds_result_html;
+    // event handler for comparing
+    document.querySelector('#extra table').onclick = e => {
+        let roll = e.target.dataset.roll
+        if(!roll) return; /** finding the button element */
+        console.log('[compare with]', roll);
+        compare_result(roll, null);
+    }
 }
 
-async function view_compared_result(metaData, all_students_results) {
+function view_compared_result(metaData, all_students_results) {
 
     /*step 2: draw in the main graph */
     // removing last  childs
@@ -781,7 +793,7 @@ function view_failed_students_chart(failed_students_results) {
     overview_total_failed_config = {
         type: 'line',
         data: {
-            labels: failed_students_results.map(obj => obj.name),
+            labels: failed_students_results.map(obj => obj.name.capitalize()),
             datasets: [{
                 label: 'Total Marks',
                 data: failed_students_results.map(obj => obj.total_mark),
