@@ -62,6 +62,8 @@ const SUB_CODE_TO_NAME = {
     '275': 'ict'
 };
 
+const SHOW_TOPPERS = 10;
+
 let IS_CREATED = false;
 
 Chart.defaults.global.elements.line.tension = 0;
@@ -80,7 +82,7 @@ async function main() {
     try {
         /**
          * only if u pass DB_NAME and XM_NAME it will run
-         * if u visit 'result.html' without any query, it wont run (wont creat 'null' db)
+         * if u visit 'result.html' without any query, it wont run (wont create 'null' db)
          */
         if (DB_NAME && XM_NAME)
             db = await openiddb(DB_NAME, DB_VERSION);
@@ -107,12 +109,9 @@ async function main() {
                 console.log('[RANK CALCULATING]');
                 await createRankList(db, OBJ_STORE_RANK, data, header_names);
             }
-
-            /** creating failed students list*/
-
         }
 
-        /**if all data is in db -- show overview */
+        /**=======if all data is in db -- show overview ========*/
 
         /** global event listener */
         search_compare_event_listener()
@@ -125,7 +124,7 @@ async function main() {
             updateMainUi(metaData);
 
             /** ========showing failed students======== */
-            /**step1 : getting their result */
+            /**step 1 : getting their result */
             let failed_students_results = [];
             for (let roll of metaData.failed_examnees) {
                 response = await getDataByKey(db, OBJ_STORE_MAIN, roll);
@@ -137,25 +136,18 @@ async function main() {
                 });
             }
             console.log('[failed_students_results]', failed_students_results);
-            /**step2 : drawing graph */
+            /**step 2 : drawing graph */
             view_failed_students_chart(failed_students_results)
 
-            /** ========showing top students======== */
-            /**step 1: get their results & deisplay them*/
-            for (let i = 1; i < 16; i++) {
+            /** =========showing top students======== */
+            /**step 1: get their results & display them*/
+            let topper_list = [];
+            for (let i = 1; i <= SHOW_TOPPERS; i++) {
                 let response = await getDataByIndexKey(db, OBJ_STORE_MAIN, 'rank', i);
-
-                let div = document.createElement('div');
-                let s1 = document.createElement('span');
-                s1.textContent = response.name.capitalize();
-                let s2 = document.createElement('span');
-                s2.textContent = response.res[metaData.header_names.indexOf('term_total')];
-                div.appendChild(s1);
-                div.appendChild(s2);
-                document.querySelector('#e .list-toppers').appendChild(div);
-
-                // console.log(response.res[metaData.header_names.indexOf('term_total')])
+                topper_list.push(response);
             }
+            view_topper_students_table(metaData, topper_list);
+            console.log('[topper_list]',topper_list);
             return;
         }
 

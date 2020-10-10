@@ -265,19 +265,31 @@ function search_result(roll, name) {
 }
 /**=================== compare result func ================= */
 function compare_result(roll, name) {
-    console.log('[SUBMIT]')
+    /**
+     * roll : string --> single roll passed
+     * roll : array --> multiple roll passed
+     */
+    console.log('[COMPARE RSULT] :', roll)
     if (!roll && !name) {
         throw Error('No Input');
     }
 
-    if (roll && parseInt(roll) && parseInt(roll) > 0) {
+    if (roll && typeof roll != "object" && parseInt(roll) && parseInt(roll) > 0) {
         /**search via roll */
         if (!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
-        else window.location.search = window.location.search.split('&').map(e => e.includes('roll=') ? e + "-" + roll : e).join('&')
+        else window.location.search = window.location.search.split('&').map(e => e.includes('roll=') ? e + "-" + roll : e).join('&');
+        return;
     }
-    else {
-        /**search via name */
+
+    if (roll) {
+        /** here roll == array, no need to check */
+        if (!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll.join('-')}`;
+        else window.location.search = window.location.search.split('&').map(e => e.includes('roll=') ? 'roll=' + roll.join('-') : e).join('&');
+        return;
+
     }
+    /**search via name */
+
 }
 /**=================== update main ui func ================= */
 function updateMainUi(metaData) {
@@ -542,14 +554,13 @@ function updateMainUi(metaData) {
             ]
         },
         options: {
-            aspectRatio: 1.5,
+            aspectRatio: 1,
             legend: {
-                position: 'right'
+                position: 'bottom'
             },
-            layout: { padding: { top: 20 } }
         }
     });
-    document.getElementById('total_failed').innerText += metaData.failed_examnee;
+    document.getElementById('total_failed').innerText = 'Failed: '+metaData.failed_examnee;
     /** ============================================= overview_total chart ends ============================================= */
 }
 
@@ -655,9 +666,9 @@ function view_specific_result(metaData, response, freinds_result_html) {
             }
         }
     });
-    /**remove the select element of #overview_secondary header*/ 
+    /**remove the select element of #overview_secondary header*/
     document.querySelector('#overview_secondary .header').lastElementChild.remove();
-    /**remove the switch of #overview_secondary*/ 
+    /**remove the switch of #overview_secondary*/
     document.getElementById('overview_secondary').lastElementChild.remove();
 
     /**==========step:3 drawing palar graph for subjects total marks */
@@ -698,18 +709,18 @@ function view_specific_result(metaData, response, freinds_result_html) {
     // event handler for comparing
     document.querySelector('#extra table').onclick = e => {
         let roll = e.target.dataset.roll
-        if(!roll) return; /** finding the button element */
+        if (!roll) return; /** finding the button element */
         console.log('[compare with]', roll);
         compare_result(roll, null);
     }
     /** lessen the area of #search && add another card */
     /** AREA has been lessen by changing GRID-TEMPLATE-AREAS */
     // adding new elelment to the #main-container
-    document.getElementById('developer').style.display = 'flex'; 
+    document.getElementById('developer').style.display = 'flex';
 }
 
 function view_compared_result(metaData, all_students_results) {
-    
+
     /*==========step 1: editing dom and layout */
     // removing last  childs
     document.querySelector('#overview_main .header').lastElementChild.remove();
@@ -719,18 +730,20 @@ function view_compared_result(metaData, all_students_results) {
     document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
     document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph'
     document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
+    // removing element
+    document.getElementById('e').remove();
     // layout
-    document.getElementById('main-container').style.gridTemplateAreas = 
-    `"m m m m m m c c c c s s"
+    document.getElementById('main-container').style.gridTemplateAreas =
+        `"m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
-    "t t t t t t t a a a e e"
-    "t t t t t t t a a a e e"
-    "t t t t t t t a a a e e"
-    "t t t t t t t a a a e e"`
-    
+    "t t t t t t t a a a a a"
+    "t t t t t t t a a a a a"
+    "t t t t t t t a a a a a"
+    "t t t t t t t a a a a a"`
+
     /*==============step 2: draw in the main graph */
     let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
     let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
@@ -794,9 +807,9 @@ function view_compared_result(metaData, all_students_results) {
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
             */
-           datasets: [{
-               data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
-               backgroundColor: GRAPH_BG_COLORS
+            datasets: [{
+                data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
+                backgroundColor: GRAPH_BG_COLORS
             }]
         },
         options: {
@@ -807,13 +820,13 @@ function view_compared_result(metaData, all_students_results) {
         }
     });
     /*==================step 3: draw the table */
-    function drawTable(field_name){
+    function drawTable(field_name) {
         let fields = ['Subject Code', 'Subject Name', field_name]
         let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
                 <tbody>
                     <tr>
                         <td colspan=2></td>
-                        ${all_students_results.map(result=>`<td>${result.name.capitalize()}</td>`).join('')}
+                        ${all_students_results.map(result => `<td>${result.name.capitalize()}</td>`).join('')}
                     </tr>
                     <tr style="background-color: #59B899;color: #F4F5F8">
                         <td><b>${fields[0]}</b></td>
@@ -834,17 +847,59 @@ function view_compared_result(metaData, all_students_results) {
     }
 
     drawTable('mcq');
+    /** editing header */
+    document.querySelector('#overview_total .header p').textContent = 'Compare';
     /** adding select element for changing */
     let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1])
-    document.querySelector('#overview_total .header').innerHTML += 
-    `<select>
-        ${per_sub_fields.map(field_name => `<option value=${field_name} ${field_name=='mcq' && 'selected'}>${field_name.toUpperCase()}</option>`)}
+    document.querySelector('#overview_total .header').innerHTML +=
+        `<select>
+        ${per_sub_fields.map(field_name => `<option value=${field_name} ${field_name == 'mcq' && 'selected'}>${field_name.toUpperCase()}</option>`)}
     </select>`
     // onchange event for select element
     document.querySelector('#overview_total .header select').onchange = e => {
         console.log(e.target.value)
         drawTable(e.target.value);
     }
+
+    /**========== step 4: table for deleting from compare list*/
+    /** editing header */
+    document.querySelector('#extra .header p').textContent = 'Students';
+    /** adding table */
+    document.querySelector('#extra .canvas').innerHTML =
+        `<table style="background-color: white;border-collapse:collapse" border="1">
+            <thead>
+                <tr>
+                    <td>ROLL</td>
+                    <td>NAME</td>
+                    <td>RANK</td>
+                    <td>REMOVE</td>
+                </tr>
+            </thead>
+            <tbody>
+                ${all_students_results.map(res => `
+                <tr>
+                    <td>${res.roll}</td>
+                    <td>${res.name}</td>
+                    <td>${res.rank}</td>
+                    <td><button class='hover-expand v-s' data-remove=${res.roll}>remove</button></td>
+                </tr>
+                `).join('')}
+            </tbody>
+        </table>`;
+    /** event listener for remove button */
+    document.querySelector('#extra .canvas table').onclick = e => {
+        let roll_to_removed = e.target.dataset.remove;
+        if (!roll_to_removed) return;
+        // console.log('roll_to_removed',roll_to_removed);
+        /**remove from compare list */
+        let new_rolls_to_compare = new URLSearchParams(window.location.search).get('roll').split('-').filter(e => e != roll_to_removed);
+        // console.log('new_rolls_to_compare', new_rolls_to_compare);
+        compare_result(new_rolls_to_compare, null);
+    }
+
+    /**adding one more empty div so that the table is placed in the middle instead of the end (flex design) */
+    document.querySelector('#extra').appendChild(document.createElement('div'));
+
 }
 
 function view_failed_students_chart(failed_students_results) {
@@ -881,4 +936,21 @@ function view_failed_students_chart(failed_students_results) {
         }
     }
     overview_total_failed_chart = new Chart(overview_total_failed_context, overview_total_failed_config)
+}
+
+function view_topper_students_table(metaData, topper_list) {
+    document.querySelector('#e .list-toppers').innerHTML =
+        `<table style="border-collapse:collapse" border="1">
+                <tr>
+                    <td>Roll</td>
+                    <td>Name</td>
+                    <td>Total</td>
+                </tr>
+                ${topper_list.map(result => `
+                <tr>
+                    <td>${result.roll}</td>
+                    <td>${result.name}</td>
+                    <td>${result.res[metaData.header_names.indexOf('term_total')]}</td>
+                </tr>`).join('')}
+            </table>`;
 }
