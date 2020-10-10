@@ -313,19 +313,19 @@ function updateMainUi(metaData) {
             }))
     }
 
-    overview_main_chart_data_mark_overview = new function(){
+    overview_main_chart_data_mark_overview = new function () {
         /** [labels] => subject_names */
         this.labels = all_subject_names;
 
         /** [datasets] (simple) => max,min,avg,passmark for each subject_names */
         // [TODO: add passmark field]
-        this.datasets = ['min','max', 'avg'].map(grade=>({
+        this.datasets = ['min', 'max', 'avg'].map(grade => ({
             label: grade.underscrore_to_capitalize(),
             data: all_subject_names.map(sub_name => metaData.all_sub[sub_name.to_camel_case()][grade]),
             backgroundColor: 'rgba(89, 127, 255,0.1)',
             borderColor: '#5A7BFA',
             borderWidth: 1,
-            fill: grade!='pass_mark' ? 'origin' : false 
+            fill: grade != 'pass_mark' ? 'origin' : false
         }))
     }
     // console.log('before', overview_main_chart_data_before);
@@ -378,15 +378,15 @@ function updateMainUi(metaData) {
             overview_main_chart_config.type = 'line'; /** GRADE_OVERVIEW must ne 'line' */
 
             e.target.checked ?
-            overview_main_chart_config.data = overview_main_chart_data_after :
-            overview_main_chart_config.data = overview_main_chart_data_before;
+                overview_main_chart_config.data = overview_main_chart_data_after :
+                overview_main_chart_config.data = overview_main_chart_data_before;
         } else {
             /** to the MARK_OVERVIEW chart */
             overview_main_chart_config.data = overview_main_chart_data_mark_overview;
 
             e.target.checked ? /** just change the [TYPE] here */
-            overview_main_chart_config.type = 'bar' :
-            overview_main_chart_config.type = 'line';
+                overview_main_chart_config.type = 'bar' :
+                overview_main_chart_config.type = 'line';
         }
 
         /**step 3: draw the new graph */
@@ -397,23 +397,23 @@ function updateMainUi(metaData) {
     document.querySelector('#overview_main .header button').onclick = e => {
         let is_mark_overview = e.target.textContent.toLowerCase().includes('mark');
         e.target.textContent = is_mark_overview ? 'grade overview' : 'mark overview';
-        
+
         overview_main_chart.destroy()
-        if(is_mark_overview){
+        if (is_mark_overview) {
             /** to the MARK_OVERVIEW chart */
             //overview_main_chart_config.type = 'bar'; /** GRADE_OVERVIEW is 'bar' for the 1rst time */ [PROBLEM, bar is croped in the canvas]
             overview_main_chart_config.data = overview_main_chart_data_mark_overview;
             overview_main_chart_config.options.scales.yAxes[0].scaleLabel.labelString = "Total Marks";
-            
+
             /**changing the footer switch-name + title name*/
             document.querySelector('#overview_main .footer .switch-name').textContent = 'Show Bar Graph';
             document.querySelector('#overview_main .header p').textContent = 'Mark Overview';
-        }else{
+        } else {
             /** to the GRADE_OVERVIEW chart */
             overview_main_chart_config.type = 'line'; /** GRADE_OVERVIEW must be 'line' */
             overview_main_chart_config.data = overview_main_chart_data_before;
             overview_main_chart_config.options.scales.yAxes[0].scaleLabel.labelString = "Total Students";
-            
+
             /**changing the footer switch-name + title name*/
             document.querySelector('#overview_main .footer .switch input[type=checkbox]').checked = false;
             document.querySelector('#overview_main .footer .switch-name').textContent = 'Change Axis';
@@ -667,4 +667,92 @@ function view_specific_result(metaData, response) {
     /**step: 4 ; DOM manupulation*/
     // deleteing svg image
     document.querySelector('#search .img').remove();
+}
+
+async function view_compared_result(metaData, all_students_results) {
+    
+    /*step 2: draw in the main graph */
+    // removing last  childs
+    document.querySelector('#overview_main .header').lastElementChild.remove();
+    document.querySelector('#overview_secondary').lastElementChild.remove();
+    document.querySelector('#overview_secondary .header').lastElementChild.remove();
+    // editing text
+    document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
+    document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph'
+    document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
+
+    let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
+    let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
+        type: 'bar',
+        data: {
+            /** labels are the subjects name */
+            labels: all_subjects_name,
+            /*array of objects 
+            return an obj forEach line ([max, student_result, min, passmark(nofill)])
+            data => array (1 element forEach sub_name) (len=lenof labels)
+            */
+            datasets: all_students_results.map((result, i) => {
+                let random_color = GRAPH_BG_COLORS[Math.floor(Math.random() * GRAPH_BG_COLORS.length)];
+                return {
+                    label: result.name,
+                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
+                    backgroundColor: random_color,
+                    borderColor: random_color.slice(0, random_color.length - 2),
+                    borderWidth: 1,
+                    hidden: false,
+                    fill: false
+                }
+            })
+        },
+        options: {
+            aspectRatio: 2,
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        labelString: 'Total Number',
+                        display: true,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        suggestedMax: 100
+                    }
+                }]
+            }
+        }
+    });
+    // checkbox event listenaer
+    document.getElementById('overview_main_checkbox').onclick = e => {
+        console.log('[CHECKBOX MAIN]:', e.target.checked)
+
+        if (!e.target.checked) overview_main_chart.config.type = 'bar';
+        else overview_main_chart.config.type = 'line';
+
+        overview_main_chart.update();
+        /** after some research I find out that --> `chart.type` wont work like `chart.data`. use `chart.confog.type` */
+        // console.log('updated', overview_main_chart.type)
+        // console.log('updated', overview_main_chart.config)
+    }
+    /*step 3: draw in the secondary graph */
+    /* thsi graph shows per students total mark */
+    let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
+        type: 'polarArea',
+        data: {
+            /** labels are the students name */
+            labels: all_students_results.map(res => res.name),
+            /*array of objects 
+            return an obj forEach line ([max, student_result, min, passmark(nofill)])
+            data => array (1 element forEach sub_name) (len=lenof labels)
+            */
+            datasets: [{
+                data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
+                backgroundColor: GRAPH_BG_COLORS
+            }]
+        },
+        options: {
+            aspectRatio: 1.2,
+            legend: {
+                position: 'right'
+            }
+        }
+    });
 }

@@ -85,11 +85,12 @@ async function main() {
         if(DB_NAME && XM_NAME)
             db = await openiddb(DB_NAME, DB_VERSION);
 
+        // let response;
         if (IS_CREATED && DB_NAME && XM_NAME) {
             /** will run if new obj_stores are created */
             /** fetch data from csv file and store them */
 
-            let response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
+            response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
             let data = await response.text();
 
             /**storing data in the iddb */
@@ -129,102 +130,17 @@ async function main() {
             return;
         }
         /* else show COMPARE result if student passes more than 1 roll */
-        /*step 1: get all their result*/
-        let all_students_results = [];
-        for (let roll of STD_ROLLS) {
-            response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
-            all_students_results.push(response);
-        }
-        /*step 2: draw in the main graph */
-        // removing last 2 child
-        document.querySelector('#overview_main .header').lastElementChild.remove();
-        document.querySelector('#overview_main .header').lastElementChild.remove();
-        document.querySelector('#overview_secondary').lastElementChild.remove();
-        document.querySelector('#overview_secondary .header').lastElementChild.remove();
-        // editing text
-        document.querySelector('#overview_main .header').lastElementChild.textContent = 'Mark Overview';
-        document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph'
-        document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
-
-        let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-        let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
-            type: 'bar',
-            data: {
-                /** labels are the subjects name */
-                labels: all_subjects_name,
-                /*array of objects 
-                return an obj forEach line ([max, student_result, min, passmark(nofill)])
-                data => array (1 element forEach sub_name) (len=lenof labels)
-                */
-                datasets: all_students_results.map((result, i) => {
-                    let random_color = GRAPH_BG_COLORS[Math.floor(Math.random() * GRAPH_BG_COLORS.length)];
-                    return {
-                        label: result.name,
-                        data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
-                        backgroundColor: random_color,
-                        borderColor: random_color.slice(0, random_color.length - 2),
-                        borderWidth: 1,
-                        hidden: false,
-                        fill: false
-                    }
-                })
-            },
-            options: {
-                aspectRatio: 2,
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            labelString: 'Total Number',
-                            display: true,
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            suggestedMax: 100
-                        }
-                    }]
-                }
+        if (STD_ROLLS.length > 1){
+            let all_students_results = [];
+            for (let roll of STD_ROLLS) {
+                response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
+                all_students_results.push(response);
             }
-        });
-        // checkbox event listenaer
-        document.getElementById('overview_main_checkbox').onclick = e => {
-            console.log('[CHECKBOX MAIN]:', e.target.checked)
-
-            if (!e.target.checked) overview_main_chart.config.type = 'bar';
-            else overview_main_chart.config.type = 'line';
-
-            overview_main_chart.update();
-            /** after some research I find out that --> `chart.type` wont work like `chart.data`. use `chart.confog.type` */
-            // console.log('updated', overview_main_chart.type)
-            // console.log('updated', overview_main_chart.config)
+            view_compared_result(metaData, all_students_results);
+            console.log('ALL RESULT', all_students_results);
+            return;
         }
-        /*step 3: draw in the secondary graph */
-        /* thsi graph shows per students total mark */
-        let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
-            type: 'polarArea',
-            data: {
-                /** labels are the students name */
-                labels: all_students_results.map(res => res.name),
-                /*array of objects 
-                return an obj forEach line ([max, student_result, min, passmark(nofill)])
-                data => array (1 element forEach sub_name) (len=lenof labels)
-                */
-                datasets: [{
-                    data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
-                    backgroundColor: GRAPH_BG_COLORS
-                }]
-            },
-            options: {
-                aspectRatio: 1.2,
-                legend: {
-                    position: 'right'
-                }
-            }
-        });
-
-
-
-        console.log('ALL RESULT', all_students_results);
-        console.log('done');
+        console.log('[done]');
 
     } catch (error) {
         console.error(error);
