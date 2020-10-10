@@ -363,33 +363,61 @@ function updateMainUi(metaData) {
     document.getElementById('overview_main_checkbox').onchange = e => {
         console.log("[CheckBox overview_main] :", e.target.checked);
 
+        let is_mark_overview = document.querySelector('#overview_main .header button').textContent.toLowerCase().includes('mark');
+
         /**step 1: destroy the previous chart */
         overview_main_chart.destroy();
-        if (e.target.checked) {
-            // updating data
-            // overview_main_chart.config.data = overview_main_chart_data_after;
 
-            overview_main_chart_config.data = overview_main_chart_data_after;
-        } else {
-            // else do the same think while loading the page
-            // overview_main_chart.config.data = overview_main_chart_data_before;
+        /**step 2: edit data based on criteria */
+        if (is_mark_overview) {
+            /**
+             * if the button text includes 'mark', means user is in the grade_overview graph, so change the axis just
+             * else he is in the mark_overview_graph,when we change the CGHART_TYPE to bar, not the axis
+             */
+            /** to the GRADE_OVERVIEW chart */
+            overview_main_chart_config.type = 'line'; /** GRADE_OVERVIEW must ne 'line' */
 
+            e.target.checked ?
+            overview_main_chart_config.data = overview_main_chart_data_after :
             overview_main_chart_config.data = overview_main_chart_data_before;
+        } else {
+            /** to the MARK_OVERVIEW chart */
+            overview_main_chart_config.data = overview_main_chart_data_mark_overview;
+
+            e.target.checked ? /** just change the [TYPE] here */
+            overview_main_chart_config.type = 'bar' :
+            overview_main_chart_config.type = 'line';
         }
+
+        /**step 3: draw the new graph */
         overview_main_chart = new Chart(overview_main_chart_context, overview_main_chart_config);
         //! [ERROR]: ANimation is not working while changing data -- [SOLVED] {destroying previous chart and creating it again based on new CONFIG}
     }
     /** mark overview  button event listener **/
     document.querySelector('#overview_main .header button').onclick = e => {
-        let is_mark = e.target.textContent.toLowerCase().includes('mark');
-        e.target.textContent = is_mark ? 'grade overview' : 'mark overview';
+        let is_mark_overview = e.target.textContent.toLowerCase().includes('mark');
+        e.target.textContent = is_mark_overview ? 'grade overview' : 'mark overview';
         
-        overview_secondary_chart.destroy()
-        if(is_mark){
+        overview_main_chart.destroy()
+        if(is_mark_overview){
+            /** to the MARK_OVERVIEW chart */
+            //overview_main_chart_config.type = 'bar'; /** GRADE_OVERVIEW is 'bar' for the 1rst time */ [PROBLEM, bar is croped in the canvas]
             overview_main_chart_config.data = overview_main_chart_data_mark_overview;
-            /**making the footer display none so that user can't use the switch of changing axis */
+            overview_main_chart_config.options.scales.yAxes[0].scaleLabel.labelString = "Total Marks";
+            
+            /**changing the footer switch-name + title name*/
+            document.querySelector('#overview_main .footer .switch-name').textContent = 'Show Bar Graph';
+            document.querySelector('#overview_main .header p').textContent = 'Mark Overview';
         }else{
+            /** to the GRADE_OVERVIEW chart */
+            overview_main_chart_config.type = 'line'; /** GRADE_OVERVIEW must be 'line' */
             overview_main_chart_config.data = overview_main_chart_data_before;
+            overview_main_chart_config.options.scales.yAxes[0].scaleLabel.labelString = "Total Students";
+            
+            /**changing the footer switch-name + title name*/
+            document.querySelector('#overview_main .footer .switch input[type=checkbox]').checked = false;
+            document.querySelector('#overview_main .footer .switch-name').textContent = 'Change Axis';
+            document.querySelector('#overview_main .header p').textContent = 'Grade Overview';
         }
         overview_main_chart = new Chart(overview_main_chart_context, overview_main_chart_config);
     }
@@ -413,7 +441,7 @@ function updateMainUi(metaData) {
             }
         }
     });
-    // select event event listener 
+    /*select event event listener */
     document.getElementById('overview_secondary_select').addEventListener('change', e => {
         console.log('[SELECT overview_secondary] :', e.target.value);
 
@@ -451,6 +479,7 @@ function updateMainUi(metaData) {
             })
             select_element.innerHTML = change;
             // console.log(change);
+
             // step2: changing chart label + data && updating
             overview_secondary_chart.data.labels = GRADES.map(e => e.underscrore_to_capitalize());
             let sub_name = select_element.options[select_element.selectedIndex].value;
@@ -475,10 +504,9 @@ function updateMainUi(metaData) {
             // console.log(change);
 
             // step2: changing chart label + data && updating
-
             overview_secondary_chart.data.labels = subjects.map(e => e.underscrore_to_capitalize());
             overview_secondary_chart.data.datasets = [{
-                data: Object.values(metaData.all_sub).map(obj => obj.failed), // 'failed' is selected 
+                data: Object.values(metaData.all_sub).map(obj => obj.failed), // 'failed' is selected in the select_element 
                 backgroundColor: GRAPH_BG_COLORS
             }];
             overview_secondary_chart.update();
@@ -507,8 +535,6 @@ function updateMainUi(metaData) {
     });
     document.getElementById('total_failed').innerText += metaData.failed_examnee;
     /** ============================================= overview_total chart ends ============================================= */
-    /** ============================================= search roll func ============================================= */
-    search_compare_event_listener()
 }
 
 
