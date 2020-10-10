@@ -1,3 +1,5 @@
+/*---------- HADER SEARCH BUTTON ----------*/
+
 /*---------- EXPANDER MENU ----------*/
 const showMenu = (toggleId, navbarId) => {
     const toggle = document.getElementById(toggleId),
@@ -147,7 +149,7 @@ async function main() {
                 topper_list.push(response);
             }
             view_topper_students_table(metaData, topper_list);
-            console.log('[topper_list]',topper_list);
+            console.log('[topper_list]', topper_list);
             return;
         }
 
@@ -156,13 +158,13 @@ async function main() {
             response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLLS[0]));
             let freinds_result_html = '<tr style="font-weight:500"><td>RANK</td><td>NAME</td><td>ROLL</td><td>TOTAL</td><td>COMPARE</td></tr>',
                 total_std_to_show = 15,
-                search_roll = STD_ROLLS[0] - parseInt(total_std_to_show/2);
-            while(total_std_to_show > 0) {
+                search_roll = STD_ROLLS[0] - parseInt(total_std_to_show / 2);
+            while (total_std_to_show > 0) {
                 if (search_roll < 1) continue;
 
                 let response = await getDataByKey(db, OBJ_STORE_MAIN, search_roll);
                 if (!response) continue;
-                
+
                 freinds_result_html += `<tr><td>${response.rank}</td><td>${response.name.capitalize()}</td><td>${response.roll}</td><td>${response.res[metaData.header_names.indexOf('term_total')]}</td><td><button class="hover-expand v-s" data-roll=${response.roll}>Compare</button></td></tr>`;
                 total_std_to_show--;
                 search_roll++;
