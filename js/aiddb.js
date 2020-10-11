@@ -248,7 +248,11 @@ function storeMainData(db, store_name, mode, data) {
     })
 }
 /**=================== search result func ================= */
-function search_result(roll, name) {
+function search_result(roll=null, name=null) {
+    /**
+     * roll ==> string || null
+     * name ==> string || null
+     */
     console.log('[SUBMIT]')
     if (!roll && !name) {
         throw Error('No Input');
@@ -264,10 +268,12 @@ function search_result(roll, name) {
     }
 }
 /**=================== compare result func ================= */
-function compare_result(roll, name) {
+function compare_result(roll=null, name=null) {
     /**
      * roll : string --> single roll passed
      * roll : array --> multiple roll passed
+     * roll : string || null
+     * name : string || null
      */
     console.log('[COMPARE RSULT] :', roll)
     if (!roll && !name) {

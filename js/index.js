@@ -160,6 +160,7 @@ async function main() {
                 total_std_to_show = 15,
                 search_roll = STD_ROLLS[0] - parseInt(total_std_to_show / 2);
             while (total_std_to_show > 0) {
+                search_roll++;
                 if (search_roll < 1) continue;
 
                 let response = await getDataByKey(db, OBJ_STORE_MAIN, search_roll);
@@ -167,7 +168,6 @@ async function main() {
 
                 freinds_result_html += `<tr><td>${response.rank}</td><td>${response.name.capitalize()}</td><td>${response.roll}</td><td>${response.res[metaData.header_names.indexOf('term_total')]}</td><td><button class="hover-expand v-s" data-roll=${response.roll}>Compare</button></td></tr>`;
                 total_std_to_show--;
-                search_roll++;
             }
             view_specific_result(metaData, response, freinds_result_html);
             return;

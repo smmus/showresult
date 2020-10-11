@@ -26,13 +26,10 @@
 <body>
     <header>
         <div class="header-logo">Show<span>Result</span></div>
-        <div class="search-container">
-            <input type="text" placeholder="Search...">
-            <div class="search"></div>
+        <div class="search-area">
+            <input type="text" class="search-input" placeholder="Search Roll">
+            <button class="hover-expand v-s" onclick="search_result(this.parentElement.firstElementChild.value)">Search</button>
         </div>
-        <nav>
-            <a href="#colleges">Colleges</a>
-        </nav>
     </header>
     <div class="l-navbar" id="navbar">
         <nav class="nav">
