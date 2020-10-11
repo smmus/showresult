@@ -28,7 +28,8 @@
         <div class="header-logo">Show<span>Result</span></div>
         <div class="search-area">
             <input type="text" class="search-input" placeholder="Search Roll">
-            <button class="hover-expand v-s" onclick="search_result(this.parentElement.firstElementChild.value)">Search</button>
+            <button class="hover-expand v-s"
+                onclick="search_result(this.parentElement.firstElementChild.value)">Search</button>
         </div>
     </header>
     <div class="l-navbar" id="navbar">
@@ -208,17 +209,19 @@
             </div>
         </div>
         <div id="search" class="card card__1">
+            <div class="colg_name">RAJSHAHI COLLEGE</div>
             <div>
                 <input class="gate" id="std_roll" type="text" placeholder="3 digit ROLL number" />
                 <label for="std_roll">Roll</label>
             </div>
-            <div style="text-align: center;">
-                <button id="search_result" class="hover-expand ">show result</button>
+            <div class="btn-grp">
+                <div style="text-align: center;">
+                    <button id="search_result" class="hover-expand ">show result</button>
+                </div>
+                <div style="text-align: center;">
+                    <button id="compare_result" class="hover-expand ">Compare</button>
+                </div>
             </div>
-            <div style="text-align: center;">
-                <button id="compare_result" class="hover-expand ">Compare</button>
-            </div>
-            <div class="colg_name">RAJSHAHI COLLEGE</div>
             <div class="img"><svg id="b21613c9-2bf0-4d37-bef0-3b193d34fc5d" data-name="Layer 1"
                     xmlns="http://www.w3.org/2000/svg" width="647.63626" height="632.17383"
                     viewBox="0 0 647.63626 632.17383">

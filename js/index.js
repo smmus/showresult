@@ -1,5 +1,3 @@
-/*---------- HADER SEARCH BUTTON ----------*/
-
 /*---------- EXPANDER MENU ----------*/
 const showMenu = (toggleId, navbarId) => {
     const toggle = document.getElementById(toggleId),
@@ -68,8 +66,18 @@ const SHOW_TOPPERS = 10;
 
 let IS_CREATED = false;
 
+// ------------------------ FOR MEDIA QUERIES  ------------------------------
+const MEDIA_PHONE_WIDTH =  '640px'; 
+const MEDIA_TABLET_WIDTH =  '768px';
+const MEDIA_DESKTOP =  '1024px';
+
+let IS_MEDIA_PHONE = window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`).matches;
+let IS_MEDIA_TABLET = window.matchMedia(`(max-width: ${MEDIA_TABLET_WIDTH})`).matches;
+let IS_MEDIA_DESKTOP = window.matchMedia(`(max-width: ${MEDIA_DESKTOP})`).matches;
+// console.log(window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`))
+
 Chart.defaults.global.elements.line.tension = 0;
-Chart.defaults.global.elements.point.hitRadius = 2;
+Chart.defaults.global.elements.point.hitRadius = 5;
 // ------------------------ main kaam starts ------------------------------
 async function main() {
     let db;

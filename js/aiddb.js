@@ -248,7 +248,7 @@ function storeMainData(db, store_name, mode, data) {
     })
 }
 /**=================== search result func ================= */
-function search_result(roll=null, name=null) {
+function search_result(roll = null, name = null) {
     /**
      * roll ==> string || null
      * name ==> string || null
@@ -268,7 +268,7 @@ function search_result(roll=null, name=null) {
     }
 }
 /**=================== compare result func ================= */
-function compare_result(roll=null, name=null) {
+function compare_result(roll = null, name = null) {
     /**
      * roll : string --> single roll passed
      * roll : array --> multiple roll passed
@@ -368,13 +368,13 @@ function updateMainUi(metaData) {
         type: 'line',
         data: overview_main_chart_data_before,
         options: {
-            aspectRatio: 2,
+            aspectRatio: IS_MEDIA_PHONE ? 1 : 2,
             maintainAspectRatio: true, //default: true
             scales: {
                 yAxes: [{
                     scaleLabel: {
                         labelString: 'Total Students',
-                        display: true,
+                        display: !IS_MEDIA_PHONE, //don't show in phone devices to expand chart drawing area
                     },
                     ticks: {
                         beginAtZero: true,
@@ -560,14 +560,16 @@ function updateMainUi(metaData) {
             ]
         },
         options: {
-            aspectRatio: 1,
+            aspectRatio: IS_MEDIA_PHONE ? 1.5 : 1,
             legend: {
-                position: 'bottom'
+                position: IS_MEDIA_PHONE ? 'right' : 'bottom'
             },
         }
     });
-    document.getElementById('total_failed').innerText = 'Failed: '+metaData.failed_examnee;
+    document.getElementById('total_failed').innerText = 'Failed: ' + metaData.failed_examnee;
     /** ============================================= overview_total chart ends ============================================= */
+    /** ============================================= removing one element on MOBILE DEVICES ============================================= */
+    document.getElementById('extra').style.display = 'none'; 
 }
 
 
@@ -634,7 +636,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
     let std_marks_per_sub = all_subjects_name.map(sub_name => response.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]);
 
     /**===========step:1 expanding area for line graph */
-    document.getElementById('main-container').style.gridTemplateAreas =
+    document.getElementById('main-container').style.gridTemplateAreas = IS_MEDIA_PHONE ? '' :
         '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a d d" "t t t t t a a a a a d d"';
     /**step:2 drawing line graph in that area */
     let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
@@ -657,12 +659,12 @@ function view_specific_result(metaData, response, freinds_result_html) {
             }))
         },
         options: {
-            aspectRatio: 2,
+            aspectRatio: IS_MEDIA_PHONE ? 1 : 2,
             scales: {
                 yAxes: [{
                     scaleLabel: {
                         labelString: 'Total Number',
-                        display: true,
+                        display: !IS_MEDIA_PHONE,
                     },
                     ticks: {
                         beginAtZero: true,
@@ -737,9 +739,9 @@ function view_compared_result(metaData, all_students_results) {
     document.querySelector('#overview_main .footer').lastElementChild.textContent = 'Show Line Graph'
     document.querySelector('#overview_secondary .header').firstElementChild.textContent = 'Total Marks';
     // removing element
-    document.getElementById('e').remove();
+    document.getElementById('e').style.display = 'none';
     // layout
-    document.getElementById('main-container').style.gridTemplateAreas =
+    document.getElementById('main-container').style.gridTemplateAreas = IS_MEDIA_PHONE ? '' :
         `"m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
@@ -775,12 +777,12 @@ function view_compared_result(metaData, all_students_results) {
             })
         },
         options: {
-            aspectRatio: 2,
+            aspectRatio: IS_MEDIA_PHONE ? 1 : 2,
             scales: {
                 yAxes: [{
                     scaleLabel: {
                         labelString: 'Total Number',
-                        display: true,
+                        display: !IS_MEDIA_PHONE,
                     },
                     ticks: {
                         beginAtZero: true,
@@ -819,9 +821,9 @@ function view_compared_result(metaData, all_students_results) {
             }]
         },
         options: {
-            aspectRatio: 1.2,
+            aspectRatio: IS_MEDIA_PHONE ? 1 : 1.2,
             legend: {
-                position: 'right'
+                position: IS_MEDIA_PHONE ? 'bottom' : 'right'
             }
         }
     });
@@ -941,7 +943,7 @@ function view_failed_students_chart(failed_students_results) {
             }
         }
     }
-    overview_total_failed_chart = new Chart(overview_total_failed_context, overview_total_failed_config)
+    overview_total_failed_chart = new Chart(overview_total_failed_context, overview_total_failed_config);
 }
 
 function view_topper_students_table(metaData, topper_list) {
