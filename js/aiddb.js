@@ -430,7 +430,7 @@ function updateMainUi(metaData) {
                     },
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 100
+                        // suggestedMax: 100
                     }
                 }]
             },
@@ -718,7 +718,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
                     },
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 100
+                        // suggestedMax: 100
                     }
                 }]
             }
@@ -836,7 +836,7 @@ function view_compared_result(metaData, all_students_results) {
                     },
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 100
+                        // suggestedMax: 100
                     }
                 }]
             }

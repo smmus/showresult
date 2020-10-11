@@ -59,12 +59,17 @@ const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'prom
 const XM_TOTAL_PRIORITY_LIST = ['exam_total', 'term_total', 'mcq'];
 const SUB_CODE_TO_NAME = {
     '101': 'bangla_1st',
+    '102': 'bangla_2nd',
     '107': 'eng_1st',
+    '108': 'eng_2nd',
     '178': 'biology_1st',
     '179': 'biology_2nd',
     '174': 'physics_1st',
+    '175': 'physics_2nd',
     '176': 'chemistry_1st',
+    '177': 'chemistry_2nd',
     '265': 'higher_math_1st',
+    '266': 'higher_math_2nd',
     '275': 'ict'
 };
 
