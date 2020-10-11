@@ -1,19 +1,24 @@
 /*---------- EXPANDER MENU ----------*/
-const showMenu = (toggleId, navbarId) => {
-    const toggle = document.getElementById(toggleId),
-        navbar = document.getElementById(navbarId);
+const showMenu = (navbarId, ...toggle_btn_selectors) => {
+    let toggle_btns = toggle_btn_selectors.map(selector => document.querySelector(selector));
+    let navbar = document.getElementById(navbarId);
 
-    if (toggle && navbar) {
-        toggle.addEventListener('click', () => {
-            navbar.classList.toggle('expander');
-            document.getElementById('main-container').classList.toggle('overlay');
+    const onclick_event_listener = () => {
+        // toggling padding first
+        navbar.style.padding = navbar.style.padding ? '' : '1.5rem 1.5rem 2rem';
 
-            document.querySelectorAll('#navbar nav > div >  div+div > div .rotate').forEach(e => e.classList.remove("rotate"));
-            document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e => e.classList.remove("showCollapse"));
-        })
+        navbar.classList.toggle('expander');
+        document.getElementById('main-container').classList.toggle('overlay');
+
+        document.querySelectorAll('#navbar nav > div >  div+div > div .rotate').forEach(e => e.classList.remove("rotate"));
+        document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e => e.classList.remove("showCollapse"));
+    }
+
+    if (toggle_btns && navbar) {
+        toggle_btns.forEach(element => {element.addEventListener('click', onclick_event_listener)});
     }
 }
-showMenu('nav-toggle', 'navbar');
+showMenu('navbar' , '#nav-toggle', '.header-logo');
 
 /*----------- LINK ACTIVE  ------------*/
 const linkColor = document.querySelectorAll('.nav__link')
@@ -67,9 +72,9 @@ const SHOW_TOPPERS = 10;
 let IS_CREATED = false;
 
 // ------------------------ FOR MEDIA QUERIES  ------------------------------
-const MEDIA_PHONE_WIDTH =  '640px'; 
-const MEDIA_TABLET_WIDTH =  '768px';
-const MEDIA_DESKTOP =  '1024px';
+const MEDIA_PHONE_WIDTH = '640px';
+const MEDIA_TABLET_WIDTH = '768px';
+const MEDIA_DESKTOP = '1024px';
 
 let IS_MEDIA_PHONE = window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`).matches;
 let IS_MEDIA_TABLET = window.matchMedia(`(max-width: ${MEDIA_TABLET_WIDTH})`).matches;

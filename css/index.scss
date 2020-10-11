@@ -291,7 +291,7 @@ body {
         }
     }
 
-    .l-navbar{
+    #navbar{
         position: fixed;
         top: 0;
         left: 0;
@@ -299,7 +299,7 @@ body {
         height: 100%;
         background-color: $bgColor;
         color: $whiteColor;
-        padding: 1.5rem 1.5rem 2rem;
+        // padding: 1.5rem 1.5rem 2rem;
         transition: .5s;
         z-index: $zIndexUp;
 
@@ -545,7 +545,8 @@ $desktop: 1024px;
             margin: 0;
         }
         #navbar{
-            display: none;
+            width: 0;
+            padding: 0;
         }
         #main-container{
             margin: 0;
@@ -573,10 +574,6 @@ $desktop: 1024px;
                         margin: 0;
                     }
                 }
-
-            }
-            #extra{
-                // display: none;
             }
         }
     }

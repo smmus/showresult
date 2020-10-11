@@ -569,7 +569,8 @@ function updateMainUi(metaData) {
     document.getElementById('total_failed').innerText = 'Failed: ' + metaData.failed_examnee;
     /** ============================================= overview_total chart ends ============================================= */
     /** ============================================= removing one element on MOBILE DEVICES ============================================= */
-    document.getElementById('extra').style.display = 'none'; 
+    if(IS_MEDIA_PHONE)
+        document.getElementById('extra').style.display = 'none'; 
 }
 
 
@@ -747,10 +748,10 @@ function view_compared_result(metaData, all_students_results) {
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
-    "t t t t t t t a a a a a"
-    "t t t t t t t a a a a a"
-    "t t t t t t t a a a a a"
-    "t t t t t t t a a a a a"`
+    "t t t t t t t t a a a a"
+    "t t t t t t t t a a a a"
+    "t t t t t t t t a a a a"
+    "t t t t t t t t a a a a"`
 
     /*==============step 2: draw in the main graph */
     let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
@@ -823,7 +824,7 @@ function view_compared_result(metaData, all_students_results) {
         options: {
             aspectRatio: IS_MEDIA_PHONE ? 1 : 1.2,
             legend: {
-                position: IS_MEDIA_PHONE ? 'bottom' : 'right'
+                position: 'bottom'
             }
         }
     });
