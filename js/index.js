@@ -41,7 +41,7 @@ for (let i = 0; i < linkCollapse.length; i++) {
     })
 }
 // ------------------------ nav functionality ends -----------------------------
-// ------------------------ global vars ends -----------------------------
+// ================================= GLOBAL VARS  =================================
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
@@ -94,8 +94,8 @@ let IS_MEDIA_DESKTOP = window.matchMedia(`(max-width: ${MEDIA_DESKTOP})`).matche
 Chart.defaults.global.elements.line.tension = 0;
 Chart.defaults.global.elements.point.hitRadius = 5;
 // ------------------------ main kaam starts ------------------------------
+let db;
 async function main() {
-    let db;
 
     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     if (!window.indexedDB) {
@@ -132,7 +132,7 @@ async function main() {
                 console.log('[RANK OK]');
             } else {
                 console.log('[RANK CALCULATING]');
-                await createRankList(db, OBJ_STORE_RANK, data, header_names);
+                await createRankList(db, OBJ_STORE_MAIN, data, header_names);
             }
         }
 

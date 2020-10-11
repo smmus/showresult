@@ -16,28 +16,58 @@ String.prototype.to_camel_case = function () {
 function createRankList(db, store_name, data, header_index) {
     return new Promise((res, rej) => {
 
-        let rankList = data.split('\n').splice(1).map(line => {
+        /** finding which one is the TOTAL_NUMBER field for each subject *assuming 'ict' represents all subjects */
+        let total_number_field_name = '';
+        let priority_list = ['exam_total', 'term_total', 'mcq'];
+        let all_sub_field_names = header_index.filter(field_name => field_name.includes('ict'));
+        priority_list.forEach(e => {
+            if (total_number_field_name) return; /** if total_number_field_name is already set -- n need to find */
+            all_sub_field_names.every(field_name => {
+                console.log(field_name)
+                if (field_name.includes(e)) {
+                    total_number_field_name = e;
+                    return false; /** it wont check for other field_name */
+                };
+                return true; /**will check for other_field_name */
+            })
+        });
+        console.log('[total_number_field_name]: ', total_number_field_name);
+        /** [BREAKEPOINT] - [GOOD] */
 
-            let result = line.split(',');
-            // [roll, total, optional, non-optional, name]
+
+        /** getting neccessary to sort array */
+        let rankList = data.split('\n').splice(1).map(line => {
+            let result = line.split(','); /**all fields are [STRING] */
+
+            if(!result[header_index.indexOf('student_name')]) return; /*no name means no result*/
+
+            /** finding student's optional subject, if not assuming its 'biology'*/
+            let optionalSub = header_index.indexOf('optionalSub') != -1 ? result[header_index.indexOf('optionalSub')] : 'biology';
+            let nonOptionalSub = optionalSub == 'biology' ? 'higher_math' : 'biology';
+            /** caculating student's optional subjects' marks, **assuming they are [INTEGER]-string** */
+            let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[field_name])).reduce((a, c) => a + c);
+            let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[field_name])).reduce((a, c) => a + c);
+            // 
+            /**
+             * rankList => Array of Arrays -> [roll, exam_total, optional, non-optional]
+             */
             return [
                 parseInt(result[header_index.indexOf('student_roll')].slice(this.length - MAIN_ROLL_DIGITS)),
-                parseInt(result[header_index.indexOf('term_total')]),
-                result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('biology_1st_mcq')]) : parseInt(result[header_index.indexOf('higher_math_1st_mcq')]),
-                result[header_index.indexOf('optionalSub')] == 'biology' ? parseInt(result[header_index.indexOf('higher_math_1st_mcq')]) : parseInt(result[header_index.indexOf('biology_1st_mcq')]),
-                result[header_index.indexOf('student_name')],
-                result[header_index.indexOf('isPassed')].toLowerCase().includes('fail') ? false : true
+                parseInt(result[header_index.indexOf('exam_total') != -1 ? header_index.indexOf('exam_total') : header_index.indexOf('term_total')]),
+                optionalSubMark,
+                nonOptionalSubMark,
             ]
 
         })
 
-        let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1)
-            .thenBy(function (arr1, arr2) { return arr1[2] - arr2[2]; },)
-            .thenBy(function (arr1, arr2) { return arr1[3] - arr2[3]; }, -1);
+        /**soriting function */
+        let sortingFunc = firstBy(function (arr1, arr2) { return arr1[1] - arr2[1]; }, -1) /* desc ==> exam_total */
+            .thenBy(function (arr1, arr2) { return arr1[2] - arr2[2]; }) /* asc ==> optional */
+            .thenBy(function (arr1, arr2) { return arr1[3] - arr2[3]; }, -1); /* desc ==> nonOptional */
         /*
         *1. who has the higher marks (desc)
-        *2. if marks same? who has low in optional_sub  (asc)
-        *3. if both marks same? who has high in non_optional_sub (desc)
+        *2. if marks same? who has the lower in optional_sub  (asc)
+        *3. if both marks same? who has the higher in non_optional_sub (desc)
         */
 
         /*sorting the main array*/
@@ -46,25 +76,36 @@ function createRankList(db, store_name, data, header_index) {
         console.log('[RANK LIST -]')
         console.log(rankList)
 
+        /** opening transaction for updating */
         let tx = db.transaction([store_name], 'readwrite');
         tx.oncomplete = function () {
             console.log('[TX CPM :', db.name, store_name, mode, ']');
+            /** returning from promise */
             res(true);
         }
         tx.onerror = e => { rej(e) };
         let objStoreRank = tx.objectStore(store_name);
 
-        rankList.forEach((arr, index) => {
-            objStoreRank.add({
-                rank: index + 1, // non-zero
-                name: arr[4],
-                roll: arr[0],
-                total: arr[1],
-                isPassed: arr[5], //boolean
-                data: arr.slice(2, 4) //2 & 3rd index (optional, non-optional)
-            })
-        })
-        // [TODO]: update the main list instead of creating new objStore.
+        objectStore.openCursor().onsuccess = function (event) {
+            const cursor = event.target.result;
+            if (cursor) {
+                if (cursor.value.roll > 0) {
+                    /** find the rank of the roll in rankList */
+                    const updateData = cursor.value;
+
+                    updateData.rank = rankList[cursor.value.roll-1];
+                    const request = cursor.update(updateData);
+                    request.onsuccess = function () {
+                        console.log('[UPDATED RANK]:', updateData.roll, updateData.rank);
+                    };
+                };
+
+                cursor.continue();
+            } else {
+                console.log('Completed Updating');
+                res(true);
+            }
+        };
     })
 }
 
@@ -569,8 +610,8 @@ function updateMainUi(metaData) {
     document.getElementById('total_failed').innerText = 'Failed: ' + metaData.failed_examnee;
     /** ============================================= overview_total chart ends ============================================= */
     /** ============================================= removing one element on MOBILE DEVICES ============================================= */
-    if(IS_MEDIA_PHONE)
-        document.getElementById('extra').style.display = 'none'; 
+    if (IS_MEDIA_PHONE)
+        document.getElementById('extra').style.display = 'none';
 }
 
 
