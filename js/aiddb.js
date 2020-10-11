@@ -18,9 +18,8 @@ function createRankList(db, store_name, data, header_index) {
 
         /** finding which one is the TOTAL_NUMBER field for each subject *assuming 'ict' represents all subjects */
         let total_number_field_name = '';
-        let priority_list = ['exam_total', 'term_total', 'mcq'];
         let all_sub_field_names = header_index.filter(field_name => field_name.includes('ict'));
-        priority_list.forEach(e => {
+        XM_TOTAL_PRIORITY_LIST.forEach(e => {
             if (total_number_field_name) return; /** if total_number_field_name is already set -- n need to find */
             all_sub_field_names.every(field_name => {
                 console.log(field_name)
@@ -126,7 +125,7 @@ function createRankList(db, store_name, data, header_index) {
 /* ===============async function for manupulating index db ==================*/
 function openiddb(db_name, db_version) {
     /**
-     * uses Global consts : OBJ_STORE_MAIN, OBJ_STORE_RANK, IS_RANK_GIVEN
+     * uses Global consts : OBJ_STORE_MAIN, IS_RANK_GIVEN
      * modyfies Global vars : IS_CREATED
      */
     return new Promise(
@@ -651,8 +650,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
     let tableData = `<table style="background-color: white;border-collapse:collapse" border="1">
             <tbody>
                 <tr>
-                    <td colspan="${fields.length}"><b>Exam Name: </b>20-Aug-2020 To 12-Sep-2020&nbsp;&nbsp;&nbsp;Year Final Exam (1st
-                        Year&nbsp;&nbsp;&nbsp;HSC - Science&nbsp;&nbsp;&nbsp; Session :2019-2020)</td>
+                    <td colspan="${fields.length}"><b>Exam Name: </b>${XM_NAME_FROM_COLLEGE}</td>
                 </tr>
                 <tr style="background-color: #59B899;color: #F4F5F8">
                     ${fields.map(e => `<td><b>${e}</b></td>`).join('')}

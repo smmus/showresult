@@ -46,16 +46,17 @@ const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institu
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
 console.log('STD_ROLLS', STD_ROLLS);
-const STD_NAME = new URLSearchParams(window.location.search).get('name');
+// const STD_NAME = new URLSearchParams(window.location.search).get('name');
 
-// const IS_RANK_GIVEN = document.querySelector(`meta[db=${DB_NAME}]`).dataset.is_rank_given;
-const IS_RANK_GIVEN = false;
-const MAIN_ROLL_DIGITS = document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
-
-const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
+const IS_RANK_GIVEN = DB_NAME && document.querySelector(`meta[db=${DB_NAME}]`).dataset.is_rank_given=='1' ? true : false;
+const MAIN_ROLL_DIGITS =DB_NAME &&  document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
+const OBJ_STORE_MAIN = DB_NAME &&  `${DB_NAME}_${XM_NAME}_main`;
 const DB_VERSION = 1;
+
+const SHOW_TOPPERS = 10;
 const GRAPH_BG_COLORS = ['#EF53504D', '#BA68C84D', '#64B5F64D', '#81C7844D', '#4DD0E14D', '#FFAB914D', '#FFB74D4D', '#B0BEC54D', '#9FA8DA4D', '#FFAB914D'];
 const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
+const XM_TOTAL_PRIORITY_LIST = ['exam_total', 'term_total', 'mcq'];
 const SUB_CODE_TO_NAME = {
     '101': 'bangla_1st',
     '107': 'eng_1st',
@@ -67,15 +68,15 @@ const SUB_CODE_TO_NAME = {
     '275': 'ict'
 };
 
-const SHOW_TOPPERS = 10;
 let IS_CREATED = false;
+let db;
 
 /** displaying college name */
-document.querySelector('.colg_name').textContent = document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
+document.querySelector('.colg_name').textContent = DB_NAME &&  document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
 
 /** setting exam_name to display on result table*/
 let XM_NAME_FROM_COLLEGE = '';
-document.querySelectorAll(`.collapse__sublink[data-xm_name]`).forEach(e=>{
+DB_NAME &&  document.querySelectorAll(`.collapse__sublink[data-xm_name]`).forEach(e=>{
     if(!e.href.includes(`in=${DB_NAME}&xm=${XM_NAME}`)) return;
     XM_NAME_FROM_COLLEGE = e.dataset.xm_name ? e.dataset.xm_name : e.textContent ;
 })
@@ -86,17 +87,19 @@ const MEDIA_PHONE_WIDTH = '640px';
 const MEDIA_TABLET_WIDTH = '768px';
 const MEDIA_DESKTOP = '1024px';
 
-let IS_MEDIA_PHONE = window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`).matches;
-let IS_MEDIA_TABLET = window.matchMedia(`(max-width: ${MEDIA_TABLET_WIDTH})`).matches;
-let IS_MEDIA_DESKTOP = window.matchMedia(`(max-width: ${MEDIA_DESKTOP})`).matches;
+const IS_MEDIA_PHONE = window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`).matches;
+const IS_MEDIA_TABLET = window.matchMedia(`(max-width: ${MEDIA_TABLET_WIDTH})`).matches;
+const IS_MEDIA_DESKTOP = window.matchMedia(`(max-width: ${MEDIA_DESKTOP})`).matches;
 // console.log(window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`))
 
+// ------------------------ CHARTJS GLOBAL SET ------------------------------
 Chart.defaults.global.elements.line.tension = 0;
 Chart.defaults.global.elements.point.hitRadius = 5;
-// ------------------------ main kaam starts ------------------------------
-let db;
+
+// ------------------------ FUNCTION MAIN STARTS ------------------------------
 async function main() {
 
+    /** getting browser index-db */
     window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
     if (!window.indexedDB) {
         console.log("[Your browser doesn't support a stable version of IndexedDB.]");
@@ -109,8 +112,9 @@ async function main() {
          * only if u pass DB_NAME and XM_NAME it will run
          * if u visit 'result.html' without any query, it wont run (wont create 'null' db)
          */
-        if (DB_NAME && XM_NAME)
-            db = await openiddb(DB_NAME, DB_VERSION);
+        if (!DB_NAME || !XM_NAME) return;
+
+        db = await openiddb(DB_NAME, DB_VERSION);
 
         let response;
         if (IS_CREATED && DB_NAME && XM_NAME) {
@@ -126,7 +130,7 @@ async function main() {
             /** getting header_names & indexs */
             let header_names = data.split('\n')[0].split(',');
 
-            /* calculating rank */
+            /* calculating rank if not given in the file */
             if (IS_RANK_GIVEN) {
                 // rank is given in the file */
                 console.log('[RANK OK]');
