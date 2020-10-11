@@ -584,8 +584,6 @@ function search_compare_event_listener() {
     if (submit_btn_element) submit_btn_element.onclick = e => search_result(roll_element && roll_element.value, name_element && name_element.value);
     if (compare_btn_element) compare_btn_element.onclick = e => compare_result(roll_element && roll_element.value, name_element && name_element.value);
 
-    /** ============================ update collge name ========================= */
-    document.querySelector('.colg_name').textContent = (DB_NAME == 'rc') ? "RAJSHAHI COLLEGE" : "DHAKA COLLEGE";
 }
 
 function view_specific_result(metaData, response, freinds_result_html) {

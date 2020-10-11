@@ -47,13 +47,13 @@ const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
 console.log('STD_ROLLS', STD_ROLLS);
 const STD_NAME = new URLSearchParams(window.location.search).get('name');
-const IS_RANK_GIVEN = new URLSearchParams(window.location.search).get('s'); // serial
-const IS_BIO_2 = new URLSearchParams(window.location.search).get('b');
+
+const IS_RANK_GIVEN = document.querySelector(`meta[db=${DB_NAME}]`).dataset.is_rank_given;
+const MAIN_ROLL_DIGITS = document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
 
 const OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
 const OBJ_STORE_RANK = `${DB_NAME}_${XM_NAME}_rank`;
 const DB_VERSION = 1;
-const MAIN_ROLL_DIGITS = parseInt(new URLSearchParams(window.location.search).get('mr'));
 const GRAPH_BG_COLORS = ['#EF53504D', '#BA68C84D', '#64B5F64D', '#81C7844D', '#4DD0E14D', '#FFAB914D', '#FFB74D4D', '#B0BEC54D', '#9FA8DA4D', '#FFAB914D'];
 const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
 const SUB_CODE_TO_NAME = {
@@ -68,8 +68,18 @@ const SUB_CODE_TO_NAME = {
 };
 
 const SHOW_TOPPERS = 10;
-
 let IS_CREATED = false;
+
+/** displaying college name */
+document.querySelector('.colg_name').textContent = document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
+
+/** setting exam_name to display on result table*/
+let XM_NAME_FROM_COLLEGE = '';
+document.querySelectorAll(`.collapse__sublink[data-xm_name]`).forEach(e=>{
+    if(!e.href.includes(`in=${DB_NAME}&xm=${XM_NAME}`)) return;
+    XM_NAME_FROM_COLLEGE = e.dataset.xm_name ? e.dataset.xm_name : e.textContent ;
+})
+console.log('XM_NAME_FROM_COLLEGE', XM_NAME_FROM_COLLEGE)
 
 // ------------------------ FOR MEDIA QUERIES  ------------------------------
 const MEDIA_PHONE_WIDTH = '640px';
