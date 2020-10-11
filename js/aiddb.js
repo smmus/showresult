@@ -33,7 +33,9 @@ function createRankList(db, store_name, data, header_index) {
         });
         console.log('[total_number_field_name]: ', total_number_field_name);
         /** [BREAKEPOINT] - [GOOD] */
-
+        // console.log(header_index.filter(field_name => field_name.includes('biology') && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[field_name])))
+        // return;
+        /** [BREAKEPOINT] - [testing] */
 
         /** getting neccessary to sort array */
         let rankList = data.split('\n').splice(1).map(line => {
@@ -45,11 +47,13 @@ function createRankList(db, store_name, data, header_index) {
             let optionalSub = header_index.indexOf('optionalSub') != -1 ? result[header_index.indexOf('optionalSub')] : 'biology';
             let nonOptionalSub = optionalSub == 'biology' ? 'higher_math' : 'biology';
             /** caculating student's optional subjects' marks, **assuming they are [INTEGER]-string** */
-            let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[field_name])).reduce((a, c) => a + c);
-            let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[field_name])).reduce((a, c) => a + c);
-            // 
+            let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
+            let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
+            // console.log('optionalSub',optionalSub, 'nonOptionalSub', nonOptionalSub)
+            // console.log('optionalSub',optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
+            
             /**
-             * rankList => Array of Arrays -> [roll, exam_total, optional, non-optional]
+             * rankList => Array of Arrays -> [roll(int), exam_total(int), optional(int), non-optional(int)]
              */
             return [
                 parseInt(result[header_index.indexOf('student_roll')].slice(this.length - MAIN_ROLL_DIGITS)),
@@ -73,18 +77,28 @@ function createRankList(db, store_name, data, header_index) {
         /*sorting the main array*/
         rankList.sort(sortingFunc);
 
-        console.log('[RANK LIST -]')
-        console.log(rankList)
+        console.log('[RANK LIST -]');
+        console.log(rankList);
+
+        /**finding rank(index+1) from RankList by roll_number */
+        function findRankByRoll(roll){
+            /** roll => interger */
+            let currentIndex = 0
+            while(currentIndex < rankList.length){
+                if (rankList[currentIndex][0] == roll) return ++currentIndex;
+                currentIndex++;
+            }
+        }
 
         /** opening transaction for updating */
         let tx = db.transaction([store_name], 'readwrite');
         tx.oncomplete = function () {
-            console.log('[TX CPM :', db.name, store_name, mode, ']');
+            console.log('[TX CPM :', db.name, store_name, 'readwrite', ']');
             /** returning from promise */
             res(true);
         }
         tx.onerror = e => { rej(e) };
-        let objStoreRank = tx.objectStore(store_name);
+        let objectStore = tx.objectStore(store_name);
 
         objectStore.openCursor().onsuccess = function (event) {
             const cursor = event.target.result;
@@ -93,17 +107,17 @@ function createRankList(db, store_name, data, header_index) {
                     /** find the rank of the roll in rankList */
                     const updateData = cursor.value;
 
-                    updateData.rank = rankList[cursor.value.roll-1];
+                    updateData.rank = findRankByRoll(updateData.roll);
                     const request = cursor.update(updateData);
                     request.onsuccess = function () {
-                        console.log('[UPDATED RANK]:', updateData.roll, updateData.rank);
+                        // console.log('[UPDATED RANK]:', updateData.roll, updateData.rank);
                     };
                 };
 
                 cursor.continue();
             } else {
                 console.log('Completed Updating');
-                res(true);
+                // res(true);
             }
         };
     })
@@ -131,10 +145,8 @@ function openiddb(db_name, db_version) {
 
                 // creating main object
                 let objStoreMain = db.createObjectStore(OBJ_STORE_MAIN, { keyPath: 'roll' });
-                let objStoreRank = db.createObjectStore(OBJ_STORE_RANK, { keyPath: 'rank' });
 
-                if (IS_RANK_GIVEN)
-                    objStoreMain.createIndex("rank", "rank", { unique: true });
+                objStoreMain.createIndex("rank", "rank", { unique: true });
 
                 /** if new obj stores are created, then they must be empty , we need to fill this*/
                 IS_CREATED = true;
