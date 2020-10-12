@@ -50,7 +50,6 @@ const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new
 
 // ========= derived globals ==========
 let IS_RANK_GIVEN,
-    IS_GRADE_GIVEN,
     MAIN_ROLL_DIGITS,
     OBJ_STORE_MAIN,
     XM_NAME_FROM_COLLEGE,
@@ -58,7 +57,6 @@ let IS_RANK_GIVEN,
 
 if (DB_NAME && XM_NAME) {
     IS_RANK_GIVEN = document.querySelector(`a[data-db=${DB_NAME}]`).dataset.is_rank_given ? true : false;
-    IS_GRADE_GIVEN = document.querySelector(`a[data-db=${DB_NAME}]`).dataset.is_grade_given ? true : false;
     MAIN_ROLL_DIGITS = document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
     OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
     document.querySelectorAll(`a[data-db=${DB_NAME}]`).forEach(e => {
@@ -113,7 +111,6 @@ console.log('[XM_NAME]', XM_NAME);
 console.log('[DB_NAME]', DB_NAME);
 console.log('[STD_ROLLS]', STD_ROLLS);
 console.log('[IS_RANK_GIVEN]', IS_RANK_GIVEN);
-console.log('[IS_GRADE_GIVEN]', IS_GRADE_GIVEN);
 console.log('[MAIN_ROLL_DIGITS]', MAIN_ROLL_DIGITS);
 console.log('[OBJ_STORE_MAIN]', OBJ_STORE_MAIN);
 console.log('[OBJ_STORES]', OBJ_STORES);
@@ -151,15 +148,15 @@ async function main() {
 
             response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
             let data = await response.text();
-
-            /**storing data in the iddb */
-            await storeMainData(db, OBJ_STORE_MAIN, 'readwrite', data);
-
+            
             /** getting header_names & indexs */
             let header_names = data.split('\n')[0].split(',');
 
             /*modifies global var */
-            set_XM_TOTAL_PRIORITY_LIST(header_names);
+            set_TOTAL_NUMBER_FIELD_NAME(header_names);
+
+            /**storing data in the iddb */
+            await storeMainData(db, OBJ_STORE_MAIN, 'readwrite', data);
 
             /* calculating rank if not given in the file */
             if (IS_RANK_GIVEN) {
@@ -179,8 +176,8 @@ async function main() {
         /**fetching from db */
         let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0);
 
-        /*modifies global var */
-        set_XM_TOTAL_PRIORITY_LIST(metaData.header_names);
+        /*modifies global var if its not yet done*/
+        TOTAL_NUMBER_FIELD_NAME || set_TOTAL_NUMBER_FIELD_NAME(metaData.header_names);
 
         /** update main ui (overview of full res) if std is not searching for specific roll **/
         if (!STD_ROLLS) {
@@ -195,7 +192,7 @@ async function main() {
                     roll,
                     name: response.name,
                     rank: response.rank,
-                    total_mark: response.res[metaData.header_names.indexOf('term_total')]
+                    total_mark: response.total_mark
                 });
             }
             console.log('[failed_students_results]', failed_students_results);

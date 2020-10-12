@@ -180,7 +180,7 @@ function storeMainData(db, store_name, mode, data) {
             failed_examnee: 0,
             all_sub: {},
             header_names: data.split('\n')[0].split(','),
-            sub_code_to_name: SUB_CODE_TO_NAME,
+            sub_code_to_name: {},
             failed_examnees: [] //array of rolls
         };
 
@@ -264,7 +264,6 @@ function storeMainData(db, store_name, mode, data) {
                 for (let i in SUB_CODE_TO_NAME) {
                     if (header_names[index].includes(SUB_CODE_TO_NAME[i])) {
                         if ( header_names[index].includes(TOTAL_NUMBER_FIELD_NAME) ) {
-
                             if(element == "" || element == "-"){
                                 /* which students don't have xm_result */
                                 metaData.all_sub[SUB_CODE_TO_NAME[i]]['no_result']++
@@ -279,9 +278,7 @@ function storeMainData(db, store_name, mode, data) {
                                     student_result.total_mark += parseInt(element);
                             }
 
-                        }
-                        else if (header_names[index].includes('grade')) {
-                            console
+                        }else if (header_names[index].includes('grade')) {
                             /** update grades */
                             element.toLowerCase() == 'a+' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_plus']++;
                             element.toLowerCase() == 'a' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a']++;
@@ -299,6 +296,19 @@ function storeMainData(db, store_name, mode, data) {
             /*adding each student's result to the obj_store*/
             obj_store.add(student_result);
         })
+
+        /* deleting those subjets which were not included in that xm */
+        for (let i in SUB_CODE_TO_NAME) {
+            /** if max != 0 */
+            if(metaData.all_sub[SUB_CODE_TO_NAME[i]].max){
+                metaData.sub_code_to_name[i] = SUB_CODE_TO_NAME[i];
+                continue;
+            }
+            
+            /** if max == 0 */
+            console.log('[DELETED]', SUB_CODE_TO_NAME[i], metaData.all_sub[SUB_CODE_TO_NAME[i]]);
+            delete metaData.all_sub[SUB_CODE_TO_NAME[i]];
+        }
 
         /* calculating avg */
         for (let i in metaData.all_sub) {
@@ -455,7 +465,7 @@ function updateMainUi(metaData) {
     /** Drawing chart for the first time */
     overview_main_chart = new Chart(overview_main_chart_context, overview_main_chart_config);
 
-    console.log('[overview_main_chart]', overview_main_chart);
+    // console.log('[overview_main_chart]', overview_main_chart);
 
     // ======== elevent listener of subjects_grade_overview_checkbox
     document.getElementById('overview_main_checkbox').onchange = e => {
@@ -1025,7 +1035,7 @@ function view_topper_students_table(metaData, topper_list) {
             </table>`;
 }
 
-function set_XM_TOTAL_PRIORITY_LIST(header_names) {
+function set_TOTAL_NUMBER_FIELD_NAME(header_names) {
     /**
      * modifies GLOBAL VAR : XM_TOTAL_PRIORITY_LIST
      */
