@@ -23,7 +23,7 @@ function createRankList(db, store_name, data, header_index) {
         let rankList = data.split('\n').splice(1).map(line => {
             let result = line.split(','); /**all fields are [STRING] */
 
-            if(!result[header_index.indexOf('student_name')]) return; /*no name means no result*/
+            if (!result[header_index.indexOf('student_name')]) return; /*no name means no result*/
 
             /** finding student's optional subject, if not assuming its 'biology'*/
             let optionalSub = header_index.indexOf('optionalSub') != -1 ? result[header_index.indexOf('optionalSub')] : 'biology';
@@ -33,7 +33,7 @@ function createRankList(db, store_name, data, header_index) {
             let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
             // console.log('optionalSub',optionalSub, 'nonOptionalSub', nonOptionalSub)
             // console.log('optionalSub',optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
-            
+
             /**
              * rankList => Array of Arrays -> [roll(int), exam_total(int), optional(int), non-optional(int)]
              */
@@ -63,10 +63,10 @@ function createRankList(db, store_name, data, header_index) {
         console.log(rankList);
 
         /**finding rank(index+1) from RankList by roll_number */
-        function findRankByRoll(roll){
+        function findRankByRoll(roll) {
             /** roll => interger */
             let currentIndex = 0
-            while(currentIndex < rankList.length){
+            while (currentIndex < rankList.length) {
                 if (rankList[currentIndex][0] == roll) return ++currentIndex;
                 currentIndex++;
             }
@@ -106,7 +106,7 @@ function createRankList(db, store_name, data, header_index) {
 }
 
 /* ===============async function for manupulating index db ==================*/
-function openiddb(db_name="", db_version=1, obj_stores=[]) {
+function openiddb(db_name = "", db_version = 1, obj_stores = []) {
     /**
      * modyfies Global vars : IS_CREATED
      */
@@ -171,6 +171,8 @@ function getDataByIndexKey(db, store_name, index_name, key) {
 
 function storeMainData(db, store_name, mode, data) {
     return new Promise((res, rej) => {
+        /*global vars*/
+        let IS_TOTAL_MARK_GIVEN = false;
 
         /** crating vars to store metaData */
         let metaData = {
@@ -219,6 +221,10 @@ function storeMainData(db, store_name, mode, data) {
         let rank_index = header_names.indexOf('rank') == -1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank');
         /** if rank is the last field (so last element of the arr) it will be 'rank\r' chrome doesn't show it, firefox does. wasted 1h :( */
         let is_passed_index = header_names.indexOf('isPassed');
+        let total_mark_index =  header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0])!=-1 ? header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0]) : header_names.indexOf(XM_TOTAL_PRIORITY_LIST[1]);
+        if( total_mark_index!=-1 ) IS_TOTAL_MARK_GIVEN = true;
+        
+        console.log('[IS_TOTAL_MARK_GIVEN]', IS_TOTAL_MARK_GIVEN);
 
         /**storing the main roll */
         let is_main_roll_stored = false;
@@ -239,26 +245,43 @@ function storeMainData(db, store_name, mode, data) {
                 metaData['failed_examnees'].push(roll);
             }
 
-            let obj = {
+            /* this obj will be added to indexdb */
+            let student_result = {
                 roll,
                 name: name,
+                rank: null,
+                total_mark: IS_TOTAL_MARK_GIVEN ? parseInt(result[total_mark_index]) : 0,  /**if the total_number is given in the file ? add it : calculate it */
                 res: result.map(e => !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
                 /** parseInt kora na gele bosao as it is, else check etate dot ase naki? thakle parseFloat nail pareInt */
             }
+
+            /**if the rank is given in the file? add it : else we will calculate it later */
             if (IS_RANK_GIVEN)
-                obj.rank = parseInt(result[rank_index]);
+                student_result.rank = parseInt(result[rank_index]);
 
-            obj_store.add(obj);
-
+    
             result.forEach((element, index) => {
                 for (let i in SUB_CODE_TO_NAME) {
-                    if ( header_names[index].includes(SUB_CODE_TO_NAME[i]) ) {
-                        if (header_names[index].includes(TOTAL_NUMBER_FIELD_NAME) && element != "") {
-                            metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'];
-                            parseInt(element) && (metaData.all_sub[SUB_CODE_TO_NAME[i]]['avg'] += parseInt(element));
-                            metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'];
+                    if (header_names[index].includes(SUB_CODE_TO_NAME[i])) {
+                        if ( header_names[index].includes(TOTAL_NUMBER_FIELD_NAME) ) {
+
+                            if(element == "" || element == "-"){
+                                /* which students don't have xm_result */
+                                metaData.all_sub[SUB_CODE_TO_NAME[i]]['no_result']++
+                            }else{
+                                /** update max, min avg */
+                                metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'];
+                                parseInt(element) && (metaData.all_sub[SUB_CODE_TO_NAME[i]]['avg'] += parseInt(element));
+                                metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'];
+                                
+                                /**calculating total_mark for this student if IS_TOTAL_MARK_GIVEN==false*/
+                                if(!IS_TOTAL_MARK_GIVEN)
+                                    student_result.total_mark += parseInt(element);
+                            }
+
                         }
                         else if (header_names[index].includes('grade')) {
+                            /** update grades */
                             element.toLowerCase() == 'a+' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_plus']++;
                             element.toLowerCase() == 'a' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a']++;
                             element.toLowerCase() == 'a-' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_minus']++;
@@ -266,11 +289,14 @@ function storeMainData(db, store_name, mode, data) {
                             element.toLowerCase() == 'c' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['c']++;
                             element.toLowerCase() == 'd' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['d']++;
                             element.toLowerCase() == 'f' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['f']++;
-                            element == "" && metaData.all_sub[SUB_CODE_TO_NAME[i]]['no_result']++;
+                            
                         }
                     }
                 }
             })
+
+            /*addign each student's result to the obj_store*/
+            obj_store.add(student_result);
         })
 
         /* calculating avg */
@@ -998,7 +1024,7 @@ function view_topper_students_table(metaData, topper_list) {
             </table>`;
 }
 
-function set_XM_TOTAL_PRIORITY_LIST(header_names){
+function set_XM_TOTAL_PRIORITY_LIST(header_names) {
     /**
      * modifies GLOBAL VAR : XM_TOTAL_PRIORITY_LIST
      */

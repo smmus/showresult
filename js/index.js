@@ -50,16 +50,19 @@ const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new
 
 // ========= derived globals ==========
 let IS_RANK_GIVEN,
+    IS_GRADE_GIVEN,
     MAIN_ROLL_DIGITS,
     OBJ_STORE_MAIN,
     XM_NAME_FROM_COLLEGE,
     OBJ_STORES = []; /** the stores under that db */
 
 if (DB_NAME && XM_NAME) {
-    IS_RANK_GIVEN = document.querySelector(`a[data-db=${DB_NAME}]`).dataset.is_rank_given == '1' ? true : false;
+    IS_RANK_GIVEN = document.querySelector(`a[data-db=${DB_NAME}]`).dataset.is_rank_given ? true : false;
+    IS_GRADE_GIVEN = document.querySelector(`a[data-db=${DB_NAME}]`).dataset.is_grade_given ? true : false;
     MAIN_ROLL_DIGITS = document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
     OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
     document.querySelectorAll(`a[data-db=${DB_NAME}]`).forEach(e => {
+        
         OBJ_STORES.push(`${DB_NAME}_${e.dataset.xm}_main`);
 
         if (e.href.includes(`in=${DB_NAME}&xm=${XM_NAME}`)) XM_NAME_FROM_COLLEGE = e.dataset.xm_name || e.textContent;
@@ -110,6 +113,7 @@ console.log('[XM_NAME]', XM_NAME);
 console.log('[DB_NAME]', DB_NAME);
 console.log('[STD_ROLLS]', STD_ROLLS);
 console.log('[IS_RANK_GIVEN]', IS_RANK_GIVEN);
+console.log('[IS_GRADE_GIVEN]', IS_GRADE_GIVEN);
 console.log('[MAIN_ROLL_DIGITS]', MAIN_ROLL_DIGITS);
 console.log('[OBJ_STORE_MAIN]', OBJ_STORE_MAIN);
 console.log('[OBJ_STORES]', OBJ_STORES);
