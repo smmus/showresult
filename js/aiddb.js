@@ -168,6 +168,18 @@ function getDataByIndexKey(db, store_name, index_name, key) {
     })
 }
 
+function getObjectCount(db, store_name) {
+    return new Promise((res, rej) => {
+        let tx = db.transaction([store_name], 'readonly');
+        tx.oncomplete = function () {
+            console.log('[TX CPM :', db.name, store_name, 'readonly', ']');
+        }
+        tx.onerror = e => rej(e);
+        let req = tx.objectStore(store_name).count();
+        req.onsuccess = e => res(e.target.result);
+    })
+}
+
 
 function storeMainData(db, store_name, mode, data) {
     return new Promise((res, rej) => {
@@ -220,7 +232,7 @@ function storeMainData(db, store_name, mode, data) {
         let roll_index = header_names.indexOf('student_roll');
         let rank_index = header_names.indexOf('rank') == -1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank');
         /** if rank is the last field (so last element of the arr) it will be 'rank\r' chrome doesn't show it, firefox does. wasted 1h :( */
-        let is_passed_index = header_names.indexOf('isPassed');
+        let is_passed_index = header_names.indexOf('isPassed')!=-1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r');
         let total_mark_index =  header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0])!=-1 ? header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0]) : header_names.indexOf(XM_TOTAL_PRIORITY_LIST[1]);
         if( total_mark_index!=-1 ) IS_TOTAL_MARK_GIVEN = true;
         

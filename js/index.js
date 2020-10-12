@@ -142,7 +142,10 @@ async function main() {
         db = await openiddb(DB_NAME, DB_VERSION, OBJ_STORES);
 
         let response;
-        if (IS_CREATED) {
+        response = await getObjectCount(db, OBJ_STORE_MAIN);
+        console.log('[getObjectCount]', response);
+
+        if (IS_CREATED || !response) {
             /** will run if new obj_stores are created */
             /** fetch data from csv file and store them */
 
