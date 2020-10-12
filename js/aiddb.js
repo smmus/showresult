@@ -281,6 +281,7 @@ function storeMainData(db, store_name, mode, data) {
 
                         }
                         else if (header_names[index].includes('grade')) {
+                            console
                             /** update grades */
                             element.toLowerCase() == 'a+' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_plus']++;
                             element.toLowerCase() == 'a' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a']++;
@@ -295,7 +296,7 @@ function storeMainData(db, store_name, mode, data) {
                 }
             })
 
-            /*addign each student's result to the obj_store*/
+            /*adding each student's result to the obj_store*/
             obj_store.add(student_result);
         })
 
