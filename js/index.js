@@ -15,10 +15,10 @@ const showMenu = (navbarId, ...toggle_btn_selectors) => {
     }
 
     if (toggle_btns && navbar) {
-        toggle_btns.forEach(element => {element.addEventListener('click', onclick_event_listener)});
+        toggle_btns.forEach(element => { element.addEventListener('click', onclick_event_listener) });
     }
 }
-showMenu('navbar' , '#nav-toggle', '.header-logo');
+showMenu('navbar', '#nav-toggle', '.header-logo');
 
 /*----------- LINK ACTIVE  ------------*/
 const linkColor = document.querySelectorAll('.nav__link')
@@ -42,21 +42,35 @@ for (let i = 0; i < linkCollapse.length; i++) {
 }
 // ------------------------ nav functionality ends -----------------------------
 // ================================= GLOBAL VARS  =================================
+const DB_VERSION = 1;
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
-console.log('STD_ROLLS', STD_ROLLS);
 // const STD_NAME = new URLSearchParams(window.location.search).get('name');
 
-const IS_RANK_GIVEN = DB_NAME && document.querySelector(`meta[db=${DB_NAME}]`).dataset.is_rank_given=='1' ? true : false;
-const MAIN_ROLL_DIGITS =DB_NAME &&  document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
-const OBJ_STORE_MAIN = DB_NAME &&  `${DB_NAME}_${XM_NAME}_main`;
-const DB_VERSION = 1;
+// ========= derived globals ==========
+let IS_RANK_GIVEN,
+    MAIN_ROLL_DIGITS,
+    OBJ_STORE_MAIN,
+    XM_NAME_FROM_COLLEGE,
+    OBJ_STORES = []; /** the stores under that db */
 
+if (DB_NAME && XM_NAME) {
+    IS_RANK_GIVEN = document.querySelector(`a[data-db=${DB_NAME}]`).dataset.is_rank_given == '1' ? true : false;
+    MAIN_ROLL_DIGITS = document.querySelector(`meta[db=${DB_NAME}]`).dataset.main_roll_digits && parseInt(document.querySelector('meta[db=rc]').dataset.main_roll_digits);
+    OBJ_STORE_MAIN = `${DB_NAME}_${XM_NAME}_main`;
+    document.querySelectorAll(`a[data-db=${DB_NAME}]`).forEach(e => {
+        OBJ_STORES.push(`${DB_NAME}_${e.dataset.xm}_main`);
+
+        if (e.href.includes(`in=${DB_NAME}&xm=${XM_NAME}`)) XM_NAME_FROM_COLLEGE = e.dataset.xm_name || e.textContent;
+    });
+}
+
+// =========== consts ==================
 const SHOW_TOPPERS = 10;
 const GRAPH_BG_COLORS = ['#EF53504D', '#BA68C84D', '#64B5F64D', '#81C7844D', '#4DD0E14D', '#FFAB914D', '#FFB74D4D', '#B0BEC54D', '#9FA8DA4D', '#FFAB914D'];
 const GRADES = ['a_plus', 'a', 'a_minus', 'b', 'c', 'd', 'f', 'no_result', 'promoted', 'failed'];
-const XM_TOTAL_PRIORITY_LIST = ['exam_total', 'term_total', 'mcq'];
+const XM_TOTAL_PRIORITY_LIST = ['exam_total', 'term_total', 'mcq']; /*which field will reprent xm_total for each subject eg. SUBNAME_exam_total */
 const SUB_CODE_TO_NAME = {
     '101': 'bangla_1st',
     '102': 'bangla_2nd',
@@ -72,20 +86,13 @@ const SUB_CODE_TO_NAME = {
     '266': 'higher_math_2nd',
     '275': 'ict'
 };
-
+let TOTAL_NUMBER_FIELD_NAME = "";
+// ============== secondary vars =============
 let IS_CREATED = false;
 let db;
 
 /** displaying college name */
-document.querySelector('.colg_name').textContent = DB_NAME &&  document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
-
-/** setting exam_name to display on result table*/
-let XM_NAME_FROM_COLLEGE = '';
-DB_NAME &&  document.querySelectorAll(`.collapse__sublink[data-xm_name]`).forEach(e=>{
-    if(!e.href.includes(`in=${DB_NAME}&xm=${XM_NAME}`)) return;
-    XM_NAME_FROM_COLLEGE = e.dataset.xm_name ? e.dataset.xm_name : e.textContent ;
-})
-console.log('XM_NAME_FROM_COLLEGE', XM_NAME_FROM_COLLEGE)
+document.querySelector('.colg_name').textContent = DB_NAME && document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
 
 // ------------------------ FOR MEDIA QUERIES  ------------------------------
 const MEDIA_PHONE_WIDTH = '640px';
@@ -97,11 +104,23 @@ const IS_MEDIA_TABLET = window.matchMedia(`(max-width: ${MEDIA_TABLET_WIDTH})`).
 const IS_MEDIA_DESKTOP = window.matchMedia(`(max-width: ${MEDIA_DESKTOP})`).matches;
 // console.log(window.matchMedia(`(max-width: ${MEDIA_PHONE_WIDTH})`))
 
-// ------------------------ CHARTJS GLOBAL SET ------------------------------
+// ========================= checking if all are expected =========================
+console.log('[DB_VERSION]', DB_VERSION);
+console.log('[XM_NAME]', XM_NAME);
+console.log('[DB_NAME]', DB_NAME);
+console.log('[STD_ROLLS]', STD_ROLLS);
+console.log('[IS_RANK_GIVEN]', IS_RANK_GIVEN);
+console.log('[MAIN_ROLL_DIGITS]', MAIN_ROLL_DIGITS);
+console.log('[OBJ_STORE_MAIN]', OBJ_STORE_MAIN);
+console.log('[OBJ_STORES]', OBJ_STORES);
+console.log('[XM_NAME_FROM_COLLEGE]', XM_NAME_FROM_COLLEGE);
+
+// ------------------------------ CHARTJS GLOBAL SET ------------------------------
 Chart.defaults.global.elements.line.tension = 0;
 Chart.defaults.global.elements.point.hitRadius = 5;
 
 // ------------------------ FUNCTION MAIN STARTS ------------------------------
+main();
 async function main() {
 
     /** getting browser index-db */
@@ -119,10 +138,10 @@ async function main() {
          */
         if (!DB_NAME || !XM_NAME) return;
 
-        db = await openiddb(DB_NAME, DB_VERSION);
+        db = await openiddb(DB_NAME, DB_VERSION, OBJ_STORES);
 
         let response;
-        if (IS_CREATED && DB_NAME && XM_NAME) {
+        if (IS_CREATED) {
             /** will run if new obj_stores are created */
             /** fetch data from csv file and store them */
 
@@ -134,6 +153,9 @@ async function main() {
 
             /** getting header_names & indexs */
             let header_names = data.split('\n')[0].split(',');
+
+            /*modifies global var */
+            set_XM_TOTAL_PRIORITY_LIST(header_names);
 
             /* calculating rank if not given in the file */
             if (IS_RANK_GIVEN) {
@@ -148,10 +170,13 @@ async function main() {
         /**=======if all data is in db -- show overview ========*/
 
         /** global event listener */
-        search_compare_event_listener()
+        search_compare_event_listener();
 
         /**fetching from db */
         let { metaData } = await getDataByKey(db, OBJ_STORE_MAIN, 0);
+
+        /*modifies global var */
+        set_XM_TOTAL_PRIORITY_LIST(metaData.header_names);
 
         /** update main ui (overview of full res) if std is not searching for specific roll **/
         if (!STD_ROLLS) {
@@ -221,4 +246,3 @@ async function main() {
         console.error(error);
     }
 }
-main();

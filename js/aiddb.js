@@ -14,28 +14,11 @@ String.prototype.to_camel_case = function () {
 }
 
 function createRankList(db, store_name, data, header_index) {
+    /*
+    * uses GLOBAL VAR => TOTAL_NUMBER_FIELD_NAME;
+    */
     return new Promise((res, rej) => {
-
-        /** finding which one is the TOTAL_NUMBER field for each subject *assuming 'ict' represents all subjects */
-        let total_number_field_name = '';
-        let all_sub_field_names = header_index.filter(field_name => field_name.includes('ict'));
-        XM_TOTAL_PRIORITY_LIST.forEach(e => {
-            if (total_number_field_name) return; /** if total_number_field_name is already set -- n need to find */
-            all_sub_field_names.every(field_name => {
-                console.log(field_name)
-                if (field_name.includes(e)) {
-                    total_number_field_name = e;
-                    return false; /** it wont check for other field_name */
-                };
-                return true; /**will check for other_field_name */
-            })
-        });
-        console.log('[total_number_field_name]: ', total_number_field_name);
         /** [BREAKEPOINT] - [GOOD] */
-        // console.log(header_index.filter(field_name => field_name.includes('biology') && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[field_name])))
-        // return;
-        /** [BREAKEPOINT] - [testing] */
-
         /** getting neccessary to sort array */
         let rankList = data.split('\n').splice(1).map(line => {
             let result = line.split(','); /**all fields are [STRING] */
@@ -46,8 +29,8 @@ function createRankList(db, store_name, data, header_index) {
             let optionalSub = header_index.indexOf('optionalSub') != -1 ? result[header_index.indexOf('optionalSub')] : 'biology';
             let nonOptionalSub = optionalSub == 'biology' ? 'higher_math' : 'biology';
             /** caculating student's optional subjects' marks, **assuming they are [INTEGER]-string** */
-            let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
-            let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(total_number_field_name)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
+            let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
+            let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
             // console.log('optionalSub',optionalSub, 'nonOptionalSub', nonOptionalSub)
             // console.log('optionalSub',optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
             
@@ -123,9 +106,8 @@ function createRankList(db, store_name, data, header_index) {
 }
 
 /* ===============async function for manupulating index db ==================*/
-function openiddb(db_name, db_version) {
+function openiddb(db_name="", db_version=1, obj_stores=[]) {
     /**
-     * uses Global consts : OBJ_STORE_MAIN, IS_RANK_GIVEN
      * modyfies Global vars : IS_CREATED
      */
     return new Promise(
@@ -142,16 +124,16 @@ function openiddb(db_name, db_version) {
 
                 let db = event.target.result;
 
-                // creating main object
-                let objStoreMain = db.createObjectStore(OBJ_STORE_MAIN, { keyPath: 'roll' });
-
-                objStoreMain.createIndex("rank", "rank", { unique: true });
+                // creating  objectject stores for each passed obj_stores
+                obj_stores.map(obj_store => {
+                    let objStoreMain = db.createObjectStore(obj_store, { keyPath: 'roll' });
+                    objStoreMain.createIndex("rank", "rank", { unique: true });
+                })
 
                 /** if new obj stores are created, then they must be empty , we need to fill this*/
                 IS_CREATED = true;
 
                 // [TODO] delete previous data if version is higher
-
             };
 
             dbRequest.onsuccess = function (event) {
@@ -173,6 +155,7 @@ function getDataByKey(db, store_name, key) {
         req.onsuccess = e => res(e.target.result);
     })
 }
+
 function getDataByIndexKey(db, store_name, index_name, key) {
     return new Promise((res, rej) => {
         let tx = db.transaction([store_name], 'readonly');
@@ -198,7 +181,7 @@ function storeMainData(db, store_name, mode, data) {
             sub_code_to_name: SUB_CODE_TO_NAME,
             failed_examnees: [] //array of rolls
         };
-        console.log(metaData.header_names)
+
         for (let i in SUB_CODE_TO_NAME) {
             metaData.all_sub[SUB_CODE_TO_NAME[i]] = {
                 max: 0,
@@ -225,6 +208,7 @@ function storeMainData(db, store_name, mode, data) {
             res(true);
         }
         tx.onerror = e => { rej(e) };
+
         let obj_store = tx.objectStore(store_name);
 
         // getting header_names & indexs
@@ -234,7 +218,7 @@ function storeMainData(db, store_name, mode, data) {
         let roll_index = header_names.indexOf('student_roll');
         let rank_index = header_names.indexOf('rank') == -1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank');
         /** if rank is the last field (so last element of the arr) it will be 'rank\r' chrome doesn't show it, firefox does. wasted 1h :( */
-        let pass_index = header_names.indexOf('isPassed');
+        let is_passed_index = header_names.indexOf('isPassed');
 
         /**storing the main roll */
         let is_main_roll_stored = false;
@@ -250,7 +234,7 @@ function storeMainData(db, store_name, mode, data) {
             metaData['total_examnee']++;
             if (!is_main_roll_stored) metaData['main_roll'] = parseInt(result[roll_index]) - roll;
 
-            if (result[pass_index].includes('ailed')) { // don't wannna 'Failed'.toLowerCase() :)
+            if (result[is_passed_index].includes('ailed')) { // don't wannna 'Failed'.toLowerCase() :)
                 metaData['failed_examnee']++;
                 metaData['failed_examnees'].push(roll);
             }
@@ -259,6 +243,7 @@ function storeMainData(db, store_name, mode, data) {
                 roll,
                 name: name,
                 res: result.map(e => !parseInt(e) ? e : (e.includes('.') ? parseFloat(e) : parseInt(e)))
+                /** parseInt kora na gele bosao as it is, else check etate dot ase naki? thakle parseFloat nail pareInt */
             }
             if (IS_RANK_GIVEN)
                 obj.rank = parseInt(result[rank_index]);
@@ -267,8 +252,8 @@ function storeMainData(db, store_name, mode, data) {
 
             result.forEach((element, index) => {
                 for (let i in SUB_CODE_TO_NAME) {
-                    if (header_names[index].includes(SUB_CODE_TO_NAME[i])) {
-                        if (header_names[index].includes('mcq') && element != "") {
+                    if ( header_names[index].includes(SUB_CODE_TO_NAME[i]) ) {
+                        if (header_names[index].includes(TOTAL_NUMBER_FIELD_NAME) && element != "") {
                             metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'];
                             parseInt(element) && (metaData.all_sub[SUB_CODE_TO_NAME[i]]['avg'] += parseInt(element));
                             metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'];
@@ -1011,4 +996,24 @@ function view_topper_students_table(metaData, topper_list) {
                     <td>${result.res[metaData.header_names.indexOf('term_total')]}</td>
                 </tr>`).join('')}
             </table>`;
+}
+
+function set_XM_TOTAL_PRIORITY_LIST(header_names){
+    /**
+     * modifies GLOBAL VAR : XM_TOTAL_PRIORITY_LIST
+     */
+    /** finding which one is the TOTAL_NUMBER field for each subject *assuming 'ict' represents all subjects */
+    let all_sub_field_names = header_names.filter(field_name => field_name.includes('ict'));
+    XM_TOTAL_PRIORITY_LIST.forEach(e => {
+        if (TOTAL_NUMBER_FIELD_NAME) return; /** if TOTAL_NUMBER_FIELD_NAME is already set -- n need to find */
+        all_sub_field_names.every(field_name => {
+            console.log(field_name)
+            if (field_name.includes(e)) {
+                TOTAL_NUMBER_FIELD_NAME = e;
+                return false; /** it wont check for other field_name */
+            };
+            return true; /**will check for other_field_name */
+        })
+    });
+    console.log('[TOTAL_NUMBER_FIELD_NAME]:', TOTAL_NUMBER_FIELD_NAME);
 }
