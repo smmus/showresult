@@ -299,7 +299,7 @@ body {
         height: 100%;
         background-color: $bgColor;
         color: $whiteColor;
-        // padding: 1.5rem 1.5rem 2rem;
+        padding: 1.5rem 1.5rem 2rem;
         transition: .5s;
         z-index: $zIndexUp;
 
@@ -521,6 +521,21 @@ body {
         }
         table{
             width: 100%;
+            border-collapse: collapse;
+            th{
+                padding: .3em;
+                text-align: left;
+                cursor: pointer;
+                transition: all .4s ease;
+                &:hover{
+                    background: rgba(0,0,0,0.3);
+                }
+            }
+            tr{
+                &:hover{
+                    background: rgba(0,0,0,0.1);
+                }
+            }
             td{
                 font-weight: 300;
                 padding: .3em;

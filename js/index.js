@@ -254,16 +254,23 @@ async function main() {
         if(SHOW_STUDENTS){
             /*step:1 make space in dom to display it */
             let main_conatiner = document.getElementById('main-container');
+            main_conatiner.innerHTML = "";
             main_conatiner.style.display = 'flex';
             main_conatiner.style.flexDirection = 'column';
             main_conatiner.style.justifyContent = 'flex-start';
             main_conatiner.style.alignItems = 'center';
+
+            let el_1 = `<div class='card' style='margin-bottom:.7em'><p>Click on table HEADERS to sort all students by that field</p></div>`
+
             /*step:2 show all students based on criteria*/
             if(SHOW_STUDENTS=='all'){
                 /**show all students in table*/
-                let table_data = await get_all_students_data_in_table(metaData.header_names);
-                main_conatiner.innerHTML = `<div class='card'>${table_data}</div>`;
+                let table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN,metaData.header_names);
+                main_conatiner.innerHTML = `<div style='margin:auto;'>${el_1}<div class='card'><table id='all_students_table' border=1><tr><th></th><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
             }
+
+            /*step 3: add_sorting_functionality_to_table*/
+            add_sorting_functionality_to_table()
         }
         console.log('[done]');
 

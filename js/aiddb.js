@@ -1090,9 +1090,9 @@ function set_TOTAL_NUMBER_FIELD_NAME(header_names) {
     console.log('[TOTAL_NUMBER_FIELD_NAME]:', TOTAL_NUMBER_FIELD_NAME);
 }
 
-function get_all_students_data_in_table(header_names) {
+function get_all_students_data_in_table(db, store_name, header_names) {
     return new Promise((resolve, reject) => {
-        let table_data = "<table id='all_students_table'><tr><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>";
+        let table_data = "";
 
         /*opening txn*/
         let tx = db.transaction([store_name], 'readwrite');
@@ -1108,13 +1108,15 @@ function get_all_students_data_in_table(header_names) {
         let objectStore = tx.objectStore(store_name);
 
         /* getting all documents */
+        let i = 1;
         objectStore.openCursor().onsuccess = function (event) {
             const cursor = event.target.result;
             if (cursor) {
                 if (cursor.value.roll > 0) {
                     /** find the rank of the roll in rankList */
                     const student_result = cursor.value;
-                    table_data += `<tr><td>${student_result.roll}</td><td>${student_result.rank}</td><td>${student_result.name}</td><td>${student_result.total_mark}</td><td>${student_result.res[header_names.indexOf('isPassed')!=-1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r')]}</td></tr>`;
+                    table_data += `<tr><td>${i}</td><td>${student_result.roll}</td><td>${student_result.rank}</td><td>${student_result.name}</td><td>${student_result.total_mark}</td><td>${student_result.res[header_names.indexOf('isPassed') != -1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r')]}</td></tr>`;
+                    i++;
                 };
 
                 cursor.continue();
@@ -1123,8 +1125,21 @@ function get_all_students_data_in_table(header_names) {
                 // res(true);
             }
         };
-
-        /*ending table*/
-        table_data += "</table>";
     })
+}
+
+function add_sorting_functionality_to_table() {
+    const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+    const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+    // do the work...
+    document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+            .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+            .forEach(tr => table.appendChild(tr));
+    })));
 }
