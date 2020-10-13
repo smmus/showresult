@@ -682,13 +682,18 @@ function updateMainUi(metaData) {
 
 function search_compare_event_listener() {
 
-    let roll_element = document.getElementById('std_roll');
-    let name_element = document.getElementById('std_name');
-    let submit_btn_element = document.getElementById('search_result');
-    let compare_btn_element = document.getElementById('compare_result');
+    let roll_element = document.getElementById('std_roll'),
+        name_element = document.getElementById('std_name'),
+        submit_btn_element = document.getElementById('search_result'),
+        compare_btn_element = document.getElementById('compare_result'),
+        show_all_btn_element = document.querySelector('#show_all button');
 
     if (submit_btn_element) submit_btn_element.onclick = e => search_result(roll_element && roll_element.value, name_element && name_element.value);
     if (compare_btn_element) compare_btn_element.onclick = e => compare_result(roll_element && roll_element.value, name_element && name_element.value);
+    if (show_all_btn_element) show_all_btn_element.onclick = e => { 
+        console.log('[show_all_btn_element btn] clicked');
+        window.location.search = `?in=${DB_NAME}&xm=${XM_NAME}&show_students=all`;
+    };
 
 }
 
@@ -742,7 +747,15 @@ function view_specific_result(metaData, response, freinds_result_html) {
 
     /**===========step:1 expanding area for line graph */
     document.getElementById('main-container').style.gridTemplateAreas = IS_MEDIA_PHONE ? '' :
-        '"m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "m m m m m m c c c c c c" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a s s" "t t t t t a a a a a d d" "t t t t t a a a a a d d"';
+        `"m m m m m m c c c c c c" 
+        "m m m m m m c c c c c c" 
+        "m m m m m m c c c c c c" 
+        "m m m m m m c c c c c c" 
+        "t t t t t a a a a a s s" 
+        "t t t t t a a a a a s s" 
+        "t t t t t a a a a a s s" 
+        "t t t t t a a a a a b b" 
+        "t t t t t a a a a a b b"`;
     /**step:2 drawing line graph in that area */
     let overview_secondary_chart = new Chart(document.getElementById('overview_secondary_canvas').getContext('2d'), {
         type: 'line',
@@ -810,8 +823,6 @@ function view_specific_result(metaData, response, freinds_result_html) {
     document.querySelector('#overview_total .header p').textContent = 'Total Mark Overview';
 
     /**==========step: 4 ; DOM manupulation*/
-    // deleteing svg image
-    document.querySelector('#search .img').remove();
     // deleteing toppers-list image
     document.getElementById('e').remove();
     // displaying near roll students
@@ -829,7 +840,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
     /** lessen the area of #search && add another card */
     /** AREA has been lessen by changing GRID-TEMPLATE-AREAS */
     // adding new elelment to the #main-container
-    document.getElementById('developer').style.display = 'flex';
+    // document.getElementById('developer').style.display = 'flex';
 }
 
 function view_compared_result(metaData, all_students_results) {
@@ -847,11 +858,11 @@ function view_compared_result(metaData, all_students_results) {
     document.getElementById('e').style.display = 'none';
     // layout
     document.getElementById('main-container').style.gridTemplateAreas = IS_MEDIA_PHONE ? '' :
-        `"m m m m m m c c c c s s"
+    `"m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
     "m m m m m m c c c c s s"
-    "m m m m m m c c c c s s"
-    "m m m m m m c c c c s s"
+    "m m m m m m c c c c b b"
+    "m m m m m m c c c c b b"
     "t t t t t t t t a a a a"
     "t t t t t t t t a a a a"
     "t t t t t t t t a a a a"
