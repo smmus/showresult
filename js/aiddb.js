@@ -674,7 +674,8 @@ function search_compare_event_listener() {
 
 function view_specific_result(metaData, response, freinds_result_html) {
 
-    let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1].toUpperCase())
+    /*assuming 'ict' has all fileld as other subs*/
+    let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_').slice(1).join('_').toUpperCase())
     let fields = ['Subject Code', 'Subject Name', ...per_sub_fields, 'Exam Highest']
     // console.log('h_names', metaData.header_names)
     console.log('fields', fields);
@@ -700,11 +701,11 @@ function view_specific_result(metaData, response, freinds_result_html) {
                 `).join('')}
                 <tr style="background-color: #59B899;color: #F4F5F8">
                     <td colspan="2"><b>Total</b></td>
-                    <td colspan="${fields.length - 2}" style="text-align: right"><b>${response.res[metaData.header_names.indexOf('term_total')]}</b></td>
+                    <td colspan="${fields.length - 2}" style="text-align: right"><b>${response.total_mark}</b></td>
                 </tr>
                 <tr>
                     <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') == -1 ? metaData.header_names.indexOf('grade') : metaData.header_names.indexOf('gpa')]}</td>
-                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[metaData.header_names.indexOf('isPassed')]}</b></td>
+                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')!=-1 ? metaData.header_names.indexOf('isPassed') : metaData.header_names.indexOf('isPassed\r')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[metaData.header_names.indexOf('isPassed')!=-1 ? metaData.header_names.indexOf('isPassed') : metaData.header_names.indexOf('isPassed\r')]}</b></td>
                 </tr>
             </tbody>
         </table>`;
@@ -716,8 +717,8 @@ function view_specific_result(metaData, response, freinds_result_html) {
     /** displaying result in graph:  */
 
     /* if the max_number of a sub is not 0, return the subname, else return null, filter the null values*/
-    let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
-    let std_marks_per_sub = all_subjects_name.map(sub_name => response.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]);
+    let all_subjects_name = Object.keys(metaData.all_sub);
+    let std_marks_per_sub = all_subjects_name.map(sub_name => response.res[metaData.header_names.indexOf(sub_name + "_" + TOTAL_NUMBER_FIELD_NAME)]);
 
     /**===========step:1 expanding area for line graph */
     document.getElementById('main-container').style.gridTemplateAreas = IS_MEDIA_PHONE ? '' :
@@ -727,7 +728,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
         type: 'line',
         data: {
             /** labels are the subjects name */
-            labels: all_subjects_name,
+            labels: all_subjects_name.map(e=>e.underscrore_to_capitalize()),
             /*array of objects 
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
@@ -768,7 +769,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
         type: 'polarArea',
         data: {
             /** labels are the subjects name */
-            labels: all_subjects_name,
+            labels: all_subjects_name.map(e=>e.underscrore_to_capitalize()),
             /*array of objects 
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
@@ -837,12 +838,12 @@ function view_compared_result(metaData, all_students_results) {
     "t t t t t t t t a a a a"`
 
     /*==============step 2: draw in the main graph */
-    let all_subjects_name = Object.keys(metaData.all_sub).map(sub_name => metaData.all_sub[sub_name].max ? sub_name.underscrore_to_capitalize() : null).filter(e => e != null);
+    let all_subjects_name = Object.keys(metaData.all_sub)
     let overview_main_chart = new Chart(document.getElementById('overview_main_canvas').getContext('2d'), {
         type: 'bar',
         data: {
             /** labels are the subjects name */
-            labels: all_subjects_name,
+            labels: all_subjects_name.map(e=>e.underscrore_to_capitalize()),
             /*array of objects 
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
@@ -851,7 +852,7 @@ function view_compared_result(metaData, all_students_results) {
                 let random_color = GRAPH_BG_COLORS[Math.floor(Math.random() * GRAPH_BG_COLORS.length)];
                 return {
                     label: result.name,
-                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_mcq")]),
+                    data: all_subjects_name.map(sub_name => result.res[metaData.header_names.indexOf(sub_name.to_camel_case() + "_" + TOTAL_NUMBER_FIELD_NAME)]),
                     backgroundColor: random_color,
                     borderColor: random_color.slice(0, random_color.length - 2),
                     borderWidth: 1,
@@ -900,7 +901,7 @@ function view_compared_result(metaData, all_students_results) {
             data => array (1 element forEach sub_name) (len=lenof labels)
             */
             datasets: [{
-                data: all_students_results.map(res => res.res[metaData.header_names.indexOf('term_total')]),
+                data: all_students_results.map(res => res.total_mark),
                 backgroundColor: GRAPH_BG_COLORS
             }]
         },
@@ -938,14 +939,14 @@ function view_compared_result(metaData, all_students_results) {
         // console.log('tableData',tableData)
     }
 
-    drawTable('mcq');
+    drawTable(TOTAL_NUMBER_FIELD_NAME);
     /** editing header */
     document.querySelector('#overview_total .header p').textContent = 'Compare';
     /** adding select element for changing */
-    let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_')[1])
+    let per_sub_fields = metaData.header_names.filter(e => e.toLowerCase().includes('ict')).map(e => e.split('_').splice(1).join('_'))
     document.querySelector('#overview_total .header').innerHTML +=
         `<select>
-        ${per_sub_fields.map(field_name => `<option value=${field_name} ${field_name == 'mcq' && 'selected'}>${field_name.toUpperCase()}</option>`)}
+        ${per_sub_fields.map(field_name => `<option value=${field_name} ${field_name == TOTAL_NUMBER_FIELD_NAME && 'selected'}>${field_name.toUpperCase()}</option>`)}
     </select>`
     // onchange event for select element
     document.querySelector('#overview_total .header select').onchange = e => {
@@ -1034,15 +1035,17 @@ function view_topper_students_table(metaData, topper_list) {
     document.querySelector('#e .list-toppers').innerHTML =
         `<table style="border-collapse:collapse" border="1">
                 <tr>
+                    <td>Rank</td>
                     <td>Roll</td>
                     <td>Name</td>
                     <td>Total</td>
                 </tr>
                 ${topper_list.map(result => `
                 <tr>
+                    <td>${result.rank}</td>
                     <td>${result.roll}</td>
                     <td>${result.name}</td>
-                    <td>${result.res[metaData.header_names.indexOf('term_total')]}</td>
+                    <td>${result.total_mark}</td>
                 </tr>`).join('')}
             </table>`;
 }

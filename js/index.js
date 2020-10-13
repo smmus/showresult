@@ -217,19 +217,23 @@ async function main() {
         /* else show secific res if student passes only 1 roll */
         if (STD_ROLLS.length == 1) {
             response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLLS[0]));
+
+            /** calculating the friend result */
             let freinds_result_html = '<tr style="font-weight:500"><td>RANK</td><td>NAME</td><td>ROLL</td><td>TOTAL</td><td>COMPARE</td></tr>',
-                total_std_to_show = 15,
-                search_roll = STD_ROLLS[0] - parseInt(total_std_to_show / 2);
+            total_std_to_show = 15,
+            search_roll = STD_ROLLS[0] - parseInt(total_std_to_show / 2);
             while (total_std_to_show > 0) {
                 search_roll++;
                 if (search_roll < 1) continue;
-
-                let response = await getDataByKey(db, OBJ_STORE_MAIN, search_roll);
-                if (!response) continue;
-
-                freinds_result_html += `<tr><td>${response.rank}</td><td>${response.name.capitalize()}</td><td>${response.roll}</td><td>${response.res[metaData.header_names.indexOf('term_total')]}</td><td><button class="hover-expand v-s" data-roll=${response.roll}>Compare</button></td></tr>`;
+                
+                let frnd_result = await getDataByKey(db, OBJ_STORE_MAIN, search_roll);
+                if (!frnd_result) continue;
+                
+                freinds_result_html += `<tr ${frnd_result.roll==response.roll && "style='background-color:#ffbebd;'"}><td>${frnd_result.rank}</td><td>${frnd_result.name.capitalize()}</td><td>${frnd_result.roll}</td><td>${frnd_result.total_mark}</td><td><button class="hover-expand v-s" data-roll=${frnd_result.roll}>Compare</button></td></tr>`;
                 total_std_to_show--;
             }
+
+            /** calling the main function */
             view_specific_result(metaData, response, freinds_result_html);
             return;
         }
@@ -240,8 +244,8 @@ async function main() {
                 response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
                 all_students_results.push(response);
             }
-            view_compared_result(metaData, all_students_results);
             console.log('ALL RESULT', all_students_results);
+            view_compared_result(metaData, all_students_results);
             return;
         }
         console.log('[done]');
