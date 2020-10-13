@@ -45,6 +45,7 @@ for (let i = 0; i < linkCollapse.length; i++) {
 const DB_VERSION = 2;
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
+const SHOW_STUDENTS = new URLSearchParams(window.location.search).get('show_students');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
 // const STD_NAME = new URLSearchParams(window.location.search).get('name');
 
@@ -110,6 +111,7 @@ console.log('[DB_VERSION]', DB_VERSION);
 console.log('[XM_NAME]', XM_NAME);
 console.log('[DB_NAME]', DB_NAME);
 console.log('[STD_ROLLS]', STD_ROLLS);
+console.log('[SHOW_STUDENTS]', SHOW_STUDENTS);
 console.log('[IS_RANK_GIVEN]', IS_RANK_GIVEN);
 console.log('[MAIN_ROLL_DIGITS]', MAIN_ROLL_DIGITS);
 console.log('[OBJ_STORE_MAIN]', OBJ_STORE_MAIN);
@@ -183,7 +185,7 @@ async function main() {
         TOTAL_NUMBER_FIELD_NAME || set_TOTAL_NUMBER_FIELD_NAME(metaData.header_names);
 
         /** update main ui (overview of full res) if std is not searching for specific roll **/
-        if (!STD_ROLLS) {
+        if (!STD_ROLLS && !SHOW_STUDENTS) {
             updateMainUi(metaData);
 
             /** ========showing failed students======== */
@@ -215,7 +217,7 @@ async function main() {
         }
 
         /* else show secific res if student passes only 1 roll */
-        if (STD_ROLLS.length == 1) {
+        if (STD_ROLLS && STD_ROLLS.length == 1) {
             response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(STD_ROLLS[0]));
 
             /** calculating the friend result */
@@ -238,7 +240,7 @@ async function main() {
             return;
         }
         /* else show COMPARE result if student passes more than 1 roll */
-        if (STD_ROLLS.length > 1) {
+        if (STD_ROLLS && STD_ROLLS.length > 1) {
             let all_students_results = [];
             for (let roll of STD_ROLLS) {
                 response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
@@ -247,6 +249,21 @@ async function main() {
             console.log('ALL RESULT', all_students_results);
             view_compared_result(metaData, all_students_results);
             return;
+        }
+
+        if(SHOW_STUDENTS){
+            /*step:1 make space in dom to display it */
+            let main_conatiner = document.getElementById('main-container');
+            main_conatiner.style.display = 'flex';
+            main_conatiner.style.flexDirection = 'column';
+            main_conatiner.style.justifyContent = 'flex-start';
+            main_conatiner.style.alignItems = 'center';
+            /*step:2 show all students based on criteria*/
+            if(SHOW_STUDENTS=='all'){
+                /**show all students in table*/
+                let table_data = await get_all_students_data_in_table(metaData.header_names);
+                main_conatiner.innerHTML = `<div class='card'>${table_data}</div>`;
+            }
         }
         console.log('[done]');
 
