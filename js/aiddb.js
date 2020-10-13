@@ -28,11 +28,13 @@ function createRankList(db, store_name, data, header_index) {
             /** finding student's optional subject, if not assuming its 'biology'*/
             let optionalSub = header_index.indexOf('optionalSub') != -1 ? result[header_index.indexOf('optionalSub')] : 'biology';
             let nonOptionalSub = optionalSub == 'biology' ? 'higher_math' : 'biology';
+            
+            console.log('optionalSub',optionalSub, 'nonOptionalSub', nonOptionalSub)
             /** caculating student's optional subjects' marks, **assuming they are [INTEGER]-string** */
             let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
             let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
-            // console.log('optionalSub',optionalSub, 'nonOptionalSub', nonOptionalSub)
-            // console.log('optionalSub',optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
+            
+            console.log('optionalSub',optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
 
             /**
              * rankList => Array of Arrays -> [roll(int), exam_total(int), optional(int), non-optional(int)]
@@ -106,6 +108,23 @@ function createRankList(db, store_name, data, header_index) {
 }
 
 /* ===============async function for manupulating index db ==================*/
+function deleteDb(db_name) {
+    return new Promise((resolve, reject) => {
+        var req = indexedDB.deleteDatabase(db_name);
+        req.onsuccess = function () {
+            console.log("[DB DELETED successfully]:", db_name);
+            resolve(true);
+        };
+        req.onerror = function () {
+            console.log("[Couldn't delete database]:", db_name);
+            reject();
+        };
+        req.onblocked = function () {
+            console.log("[Couldn't delete database due to the operation being blocked]:", db_name);
+            reject();
+        };
+    })
+}
 function openiddb(db_name = "", db_version = 1, obj_stores = []) {
     /**
      * modyfies Global vars : IS_CREATED
@@ -115,7 +134,8 @@ function openiddb(db_name = "", db_version = 1, obj_stores = []) {
             var dbRequest = indexedDB.open(db_name, db_version);
 
             dbRequest.onerror = function (event) {
-                reject(Error(event));
+                console.log('[ERROR on DB opening request.]')
+                reject(event);
             };
 
             dbRequest.onupgradeneeded = function (event) {
@@ -232,10 +252,10 @@ function storeMainData(db, store_name, mode, data) {
         let roll_index = header_names.indexOf('student_roll');
         let rank_index = header_names.indexOf('rank') == -1 ? header_names.indexOf('rank\r') : header_names.indexOf('rank');
         /** if rank is the last field (so last element of the arr) it will be 'rank\r' chrome doesn't show it, firefox does. wasted 1h :( */
-        let is_passed_index = header_names.indexOf('isPassed')!=-1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r');
-        let total_mark_index =  header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0])!=-1 ? header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0]) : header_names.indexOf(XM_TOTAL_PRIORITY_LIST[1]);
-        if( total_mark_index!=-1 ) IS_TOTAL_MARK_GIVEN = true;
-        
+        let is_passed_index = header_names.indexOf('isPassed') != -1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r');
+        let total_mark_index = header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0]) != -1 ? header_names.indexOf(XM_TOTAL_PRIORITY_LIST[0]) : header_names.indexOf(XM_TOTAL_PRIORITY_LIST[1]);
+        if (total_mark_index != -1) IS_TOTAL_MARK_GIVEN = true;
+
         console.log('[IS_TOTAL_MARK_GIVEN]', IS_TOTAL_MARK_GIVEN);
 
         /**storing the main roll */
@@ -271,26 +291,26 @@ function storeMainData(db, store_name, mode, data) {
             if (IS_RANK_GIVEN)
                 student_result.rank = parseInt(result[rank_index]);
 
-    
+
             result.forEach((element, index) => {
                 for (let i in SUB_CODE_TO_NAME) {
                     if (header_names[index].includes(SUB_CODE_TO_NAME[i])) {
-                        if ( header_names[index].includes(TOTAL_NUMBER_FIELD_NAME) ) {
-                            if(element == "" || element == "-"){
+                        if (header_names[index].includes(TOTAL_NUMBER_FIELD_NAME)) {
+                            if (element == "" || element == "-") {
                                 /* which students don't have xm_result */
                                 metaData.all_sub[SUB_CODE_TO_NAME[i]]['no_result']++
-                            }else{
+                            } else {
                                 /** update max, min avg */
                                 metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'] < parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['max'];
                                 parseInt(element) && (metaData.all_sub[SUB_CODE_TO_NAME[i]]['avg'] += parseInt(element));
                                 metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] = metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'] > parseInt(element) ? parseInt(element) : metaData.all_sub[SUB_CODE_TO_NAME[i]]['min'];
-                                
+
                                 /**calculating total_mark for this student if IS_TOTAL_MARK_GIVEN==false*/
-                                if(!IS_TOTAL_MARK_GIVEN)
+                                if (!IS_TOTAL_MARK_GIVEN)
                                     student_result.total_mark += parseInt(element);
                             }
 
-                        }else if (header_names[index].includes('grade')) {
+                        } else if (header_names[index].includes('grade')) {
                             /** update grades */
                             element.toLowerCase() == 'a+' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a_plus']++;
                             element.toLowerCase() == 'a' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['a']++;
@@ -299,7 +319,7 @@ function storeMainData(db, store_name, mode, data) {
                             element.toLowerCase() == 'c' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['c']++;
                             element.toLowerCase() == 'd' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['d']++;
                             element.toLowerCase() == 'f' && metaData.all_sub[SUB_CODE_TO_NAME[i]]['f']++;
-                            
+
                         }
                     }
                 }
@@ -312,11 +332,11 @@ function storeMainData(db, store_name, mode, data) {
         /* deleting those subjets which were not included in that xm */
         for (let i in SUB_CODE_TO_NAME) {
             /** if max != 0 */
-            if(metaData.all_sub[SUB_CODE_TO_NAME[i]].max){
+            if (metaData.all_sub[SUB_CODE_TO_NAME[i]].max) {
                 metaData.sub_code_to_name[i] = SUB_CODE_TO_NAME[i];
                 continue;
             }
-            
+
             /** if max == 0 */
             console.log('[DELETED]', SUB_CODE_TO_NAME[i], metaData.all_sub[SUB_CODE_TO_NAME[i]]);
             delete metaData.all_sub[SUB_CODE_TO_NAME[i]];
@@ -705,7 +725,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
                 </tr>
                 <tr>
                     <td colspan="2">${response.res[metaData.header_names.indexOf('gpa') == -1 ? metaData.header_names.indexOf('grade') : metaData.header_names.indexOf('gpa')]}</td>
-                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed')!=-1 ? metaData.header_names.indexOf('isPassed') : metaData.header_names.indexOf('isPassed\r')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[metaData.header_names.indexOf('isPassed')!=-1 ? metaData.header_names.indexOf('isPassed') : metaData.header_names.indexOf('isPassed\r')]}</b></td>
+                    <td colspan="${fields.length - 2}" style="text-align:center;color:${response.res[metaData.header_names.indexOf('isPassed') != -1 ? metaData.header_names.indexOf('isPassed') : metaData.header_names.indexOf('isPassed\r')].includes('ailed') ? 'red' : 'rgb(0, 188, 75)'}"><b>${response.res[metaData.header_names.indexOf('isPassed') != -1 ? metaData.header_names.indexOf('isPassed') : metaData.header_names.indexOf('isPassed\r')]}</b></td>
                 </tr>
             </tbody>
         </table>`;
@@ -728,7 +748,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
         type: 'line',
         data: {
             /** labels are the subjects name */
-            labels: all_subjects_name.map(e=>e.underscrore_to_capitalize()),
+            labels: all_subjects_name.map(e => e.underscrore_to_capitalize()),
             /*array of objects 
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
@@ -769,7 +789,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
         type: 'polarArea',
         data: {
             /** labels are the subjects name */
-            labels: all_subjects_name.map(e=>e.underscrore_to_capitalize()),
+            labels: all_subjects_name.map(e => e.underscrore_to_capitalize()),
             /*array of objects 
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)
@@ -843,7 +863,7 @@ function view_compared_result(metaData, all_students_results) {
         type: 'bar',
         data: {
             /** labels are the subjects name */
-            labels: all_subjects_name.map(e=>e.underscrore_to_capitalize()),
+            labels: all_subjects_name.map(e => e.underscrore_to_capitalize()),
             /*array of objects 
             return an obj forEach line ([max, student_result, min, passmark(nofill)])
             data => array (1 element forEach sub_name) (len=lenof labels)

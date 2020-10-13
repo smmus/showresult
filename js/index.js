@@ -42,7 +42,7 @@ for (let i = 0; i < linkCollapse.length; i++) {
 }
 // ------------------------ nav functionality ends -----------------------------
 // ================================= GLOBAL VARS  =================================
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
@@ -252,5 +252,17 @@ async function main() {
 
     } catch (error) {
         console.error(error);
+        console.dir(error.type);
+        // console.dir(error.srcElement instanceof IDBOpenDBRequest);
+        // console.dir(error.srcElement.error instanceof DOMException);
+
+        if (error.srcElement instanceof IDBOpenDBRequest && error.srcElement.error instanceof DOMException){
+            console.log('[ERROR: DOMException]');
+            console.log(`[Failed to execute 'createObjectStore' on 'IDBDatabase']`);
+
+            /**delte the database [BAD SOLUTION] it will create is again*/
+            let res = await deleteDb(DB_NAME);
+            res && window.location.reload();
+        }
     }
 }
