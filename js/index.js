@@ -42,7 +42,7 @@ for (let i = 0; i < linkCollapse.length; i++) {
 }
 // ------------------------ nav functionality ends -----------------------------
 // ================================= GLOBAL VARS  =================================
-const DB_VERSION = 2;
+const DB_VERSION = 1;
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const SHOW_STUDENTS = new URLSearchParams(window.location.search).get('show_students');
