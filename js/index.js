@@ -260,17 +260,81 @@ async function main() {
             main_conatiner.style.justifyContent = 'flex-start';
             main_conatiner.style.alignItems = 'center';
 
-            let el_1 = `<div class='card' style='margin-bottom:.7em'><p>Click on table HEADERS to sort all students by that field</p></div>`
+            let el_1 = `
+            <div class='card' style='margin-bottom:.7em'>
+                <p>Click on table HEADERS to sort all students by that field</p>
+                <button class='hover-expand v-s' style='margin-top:.6em' onclick='location.reload(); return false;'>Reload All</button>
+            </div>`
+            let el_2 = 
+            `<div class='card' style='margin-bottom:.7em'>
+                <div class='header' style='margin-bottom:.7em'>
+                    <p>Give a range of Roll (both inclusive)</p>
+                </div>
+                <div style='width:100%;display:flex;justify-content:space-between'>
+                    <input type='number' placeholder='eg. 20'>
+                    <input type='number' placeholder='eg. 120'>
+                    <button class='hover-expand v-s' id='search_in_range'>Calculate</button>
+                </div>
+            </div>`
 
             /*step:2 show all students based on criteria*/
             if(SHOW_STUDENTS=='all'){
                 /**show all students in table*/
                 let table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN,metaData.header_names);
-                main_conatiner.innerHTML = `<div style='margin:auto;'>${el_1}<div class='card'><table id='all_students_table' border=1><tr><th></th><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
+                main_conatiner.innerHTML = `<div style='margin:auto;'>${el_2+el_1}<div class='card'><table id='all_students_table' border=1><tr><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
             }
 
             /*step 3: add_sorting_functionality_to_table*/
             add_sorting_functionality_to_table()
+
+            /*step 4: adding event listener to the table */
+            document.getElementById('all_students_table').onclick = e => {
+                let roll = e.target.parentElement.firstElementChild.textContent
+                console.log('[ROLL]:',roll);
+                
+                /** search only if the roll can be paresed into integer */
+                parseInt(roll) && search_result(roll);
+            }
+            
+            /*step 5: adding event listener to the button */
+            document.getElementById('search_in_range').onclick = e => {
+                console.log('[search_in_range btn clicked]');
+
+                /* step 1: getting values */
+                let input_elements = e.target.parentElement.querySelectorAll('input[type=number]');
+                let val1 = input_elements[0].value && parseInt(input_elements[0].value), 
+                val2 = input_elements[1].value && parseInt(input_elements[1].value);
+                
+                /* step 2: checking if values exist */
+                if(!val1 || !val2 || val1==val2){
+                    console.log('[1 or both inputs are empty or equal]');
+                    return;
+                }
+
+                /* step 3: making sure val2>val1 */
+                if( val1 > val2 ){
+                    /*just swap them*/
+                    let temp = val1;
+                    val1 = val2;
+                    val2 = temp;
+
+                    console.log('[SWAPED]');
+                }
+                console.log('[val1]', val1);
+                console.log('[val2]', val2);
+                
+                /* step 3: removing unnecessary [tr]s */
+                //window.location.search = window.location.search.split('&').map(e => e.includes('show_students') ? `show_students=${parseInt(val1)}-${parseInt(val2)}` : e).join('&');
+                document.querySelectorAll('#all_students_table tr').forEach(tr => {
+                    // console.log(tr.firstChild.textContent);
+                    if (parseInt(tr.firstChild.textContent) && (parseInt(tr.firstChild.textContent) < val1 || parseInt(tr.firstChild.textContent) > val2)){
+                        tr.remove();
+                        // console.log('[REMOVED]')
+                    }
+                })
+                
+            }
+
         }
         console.log('[done]');
 

@@ -366,8 +366,8 @@ function search_result(roll = null, name = null) {
 
     if (roll && parseInt(roll) && parseInt(roll) > 0) {
         /**search via roll */
-        if (!window.location.search.includes('roll=')) window.location.search = `${window.location.search}&roll=${roll}`;
-        else window.location.search = window.location.search.split('&').map(e => e.includes('roll=') ? `roll=${roll}` : e).join('&');
+        if (!window.location.search.includes('roll=')) window.location.search = `${window.location.search.split('&').filter(e => !e.includes('show_students')).join('&')}&roll=${roll}`;
+        else window.location.search = window.location.search.split('&').filter(e => !e.includes('show_students')).map(e => e.includes('roll=') ? `roll=${roll}` : e).join('&');
     }
     else {
         /**search via name */
@@ -1108,15 +1108,14 @@ function get_all_students_data_in_table(db, store_name, header_names) {
         let objectStore = tx.objectStore(store_name);
 
         /* getting all documents */
-        let i = 1;
         objectStore.openCursor().onsuccess = function (event) {
             const cursor = event.target.result;
             if (cursor) {
                 if (cursor.value.roll > 0) {
                     /** find the rank of the roll in rankList */
                     const student_result = cursor.value;
-                    table_data += `<tr><td>${i}</td><td>${student_result.roll}</td><td>${student_result.rank}</td><td>${student_result.name}</td><td>${student_result.total_mark}</td><td>${student_result.res[header_names.indexOf('isPassed') != -1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r')]}</td></tr>`;
-                    i++;
+                    table_data += `<tr><td>${student_result.roll}</td><td>${student_result.rank}</td><td>${student_result.name}</td><td>${student_result.total_mark}</td><td>${student_result.res[header_names.indexOf('isPassed') != -1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r')]}</td></tr>`;
+
                 };
 
                 cursor.continue();
