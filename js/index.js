@@ -356,9 +356,20 @@ async function main() {
 
             let el_1 = `
             <div class='card' style='margin-bottom:.7em'>
-                <p>Click on table HEADERS to sort all students by that field</p>
-                <button class='hover-expand v-s' style='margin-top:.6em' onclick='location.reload(); return false;'>Reload All</button>
-            </div>`
+                <p>Click on table HEADERS to sort all students by that field.</p>
+                <p>Click on Student's Row to display his/her full result.</p>
+                <div style='display:flex;justify-content:space-between;margin-top:1em'>
+                    <button style='width:49%' class='hover-expand v-s' style='margin-top:.6em' onclick='location.search="?in=${DB_NAME}&xm=${XM_NAME}&show_students=all"; return false;'>Reload All</button>
+                    <input id='all_students_table-search_btn' style='width:49%' type='text' placeholder='Search by Name'>
+                </div>
+            </div>`;
+
+            let el_dev = `
+            <div class='card' style='margin-bottom:.7em;flex-direction:row'>
+                <span>Developer :</span>
+                <span>MUSH</span>
+            </div>`;
+
             let el_2 =
                 `<div class='card' style='margin-bottom:.7em'>
                 <div class='header' style='margin-bottom:.7em'>
@@ -369,7 +380,7 @@ async function main() {
                     <input type='number' placeholder='eg. 120' style='width:30%'>
                     <button class='hover-expand v-s' id='search_in_range' style='width:30%'>Calculate</button>
                 </div>
-            </div>`
+            </div>`;
 
             /*step:2 show all students based on criteria*/
 
@@ -378,7 +389,7 @@ async function main() {
             if(SEARCHED_NAME)
                 table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN, metaData.header_names, v => v.toLowerCase().includes(SEARCHED_NAME));
             else table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN, metaData.header_names, v => v);
-            main_conatiner.innerHTML = `<div id='all_students_table-div' style='margin:auto;'>${el_2 + el_1}<div class='card'><table id='all_students_table' border=1><tr><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
+            main_conatiner.innerHTML = `<div id='all_students_table-div' style='margin:auto;'>${el_dev + el_2 + el_1}<div class='card'><table id='all_students_table' border=1><tr><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
 
 
             /*step 3: add_sorting_functionality_to_table*/
@@ -428,6 +439,20 @@ async function main() {
                         tr.remove();
                         // console.log('[REMOVED]')
                     }
+                })
+
+            }
+            /**step 6: adding event listener to the input */
+            let all_rows = document.querySelectorAll('#all_students_table tr');
+            document.getElementById('all_students_table-search_btn').onkeyup = event => {
+                console.log('[KEYUP Event]', event.target.value);
+
+                all_rows.forEach(row=>{
+                    if(!row.querySelectorAll('td')[2]) return;
+                    // console.log(row)
+                    if(!row.querySelectorAll('td')[2].textContent.toLowerCase().includes(event.target.value))
+                        row.style.display = 'none';
+                    else row.style.display = '';
                 })
 
             }

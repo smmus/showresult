@@ -585,11 +585,12 @@ body {
         table{
             width: 100%;
             border-collapse: collapse;
+            cursor: pointer;
             th{
                 padding: .3em;
                 text-align: left;
-                cursor: pointer;
                 transition: all .4s ease;
+                background: rgba(0,255,0,0.3);
                 &:hover{
                     background: rgba(0,0,0,0.3);
                 }
