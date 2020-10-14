@@ -795,7 +795,7 @@ function view_specific_result(metaData, response, freinds_result_html) {
     /**remove the select element of #overview_secondary header*/
     document.querySelector('#overview_secondary .header').lastElementChild.remove();
     /**remove the switch of #overview_secondary*/
-    document.getElementById('overview_secondary').lastElementChild.remove();
+    document.getElementById('overview_secondary').lastElementChild.innerHTML = `<span>Optional Subject: ${response.res[metaData.header_names.indexOf('optionalSub')!=-1 ? metaData.header_names.indexOf('optionalSub') : metaData.header_names.indexOf('optionalSub\r')] || 'Not Known'}</span>`;
 
     /**==========step:3 drawing palar graph for subjects total marks */
     new Chart(document.getElementById('overview_total_canvas').getContext('2d'), {
