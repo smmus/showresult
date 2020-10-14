@@ -1,48 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta developer='smmus'>
+
+    <!-- custom meta tags thsat provide info wile loading specific dbs -->
+    <meta db=rc data-in="Rajshahi College" data-main_roll_digits="3">
+    <meta db=dc data-in="Dhaka College" data-main_roll_digits="3">
+    <meta db=cc data-in="Chittagonj College" data-main_roll_digits="3">
+    <meta db=gccc data-in="Chittagonj City College" data-main_roll_digits="3">
+
     <!-- custom css -->
     <link rel="stylesheet" href="css/index.css">
+    <!-- chartjs css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css"
+        integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w=="
+        crossorigin="anonymous" />
+    <!-- chartjs js -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+        integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg=="
+        crossorigin="anonymous"></script>
+    <!-- custom script -->
+    <script src="js/aiddb.js" defer></script>
+    <script src="js/index.js" defer></script>
+
     <title>ShowResult</title>
+
 </head>
+
 <body>
     <header>
-        <div class="header-logo">Show<span>Result</span></div>
-        <nav>
-            <a href="#colleges">Colleges</a>
-        </nav>
+        <div class="header-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18px" height="18px">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg>Show<span>Result</span></div>
+        <div class="search-area">
+            <input type="text" class="search-input" placeholder="Search Roll">
+            <button class="hover-expand v-s"
+                onclick="search_result(this.parentElement.firstElementChild.value)">Search</button>
+        </div>
     </header>
-    <main>
-        <div class="container">
-            <div class="text">
-                <h4>Get an Overview of your result</h4>
-                <div>
-                    <span>General Data</span>|
-                    <span>Compare</span>|
-                    <span>Rank</span>
+    <div id="navbar">
+        <nav class="nav">
+            <div>
+                <div class="nav__brand">
+                    <span class="nav__toggle" id="nav-toggle"><svg xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24" fill="white" width="18px" height="18px">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg></span>
+                    <a href="#" class="nav__logo">
+                        <div class="header-logo">Show<span>Result</span></div>
+                    </a>
                 </div>
-                <button class="btn">Explore More</button>
+                <div class="nav__list">
+                    <a href="index.html" class="nav__link active">
+                        <span class="nav__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
+                                width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg></span>
+                        <span class="nav__name">Main</span>
+                    </a>
+
+                    <div class="nav__link collapse">
+                        <span class="nav__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
+                                width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg></span>
+                        <span class="nav__name">Dhaka College</span>
+
+                        <span class="collapse__link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="white" width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span>
+
+                        <ul class="collapse__menu">
+                            <a style="display:none;" href="index.html?in=dc&xm=hsc_2021_1st_year_science_midterm"
+                                class="collapse__sublink" data-db='dc' data-xm="hsc_2021_1st_year_science_midterm">Half
+                                Yearly HSC-2021</a>
+                            <a href="index.html?in=dc&xm=hsc_2021_1st_year_science_final_2" class="collapse__sublink"
+                                data-db='dc' data-xm="hsc_2021_1st_year_science_final_2" data-is_rank_given=1
+                                data-xm_name='20-Aug-2020 To 09-Sep-2020 XI Year Final (1st Year HSC - Science Session :2019-2020)'>Final
+                                HSC-2021</a>
+                        </ul>
+                    </div>
+                    <div class="nav__link collapse">
+                        <span class="nav__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
+                                width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg></span>
+                        <span class="nav__name">Rajshahi College</span>
+
+                        <span class="collapse__link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="white" width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span>
+
+                        <ul class="collapse__menu">
+                            <a href="index.html?in=rc&xm=hsc_2021_1st_year_science_midterm" class="collapse__sublink"
+                                data-db='rc' data-xm="hsc_2021_1st_year_science_midterm"
+                                data-xm_name="14-Jan-2020 To 12-Feb-2020 Half Yearly (1st Year HSC - Science Session :2019-2020)">Half
+                                Yearly HSC-2021</a>
+                            <a href="index.html?in=rc&xm=hsc_2021_1st_year_science_final" class="collapse__sublink"
+                                data-db='rc' data-xm="hsc_2021_1st_year_science_final" data-is_rank_given=1
+                                data-xm_name="20-Aug-2020 To 12-Sep-2020 Year Final Exam (1st Year HSC - Science Session :2019-2020)">Final
+                                HSC-2021</a>
+                        </ul>
+                    </div>
+                    <div class="nav__link collapse">
+                        <span class="nav__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
+                                width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg></span>
+                        <span class="nav__name">Chittagonj College</span>
+
+                        <span class="collapse__link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="white" width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span>
+
+                        <ul class="collapse__menu">
+                            <a href="index.html?in=cc&xm=hsc_2021_1st_year_science_midterm" class="collapse__sublink"
+                                data-db='cc' data-xm="hsc_2021_1st_year_science_midterm"
+                                data-xm_name="11-Nov-2019 To 27-Nov-2019 Half Yearly (1st Year HSC - Science Session :2019-2020)">Half
+                                Yearly HSC-2021</a>
+                            <a href="index.html?in=cc&xm=hsc_2021_1st_year_science_final" class="collapse__sublink"
+                                data-db='cc' data-xm="hsc_2021_1st_year_science_final"
+                                data-xm_name="20-Sep-2020 To 30-Sep-2020 Year Final Exam (1st Year HSC - Science Session :2019-2020)">Final
+                                HSC-2021</a>
+                        </ul>
+                    </div>
+                    <div class="nav__link collapse">
+                        <span class="nav__icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
+                                width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg></span>
+                        <span class="nav__name">Chittagonj City College</span>
+
+                        <span class="collapse__link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="white" width="18px" height="18px">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span>
+
+                        <ul class="collapse__menu">
+                            <a href="index.html?in=gccc&xm=hsc_2021_1st_year_science_midterm" data-db="gccc"
+                                data-xm="hsc_2021_1st_year_science_midterm" data-is_rank_given=1
+                                class="collapse__sublink">Half Yearly HSC-2021</a>
+                            <!-- <a href="#" class="collapse__sublink">Final HSC-2021</a> -->
+                        </ul>
+                    </div>
+                    <a href="#" class="nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"
+                            fill="white" width="18px" height="18px">
+                            <g>
+                                <path d="M0,0h24v24H0V0z" fill="none" />
+                                <path
+                                    d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
+                            </g>
+                        </svg>
+                        <span class="nav__name">Settings</span>
+                    </a>
+                </div>
             </div>
-            <div class="image">
-                <svg id="ed352ff4-7a14-4498-84af-0dc7b5b1bcd0" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="772.90945" height="531.44094" viewBox="0 0 772.90945 531.44094"><path d="M319.61433,712.67961A141.78089,141.78089,0,0,1,213.56155,573.28569c.1219-7.912.95378-15.99006,4.27976-23.1701s9.50394-13.39013,17.23186-15.09142c8.43389-1.8567,17.33349,1.93874,23.61873,7.861s10.40636,13.736,14.198,21.495c22.83782,46.734,40.18948,96.87978,46.6859,148.48823Z" transform="translate(-213.54528 -184.27953)" fill="#f2f2f2"/><path d="M231.247,536.58343,247.253,572.95049l16.006,36.36706c5.06915,11.51754,10.12863,23.04012,15.36814,34.48152,5.1935,11.34091,10.56495,22.6034,16.29525,33.684,5.72218,11.06486,11.80377,21.94912,18.40506,32.51522q1.23309,1.9737,2.49042,3.93206c.58008.90425,2.03014.06547,1.44595-.84519-6.72793-10.48763-12.92723-21.30541-18.74161-32.32388-5.82064-11.03036-11.2609-22.25747-16.50019-33.57425-5.26729-11.37725-10.332-22.84667-15.38326-34.321q-7.97541-18.11688-15.948-36.235l-16.00605-36.36706-1.99187-4.52568c-.43316-.98418-1.87645-.133-1.44595.84519Z" transform="translate(-213.54528 -184.27953)" fill="#fff"/><path d="M312.93738,712.93239a82.96676,82.96676,0,0,1-92.692-43.74066c-2.07267-4.14071-3.82153-8.55926-4.03308-13.1849s1.31945-9.51764,4.87237-12.48717c3.87749-3.2408,9.52264-3.67283,14.38463-2.29486s9.111,4.32217,13.17418,7.32689c24.47345,18.09816,47.01962,39.44868,64.3248,64.48912Z" transform="translate(-213.54528 -184.27953)" fill="#f2f2f2"/><path d="M219.51916,645.36213,237.647,659.92225l18.12782,14.56013c5.74112,4.61123,11.47858,9.22769,17.2876,13.75339,5.758,4.486,11.58722,8.88316,17.55363,13.089,5.958,4.19991,12.05376,8.209,18.33349,11.91267q1.173.69183,2.35449,1.36914c.54528.31287,1.07169-.51407.52254-.82916-6.32429-3.62871-12.46326-7.57153-18.45656-11.72247-5.99977-4.15542-11.85515-8.51568-17.63042-12.97675-5.80611-4.4849-11.53195-9.07235-17.25211-13.666q-9.03158-7.25292-18.062-14.50724L222.29761,646.3449,220.0417,644.533c-.49058-.394-1.0101.43755-.52254.82916Z" transform="translate(-213.54528 -184.27953)" fill="#fff"/><path d="M979.45472,184.27953h-487a7.00778,7.00778,0,0,0-7,7v330a7.00779,7.00779,0,0,0,7,7h487a7.00778,7.00778,0,0,0,7-7v-330A7.00778,7.00778,0,0,0,979.45472,184.27953Zm5,337a5.002,5.002,0,0,1-5,5h-487a5.002,5.002,0,0,1-5-5v-330a5.002,5.002,0,0,1,5-5h487a5.002,5.002,0,0,1,5,5Z" transform="translate(-213.54528 -184.27953)" fill="#3f3d56"/><rect x="272.90945" y="28.03998" width="499" height="2" fill="#3f3d56"/><circle cx="289.90945" cy="15" r="6" fill="#3f3d56"/><circle cx="307.15945" cy="15" r="6" fill="#3f3d56"/><circle cx="324.40945" cy="15" r="6" fill="#3f3d56"/><path d="M608.32283,258.77953h-84a7,7,0,1,1,0-14h84a7,7,0,0,1,0,14Z" transform="translate(-213.54528 -184.27953)" fill="#ccc"/><path d="M723.32283,292.77953h-199a7,7,0,0,1,0-14h199a7,7,0,0,1,0,14Z" transform="translate(-213.54528 -184.27953)" fill="#ccc"/><path d="M787.54267,306.30254a91.00351,91.00351,0,0,0,75.04394,142.477v-79.44Z" transform="translate(-213.54528 -184.27953)" fill="#ffc15b"/><path d="M862.58661,266.77953a90.896,90.896,0,0,0-75.04394,39.523l75.04394,63.037Z" transform="translate(-213.54528 -184.27953)" fill="#ccc"/><path d="M862.58661,449.77953h-1v-184h1a92,92,0,1,1,0,184Zm1-181.99463V447.77416a90.00019,90.00019,0,0,0,0-179.98926Z" transform="translate(-213.54528 -184.27953)" fill="#3f3d56"/><path d="M582.32283,487.27953h-17a4.50508,4.50508,0,0,1-4.5-4.5v-49a4.50508,4.50508,0,0,1,4.5-4.5h17a4.50507,4.50507,0,0,1,4.5,4.5v49A4.50508,4.50508,0,0,1,582.32283,487.27953Z" transform="translate(-213.54528 -184.27953)" fill="#ccc"/><path d="M632.32283,487.27953h-17a4.50508,4.50508,0,0,1-4.5-4.5v-72a4.50508,4.50508,0,0,1,4.5-4.5h17a4.50507,4.50507,0,0,1,4.5,4.5v72A4.50508,4.50508,0,0,1,632.32283,487.27953Z" transform="translate(-213.54528 -184.27953)" fill="#ff6584"/><path d="M682.32283,487.27953h-17a4.50508,4.50508,0,0,1-4.5-4.5v-92a4.50508,4.50508,0,0,1,4.5-4.5h17a4.50507,4.50507,0,0,1,4.5,4.5v92A4.50508,4.50508,0,0,1,682.32283,487.27953Z" transform="translate(-213.54528 -184.27953)" fill="#ffc15b"/><path d="M582.32283,487.77953h-17a5.00573,5.00573,0,0,1-5-5v-110a5.00573,5.00573,0,0,1,5-5h17a5.00573,5.00573,0,0,1,5,5v110A5.00573,5.00573,0,0,1,582.32283,487.77953Zm-17-118a3.00328,3.00328,0,0,0-3,3v110a3.00329,3.00329,0,0,0,3,3h17a3.00328,3.00328,0,0,0,3-3v-110a3.00328,3.00328,0,0,0-3-3Z" transform="translate(-213.54528 -184.27953)" fill="#3f3d56"/><path d="M632.32283,487.77953h-17a5.00573,5.00573,0,0,1-5-5v-110a5.00573,5.00573,0,0,1,5-5h17a5.00573,5.00573,0,0,1,5,5v110A5.00573,5.00573,0,0,1,632.32283,487.77953Zm-17-118a3.00328,3.00328,0,0,0-3,3v110a3.00329,3.00329,0,0,0,3,3h17a3.00328,3.00328,0,0,0,3-3v-110a3.00328,3.00328,0,0,0-3-3Z" transform="translate(-213.54528 -184.27953)" fill="#3f3d56"/><path d="M682.32283,487.77953h-17a5.00573,5.00573,0,0,1-5-5v-110a5.00573,5.00573,0,0,1,5-5h17a5.00573,5.00573,0,0,1,5,5v110A5.00573,5.00573,0,0,1,682.32283,487.77953Zm-17-118a3.00328,3.00328,0,0,0-3,3v110a3.00329,3.00329,0,0,0,3,3h17a3.00328,3.00328,0,0,0,3-3v-110a3.00328,3.00328,0,0,0-3-3Z" transform="translate(-213.54528 -184.27953)" fill="#3f3d56"/><path d="M325.97669,543.28208A10.05577,10.05577,0,0,0,317.19187,530.61L308.592,495.92535l-12.58652,13.65332,10.09618,30.84389a10.11028,10.11028,0,0,0,19.875,2.85952Z" transform="translate(-213.54528 -184.27953)" fill="#ffb8b8"/><path d="M302.92,532.61453a4.50494,4.50494,0,0,1-2.5174-2.66936L286.04644,485.767a46.37348,46.37348,0,0,1,.76364-32.63527l13.83846-34.35489a14.49652,14.49652,0,1,1,28.5985,4.76667l-19.09249,55.55769,6.683,45.23868a4.51467,4.51467,0,0,1-2.5399,4.50394l-7.70875,3.67825a4.50568,4.50568,0,0,1-2.65851.38041A4.45465,4.45465,0,0,1,302.92,532.61453Z" transform="translate(-213.54528 -184.27953)" fill="#2f2e41"/><polygon points="160.343 518.443 172.603 518.442 178.435 471.154 160.341 471.155 160.343 518.443" fill="#ffb8b8"/><path d="M371.26153,699.21893h38.53073a0,0,0,0,1,0,0V714.1058a0,0,0,0,1,0,0H386.14839a14.88686,14.88686,0,0,1-14.88686-14.88686v0A0,0,0,0,1,371.26153,699.21893Z" transform="translate(567.54077 1229.02737) rotate(179.99738)" fill="#2f2e41"/><polygon points="99.343 518.443 111.603 518.442 117.435 471.154 99.341 471.155 99.343 518.443" fill="#ffb8b8"/><path d="M310.26153,699.21893h38.53073a0,0,0,0,1,0,0V714.1058a0,0,0,0,1,0,0H325.14839a14.88686,14.88686,0,0,1-14.88686-14.88686v0A0,0,0,0,1,310.26153,699.21893Z" transform="translate(445.54077 1229.03015) rotate(179.99738)" fill="#2f2e41"/><path d="M377.23949,509.99078l10.77686,85.38587q2.22236,17.60784,3.10973,35.34585l2.90343,58.06853a4,4,0,0,1-3.995,4.19975H373.67817a4,4,0,0,1-3.95471-3.39973l-14.71008-96.91351a2,2,0,0,0-3.94338-.06694l-17.72158,94.91672a4,4,0,0,1-3.62623,3.18424l-15.05405.95518a4,4,0,0,1-4.28995-4.11428l4.8613-155.56168Z" transform="translate(-213.54528 -184.27953)" fill="#2f2e41"/><circle cx="115.94619" cy="179.53015" r="24.56103" fill="#ffb8b8"/><path d="M310.23949,533.99078c6,14,32,24,38,4,4.64014-15.46,23.02-21.96,31.12989-24.11a4.01608,4.01608,0,0,0,2.86035-4.86005l-22.67041-89.05a31.272,31.272,0,0,0-21.06006-22.16c-18.01953-5.58-37.01953,5.91-40.06983,24.52a137.15658,137.15658,0,0,0-1.58984,15.76C294.95922,477.3808,306.2893,524.77075,310.23949,533.99078Z" transform="translate(-213.54528 -184.27953)" fill="#ffc15b"/><path d="M391.62938,533.96509a10.05577,10.05577,0,0,0-12.75277-8.66732l-20.49275-29.275-6.83741,17.2651L372.055,538.441a10.11027,10.11027,0,0,0,19.57442-4.47588Z" transform="translate(-213.54528 -184.27953)" fill="#ffb8b8"/><path d="M366.27921,532.29853a4.505,4.505,0,0,1-3.30867-1.586l-29.27686-36.06483a46.37356,46.37356,0,0,1-11.01848-30.72844l.56429-37.033a14.49652,14.49652,0,1,1,28.40042-5.832l2.15442,58.70723,22.49784,39.81265a4.51467,4.51467,0,0,1-.75115,5.1159l-5.87132,6.20338a4.50564,4.50564,0,0,1-2.34406,1.31062A4.4548,4.4548,0,0,1,366.27921,532.29853Z" transform="translate(-213.54528 -184.27953)" fill="#2f2e41"/><path d="M310.849,383.89889a4.00709,4.00709,0,0,0,5.90278-2.36826l.01371-.0559c.44576-1.86412.0756-3.81068-.05232-5.72308s.05925-4.01327,1.36174-5.41937c2.428-2.62114,6.74756-1.23165,10.25844-1.8944a8.66429,8.66429,0,0,0,6.74007-9.25291c-.05-.3975-.12841-.79545-.21633-1.19315a6.67288,6.67288,0,0,1,6.92675-8.0813c3.5481.20288,7.378,1.2779,10.31357-1.35011a7.60777,7.60777,0,0,0,1.82654-8.20134c-1.67623-4.8383-6.4137-7.37124-11.10186-8.76367a40.62025,40.62025,0,0,0-34.43036,5.64955c-2.96118,2.08724-5.72662,4.70983-6.98873,8.10575s-.65322,7.6803,2.19278,9.92206a18.332,18.332,0,0,0-4.24619,17.80643C300.7553,377.60865,307.46406,381.95122,310.849,383.89889Z" transform="translate(-213.54528 -184.27953)" fill="#2f2e41"/><path d="M489.65157,715.72047h-265a1,1,0,0,1,0-2h265a1,1,0,0,1,0,2Z" transform="translate(-213.54528 -184.27953)" fill="#3f3d56"/></svg>
+
+            <a href="#" class="nav__link">
+                <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"
+                    fill="white" width="18px" height="18px">
+                    <g>
+                        <rect fill="none" height="24" width="24" />
+                    </g>
+                    <g>
+                        <path
+                            d="M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5-5L11,7z M20,19h-8v2h8c1.1,0,2-0.9,2-2V5c0-1.1-0.9-2-2-2h-8v2h8V19z" />
+                    </g>
+                </svg>
+                <span class="nav__name">Log Out</span>
+            </a>
+        </nav>
+    </div>
+    <section id="main-container">
+
+        <div class="card__1 card" id="overview_main">
+            <div class="header">
+                <p>Grade Overview</p>
+                <button class="hover-expand v-s">Mark Overview</button>
+            </div>
+            <div class="canvas">
+                <canvas id="overview_main_canvas"></canvas>
+            </div>
+            <div class="footer">
+                <span>
+                    <label class="switch">
+                        <input type="checkbox" id="overview_main_checkbox">
+                        <span></span>
+                    </label>
+                </span>
+                <span class="switch-name">Change Axis</span>
             </div>
         </div>
-    </main>
-    <section id="colleges">
-        <div class="box">
-            <a href="results.html">Dhaka College</a>
+
+        <div class="card__1 card" id="overview_secondary">
+            <div class="header">
+                <p>Result</p>
+                <select id="overview_secondary_select">
+                    <option value="promoted">Promoted</option>
+                    <option value="failed" selected>Failed</option>
+                    <option value="a_plus">A plus</option>
+                    <option value="a">A</option>
+                    <option value="a_minus">A minus</option>
+                    <option value="b">B</option>
+                    <option value="c">C</option>
+                    <option value="d">D</option>
+                    <option value="f">F</option>
+                    <option value="no_result">No Result</option>
+                </select>
+            </div>
+            <div class="canvas">
+                <canvas id="overview_secondary_canvas"></canvas>
+            </div>
+            <div class="footer">
+                <span>
+                    <label class="switch">
+                        <input type="checkbox" id="overview_secondary_checkbox">
+                        <span></span>
+                    </label>
+                </span>
+                <span>Change Axis</span>
+            </div>
         </div>
-        <div class="box">
-            <a href="results.html">Rajshahi College</a>
+        <div id="search" class="card card__1">
+            <div class="colg_name"></div>
+            <div>
+                <input class="gate" id="std_roll" type="text" placeholder="3 digit ROLL number" />
+                <label for="std_roll">Roll</label>
+            </div>
+            <div class="btn-grp">
+                <div style="text-align: center;">
+                    <button id="search_result" class="hover-expand ">show result</button>
+                </div>
+                <div style="text-align: center;">
+                    <button id="compare_result" class="hover-expand ">Compare</button>
+                </div>
+            </div>
+            <!-- <div>
+                <input class="gate" id="std_name" type="text" placeholder="Seach by name is currently off" />
+                <label for="std_name">Name</label>
+            </div> -->
         </div>
-        <div class="box">
-            <a href="results.html">Chittagong College</a>
+
+        <div class="card" id="show_all">
+            <button class="hover-expand btn--jump is-active">Show all students' result</button>
+            <p>Developer: MUSH</p>
+            <div class="dev-icons">
+                <a class="dev-icon" href="https://github.com/smmus" target="_blank">
+                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="35.318px" height="35.318px"
+                        viewBox="0 0 35.318 35.318" style="enable-background:new 0 0 35.318 35.318;"
+                        xml:space="preserve">
+                        <g>
+                            <path
+                                d="M23.71,34.689c-0.172,0.062-0.345,0.137-0.522,0.168c-0.678,0.121-1.112-0.229-1.116-0.922
+                                c-0.009-1.287-0.009-2.572,0.012-3.859c0.022-1.48-0.012-2.941-1.139-4.162c0.67-0.12,1.266-0.204,1.849-0.338
+                                c3.862-0.887,5.868-3.323,6.124-7.366c0.131-2.058-0.236-3.946-1.604-5.567c-0.099-0.114-0.104-0.373-0.057-0.539
+                                c0.364-1.34,0.258-2.649-0.166-3.959c-0.105-0.327-0.279-0.428-0.602-0.407c-1.134,0.063-2.173,0.461-3.089,1.073
+                                c-0.883,0.593-1.705,0.722-2.754,0.482c-2.31-0.521-4.635-0.369-6.94,0.165c-0.261,0.062-0.612-0.021-0.851-0.161
+                                c-1.082-0.634-2.164-1.25-3.412-1.496c-0.965-0.188-1.049-0.14-1.305,0.793C7.816,9.77,7.784,10.947,8.113,12.13
+                                c0.047,0.172-0.002,0.448-0.117,0.575c-2.557,2.853-1.631,8.244,0.092,10.309c1.34,1.604,3.12,2.326,5.096,2.701
+                                c0.345,0.064,0.688,0.113,1.033,0.173c-0.296,0.77-0.562,1.497-0.863,2.212c-0.059,0.138-0.246,0.254-0.399,0.312
+                                c-1.938,0.752-3.604,0.199-4.713-1.56c-0.593-0.938-1.354-1.639-2.488-1.842c-0.036-0.007-0.073-0.026-0.106-0.021
+                                c-0.305,0.08-0.607,0.164-0.911,0.246c0.171,0.238,0.292,0.558,0.521,0.701c0.961,0.608,1.586,1.475,1.999,2.498
+                                c0.649,1.604,1.909,2.319,3.546,2.459c0.799,0.065,1.606,0.01,2.481,0.01c0,0.996,0.036,2.133-0.015,3.265
+                                c-0.026,0.61-0.639,0.854-1.373,0.604c-1.947-0.666-3.752-1.621-5.311-2.963C0.956,26.96-1.214,20.83,0.657,13.655
+                                C2.522,6.503,7.383,2.116,14.651,0.739C24.708-1.163,34.235,6.161,35.233,16.37C36.021,24.418,31.284,31.949,23.71,34.689z
+                                M14.229,25.85c-0.006,0.014-0.01,0.024-0.016,0.038c0.018,0.003,0.036,0.006,0.055,0.009
+                                C14.282,25.898,14.294,25.923,14.229,25.85z M9.679,29.031c0.157,0.097,0.307,0.22,0.477,0.273c0.062,0.02,0.177-0.121,0.38-0.271
+                                c-0.282-0.107-0.448-0.201-0.623-0.225C9.845,28.8,9.757,28.953,9.679,29.031z M11.112,29.277c0.023,0.105,0.232,0.236,0.355,0.234
+                                c0.119-0.002,0.235-0.16,0.354-0.25c-0.108-0.099-0.216-0.195-0.548-0.494C11.201,28.975,11.082,29.143,11.112,29.277z
+                                M12.87,28.854c-0.148,0.035-0.273,0.172-0.408,0.266c0.079,0.1,0.158,0.193,0.285,0.35c0.175-0.16,0.294-0.271,0.414-0.379
+                                C13.061,29.004,12.944,28.836,12.87,28.854z M8.512,28.261c0.082,0.155,0.209,0.289,0.381,0.508
+                                c0.115-0.188,0.24-0.332,0.218-0.361c-0.109-0.143-0.257-0.26-0.403-0.367C8.698,28.033,8.495,28.227,8.512,28.261z" />
+                        </g>
+                    </svg>
+                </a>
+                <a class="dev-icon" onclick="alert('Sorry, Not set yet!!')">
+                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
+                        style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                        <g>
+                            <g>
+                                <path d="M448,0H64C28.704,0,0,28.704,0,64v384c0,35.296,28.704,64,64,64h192V336h-64v-80h64v-64c0-53.024,42.976-96,96-96h64v80
+			                    h-32c-17.664,0-32-1.664-32,16v64h80l-32,80h-48v176h96c35.296,0,64-28.704,64-64V64C512,28.704,483.296,0,448,0z" />
+                            </g>
+                        </g>
+                    </svg>
+                </a>
+                <a class="dev-icon" onclick="alert('Sorry, Not set yet!!')">
+                    <svg height="512pt" viewBox="0 0 512 512" width="512pt" xmlns="http://www.w3.org/2000/svg"><path d="m256 0c-141.363281 0-256 114.636719-256 256s114.636719 256 256 256 256-114.636719 256-256-114.636719-256-256-256zm-74.390625 387h-62.347656v-187.574219h62.347656zm-31.171875-213.1875h-.40625c-20.921875 0-34.453125-14.402344-34.453125-32.402344 0-18.40625 13.945313-32.410156 35.273437-32.410156 21.328126 0 34.453126 14.003906 34.859376 32.410156 0 18-13.53125 32.402344-35.273438 32.402344zm255.984375 213.1875h-62.339844v-100.347656c0-25.21875-9.027343-42.417969-31.585937-42.417969-17.222656 0-27.480469 11.601563-31.988282 22.800781-1.648437 4.007813-2.050781 9.609375-2.050781 15.214844v104.75h-62.34375s.816407-169.976562 0-187.574219h62.34375v26.558594c8.285157-12.78125 23.109375-30.960937 56.1875-30.960937 41.019531 0 71.777344 26.808593 71.777344 84.421874zm0 0"/></svg>
+                </a>
+            </div>
         </div>
-        <div class="box">
-            <a href="results.html">Chittagong City College</a>
+
+
+        <div class="card" id="overview_total">
+            <div class="header">
+                <p>Promoted vs Failed</p>
+                <p id="total_failed" style="color:#FF4651"></p>
+            </div>
+            <div class="canvas">
+                <canvas id="overview_total_canvas"></canvas>
+            </div>
+            <div class="footer"></div>
         </div>
+
+        <div class="card" id="extra">
+            <div class="header">
+                <p>Failed Students</p>
+            </div>
+            <div class="canvas">
+                <canvas id="overview_total_failed_canvas"></canvas>
+            </div>
+        </div>
+        <div class="card" id="e">
+            <p>Toppers (1-10)</p>
+            <div class="list-toppers"></div>
+            <div></div>
+        </div>
+        <div style="display: none;" class="card" id="developer">
+            <p>Developer</p>
+            <div style="text-align: center;">
+                MUSH
+            </div>
+            <div></div>
+        </div>
+
     </section>
 </body>
+
 </html>
