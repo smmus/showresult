@@ -501,6 +501,20 @@ body {
                         margin-top: 1em;
                     }
                 }
+                .dev-icons{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .dev-icon{
+                        height: 26px;
+                        width: 26px;
+                        svg{
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                }
         }
         .card__1{
             height: 100%;
