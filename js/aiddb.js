@@ -371,6 +371,7 @@ function search_result(roll = null, name = null) {
     }
     else {
         /**search via name */
+        window.location.search = `?in=${DB_NAME}&xm=${XM_NAME}&show_students=all&searched_name=${name.toLowerCase()}`;
     }
 }
 /**=================== compare result func ================= */
@@ -401,6 +402,8 @@ function compare_result(roll = null, name = null) {
 
     }
     /**search via name */
+    let ifGo = confirm('Search by name? current page content will be lossed');
+    if(ifGo) window.location.search = `?in=${DB_NAME}&xm=${XM_NAME}&show_students=all&searched_name=${name.toLowerCase()}`;
 
 }
 /**=================== update main ui func ================= */
@@ -1101,7 +1104,7 @@ function set_TOTAL_NUMBER_FIELD_NAME(header_names) {
     console.log('[TOTAL_NUMBER_FIELD_NAME]:', TOTAL_NUMBER_FIELD_NAME);
 }
 
-function get_all_students_data_in_table(db, store_name, header_names) {
+function get_all_students_data_in_table(db, store_name, header_names, test_func) {
     return new Promise((resolve, reject) => {
         let table_data = "";
 
@@ -1122,11 +1125,9 @@ function get_all_students_data_in_table(db, store_name, header_names) {
         objectStore.openCursor().onsuccess = function (event) {
             const cursor = event.target.result;
             if (cursor) {
-                if (cursor.value.roll > 0) {
+                if (cursor.value.roll > 0 && test_func(cursor.value.name)) {
                     /** find the rank of the roll in rankList */
-                    const student_result = cursor.value;
-                    table_data += `<tr><td>${student_result.roll}</td><td>${student_result.rank}</td><td>${student_result.name}</td><td>${student_result.total_mark}</td><td>${student_result.res[header_names.indexOf('isPassed') != -1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r')]}</td></tr>`;
-
+                    table_data += `<tr><td>${cursor.value.roll}</td><td>${cursor.value.rank}</td><td>${cursor.value.name}</td><td>${cursor.value.total_mark}</td><td>${cursor.value.res[header_names.indexOf('isPassed') != -1 ? header_names.indexOf('isPassed') : header_names.indexOf('isPassed\r')]}</td></tr>`;
                 };
 
                 cursor.continue();

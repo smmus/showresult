@@ -48,6 +48,7 @@ const DB_VERSION = 1;
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
 const XM_NAME = new URLSearchParams(window.location.search).get('xm');
 const SHOW_STUDENTS = new URLSearchParams(window.location.search).get('show_students');
+const SEARCHED_NAME = new URLSearchParams(window.location.search).get('searched_name');
 const STD_ROLLS = new URLSearchParams(window.location.search).get('roll') && new URLSearchParams(window.location.search).get('roll').split('-').map(e => parseInt(e)); // array of rolls(int)
 // const STD_NAME = new URLSearchParams(window.location.search).get('name');
 
@@ -114,6 +115,7 @@ console.log('[XM_NAME]', XM_NAME);
 console.log('[DB_NAME]', DB_NAME);
 console.log('[STD_ROLLS]', STD_ROLLS);
 console.log('[SHOW_STUDENTS]', SHOW_STUDENTS);
+console.log('[SEARCHED_NAME]', SEARCHED_NAME);
 console.log('[IS_RANK_GIVEN]', IS_RANK_GIVEN);
 console.log('[MAIN_ROLL_DIGITS]', MAIN_ROLL_DIGITS);
 console.log('[OBJ_STORE_MAIN]', OBJ_STORE_MAIN);
@@ -334,7 +336,7 @@ async function main() {
         if (STD_ROLLS && STD_ROLLS.length > 1) {
             let all_students_results = [];
             for (let roll of STD_ROLLS) {
-                response = await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
+                response =  await getDataByKey(db, OBJ_STORE_MAIN, parseInt(roll));
                 all_students_results.push(response);
             }
             console.log('ALL RESULT', all_students_results);
@@ -350,6 +352,7 @@ async function main() {
             main_conatiner.style.flexDirection = 'column';
             main_conatiner.style.justifyContent = 'flex-start';
             main_conatiner.style.alignItems = 'center';
+            main_conatiner.style.maxWidth= '100vw';
 
             let el_1 = `
             <div class='card' style='margin-bottom:.7em'>
@@ -362,17 +365,20 @@ async function main() {
                     <p>Give a range of Roll (both inclusive)</p>
                 </div>
                 <div style='width:100%;display:flex;justify-content:space-between'>
-                    <input type='number' placeholder='eg. 20'>
-                    <input type='number' placeholder='eg. 120'>
-                    <button class='hover-expand v-s' id='search_in_range'>Calculate</button>
+                    <input type='number' placeholder='eg. 20'  style='width:30%'>
+                    <input type='number' placeholder='eg. 120' style='width:30%'>
+                    <button class='hover-expand v-s' id='search_in_range' style='width:30%'>Calculate</button>
                 </div>
             </div>`
 
             /*step:2 show all students based on criteria*/
 
             /**show all students in table*/
-            let table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN, metaData.header_names);
-            main_conatiner.innerHTML = `<div style='margin:auto;'>${el_2 + el_1}<div class='card'><table id='all_students_table' border=1><tr><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
+            let table_data = "";
+            if(SEARCHED_NAME)
+                table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN, metaData.header_names, v => v.toLowerCase().includes(SEARCHED_NAME));
+            else table_data = await get_all_students_data_in_table(db, OBJ_STORE_MAIN, metaData.header_names, v => v);
+            main_conatiner.innerHTML = `<div id='all_students_table-div' style='margin:auto;'>${el_2 + el_1}<div class='card'><table id='all_students_table' border=1><tr><th>ROLL</th><th>RANK</th><th>NAME</th><th>TOTAL</th><th>PROMOTED</th></tr>${table_data}</table></div></div>`;
 
 
             /*step 3: add_sorting_functionality_to_table*/
