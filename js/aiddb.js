@@ -34,7 +34,7 @@ function createRankList(db, store_name, data, header_index) {
             let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
             let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
 
-            console.log('optionalSub', optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
+            // console.log('optionalSub', optionalSubMark, 'nonOptionalSub', nonOptionalSubMark)
 
             /**
              * rankList => Array of Arrays -> [roll(int), exam_total(int), optional(int), non-optional(int)]

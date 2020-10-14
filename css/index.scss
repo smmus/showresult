@@ -569,6 +569,9 @@ body {
         }
         #show_all{
             grid-area: b;
+            p{
+                margin: 1em 0;
+            }
         }
         .list-1{
             font-weight: 300;
