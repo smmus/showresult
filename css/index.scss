@@ -421,6 +421,24 @@ body {
         }
     }
 
+    #main-div{
+        width: 60%;
+        .card{
+            .body{
+                margin-top: .5em;
+                margin-bottom: .5em;
+            }
+            .footer{
+                margin-top: 1em;
+            }
+            .img{
+                margin: 0 auto;
+                width: 60%;
+                height: 60%;
+            }
+        }
+    }
+
     #main-container{
         margin-left: $navWidth;
         position: relative;
@@ -509,9 +527,14 @@ body {
                     .dev-icon{
                         height: 26px;
                         width: 26px;
+                        transition: all .2s ease-in-out;
                         svg{
                             width: 100%;
                             height: 100%;
+                        }
+
+                        &:hover{
+                            transform: scale(1.15);
                         }
                     }
                 }
@@ -610,6 +633,15 @@ $desktop: 1024px;
         #navbar{
             width: 0;
             padding: 0;
+        }
+        #main-div{
+            width: 80%;
+            .card{
+                .img{
+                    width: 100%;
+                    height: 100%;
+                }
+            }
         }
         #main-container{
             margin: 0;
