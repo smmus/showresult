@@ -578,7 +578,7 @@ function updateMainUi(metaData) {
             ]
         },
         options: {
-            aspectRatio: 1.5,
+            aspectRatio: IS_MEDIA_PHONE ? 1.5 : 2,
             legend: {
                 position: 'right'
             }
@@ -669,9 +669,9 @@ function updateMainUi(metaData) {
             ]
         },
         options: {
-            aspectRatio: IS_MEDIA_PHONE ? 1.5 : 1,
+            aspectRatio: IS_MEDIA_PHONE ? 1.5 : IS_MEDIA_TABLET ? 2 : 1,
             legend: {
-                position: IS_MEDIA_PHONE ? 'right' : 'bottom'
+                position: (IS_MEDIA_PHONE || IS_MEDIA_TABLET) ? 'right' : 'bottom'
             },
         }
     });

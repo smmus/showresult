@@ -68,6 +68,10 @@ if (DB_NAME && XM_NAME) {
         OBJ_STORES.push(`${DB_NAME}_${e.dataset.xm}_main`);
 
         if (e.href.includes(`in=${DB_NAME}&xm=${XM_NAME}`)) XM_NAME_FROM_COLLEGE = e.dataset.xm_name || e.textContent;
+
+        /* changing active nav */
+        document.querySelector(`div[data-in=${DB_NAME}]`).classList.add('active');
+        document.querySelector(`a[href="index.html"]`).classList.remove('active')
     });
 }
 
@@ -121,6 +125,10 @@ console.log('[MAIN_ROLL_DIGITS]', MAIN_ROLL_DIGITS);
 console.log('[OBJ_STORE_MAIN]', OBJ_STORE_MAIN);
 console.log('[OBJ_STORES]', OBJ_STORES);
 console.log('[XM_NAME_FROM_COLLEGE]', XM_NAME_FROM_COLLEGE);
+
+console.log('[IS_MEDIA_PHONE]', IS_MEDIA_PHONE)
+console.log('[IS_MEDIA_TABLET]',IS_MEDIA_TABLET)
+console.log('[IS_MEDIA_DESKTOP]',IS_MEDIA_DESKTOP)
 
 // ------------------------------ CHARTJS GLOBAL SET ------------------------------
 Chart.defaults.global.elements.line.tension = 0;
@@ -450,7 +458,7 @@ async function main() {
                 all_rows.forEach(row=>{
                     if(!row.querySelectorAll('td')[2]) return;
                     // console.log(row)
-                    if(!row.querySelectorAll('td')[2].textContent.toLowerCase().includes(event.target.value))
+                    if(!row.querySelectorAll('td')[2].textContent.toLowerCase().includes(event.target.value.toLowerCase()))
                         row.style.display = 'none';
                     else row.style.display = '';
                 })
