@@ -2,15 +2,15 @@
 
 [View Main Site](https://smmus.github.io/showresult)
 
-**What facities do we provide**
-- 🔭 `Overview` of result of the whole exam
-- 🔭 Find `specific student's result` and show overview like min, max, average etc.
-- 👯 `Compare more than one student`
-- 🔭 `Search by Name` if roll number is forgotten
-- ⚡ Calculate `RANK`, only if not given from the institute
-- ⚡ `Show All Students` in a list with their `Name`, `Roll`, `Rank` and `Total Mark`
+**What facilities do we provide?**
+1. 🔭 `Overview` of result of the whole exam
+2. 🔭 Find `specific student's result` and show overview like min, max, average etc.
+3. 👯 `Compare more than one student`
+4. 🔭 `Search by Name` if roll number is forgotten
+5. ⚡ Calculate `RANK`, only if not given from the institute
+6. ⚡ `Show All Students` in a list with their `Name`, `Roll`, `Rank` and `Total Mark`
     - `SORT` then based on `Name`, `Roll`, `Rank` and `Total Mark`
-- ⚡ Show all students in a `Range of Roll` or within `Section`
+7. ⚡ Show all students in a `Range of Roll` or within `Section`
 
 **Are all data actual results?**
 - Yes
@@ -35,6 +35,15 @@
 - Wanna add some styles?
     - modify `global variables` in `scss` and `js` files to customize `COLORS`
 - Any contribution will be apreciated 👯
+
+---
+
+### Todos (consider contributing)
+* [ ] **Update:** the **Color Scheme** 
+* [ ] **Add:** `Dark Mode` under `settings` menu  
+* [ ] **Fix:** One student cannot compare with himself
+* [ ] **Add:** `Ranking` in a roll range (for section)  
+* [ ] **Make:** PWA (working on it) 
 
 ---
 
