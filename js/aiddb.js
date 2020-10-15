@@ -1047,7 +1047,7 @@ function view_failed_students_chart(failed_students_results) {
             }]
         },
         options: {
-            aspectRatio: 2.5,
+            aspectRatio: IS_MEDIA_TABLET ? 1.5 : 2.5,
             scales: {
                 yAxes: [{
                     scaleLabel: {
