@@ -450,7 +450,7 @@ async function main() {
                 })
 
             }
-            /**step 6: adding event listener to the input */
+            /**step 6: adding event listener to the seach by name input */
             let all_rows = document.querySelectorAll('#all_students_table tr');
             document.getElementById('all_students_table-search_btn').onkeyup = event => {
                 console.log('[KEYUP Event]', event.target.value);
@@ -464,7 +464,35 @@ async function main() {
                 })
 
             }
-            return;
+
+            /**step 7: adding event listener to add_section_range button */
+            // document.getElementById('add_section_range').onclick = e => {
+            //     console.log('[CLICK] add_section_range');
+            //     console.log('[IF CONTAINS added]', e.target.classList.contains('added'));
+
+            //     if(!e.target.classList.contains('added')){
+            //         /*means rank not added yet*/
+
+            //         let rank = 0;
+            //         all_rows.forEach(row=>{
+            //             let td = document.createElement('td');
+            //             td.textContent = rank++;
+            //             if(!row.style.display)
+            //                 row.appendChild(td);
+            //         });
+
+            //         e.target.classList.add('added');
+            //         return;
+            //     }
+                
+            //     all_rows.forEach(row=>{
+            //         if(!row.style.display)
+            //             row.lastElementChild.remove();
+            //     });
+
+            //     e.target.classList.remove('added');
+            // }
+            // return;
         }
 
     } catch (error) {
