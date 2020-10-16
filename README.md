@@ -9,7 +9,7 @@
 4. 🔭 `Search by Name` if roll number is forgotten
 5. ⚡ Calculate `RANK`, only if not given from the institute
 6. ⚡ `Show All Students` in a list with their `Name`, `Roll`, `Rank` and `Total Mark`
-    - `SORT` then based on `Name`, `Roll`, `Rank` and `Total Mark`
+    - `SORT` them based on `Name`, `Roll`, `Rank` and `Total Mark`
 7. ⚡ Show all students in a `Range of Roll` or within `Section`
 
 **Are all data actual results?**
