@@ -1,48 +1,3 @@
-/*---------- EXPANDER MENU ----------*/
-const showMenu = (navbarId, ...toggle_btn_selectors) => {
-    let toggle_btns = toggle_btn_selectors.map(selector => document.querySelector(selector));
-    let navbar = document.getElementById(navbarId);
-
-    const onclick_event_listener = () => {
-        // toggling padding first
-        navbar.style.padding = navbar.style.padding ? '' : '1.5rem 1.5rem 2rem';
-
-        navbar.classList.toggle('expander');
-        document.getElementById('main-container').classList.toggle('overlay');
-
-        document.querySelectorAll('#navbar nav > div >  div+div > div .rotate').forEach(e => e.classList.remove("rotate"));
-        document.querySelectorAll('#navbar nav > div >  div+div > div .showCollapse').forEach(e => e.classList.remove("showCollapse"));
-    }
-
-    if (toggle_btns && navbar) {
-        toggle_btns.forEach(element => { element.addEventListener('click', onclick_event_listener) });
-    }
-}
-showMenu('navbar', '#nav-toggle', '.header-logo');
-
-/*----------- LINK ACTIVE  ------------*/
-const linkColor = document.querySelectorAll('.nav__link')
-function colorLink() {
-    linkColor.forEach(l => l.classList.remove('active'))
-    this.classList.add('active')
-}
-linkColor.forEach(l => l.addEventListener('click', colorLink))
-
-
-/*------------- COLLAPSE MENU  --------------*/
-const linkCollapse = document.getElementsByClassName('nav__link')
-for (let i = 0; i < linkCollapse.length; i++) {
-    linkCollapse[i].addEventListener('click', function () {
-        // const collapseMenu = this.nextElementSibling
-        const collapseMenu = this.querySelector('ul')
-        collapseMenu.classList.toggle('showCollapse')
-
-        // const rotate = collapseMenu.previousElementSibling
-        const rotate = this.querySelector('.collapse__link')
-        rotate.classList.toggle('rotate')
-    })
-}
-// ------------------------ nav functionality ends -----------------------------
 // ================================= GLOBAL VARS  =================================
 const DB_VERSION = 1;
 const DB_NAME = new URLSearchParams(window.location.search).get('in'); //institution
@@ -101,7 +56,7 @@ let IS_CREATED = false;
 let db;
 
 /** displaying college name */
-document.querySelector('.colg_name').textContent = DB_NAME && document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
+if(document.querySelector('.colg_name')) document.querySelector('.colg_name').textContent = DB_NAME && document.querySelector(`meta[db=${DB_NAME}]`).dataset.in;
 
 // ------------------------ FOR MEDIA QUERIES  ------------------------------
 const MEDIA_PHONE_WIDTH = '640px';
@@ -254,6 +209,14 @@ async function main() {
 
             response = await fetch(`data/${DB_NAME}_${XM_NAME}.csv`);
             let data = await response.text();
+
+            /*this data is a html file while no internet connection */
+            if (data.slice(0,20).toLowerCase().includes('<!doctype html>')){
+                location.href =  document.baseURI + 'error.html?error=no_internet';
+                return;
+            } 
+            // console.log(response)
+            // console.log(data)
 
             /** getting header_names & indexs */
             let header_names = data.split('\n')[0].split(',');

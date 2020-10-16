@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+
+    <base href="http://localhost:5500/">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta developer='smmus'>
@@ -12,11 +15,20 @@
     <meta db=cc data-in="Chittagonj College" data-main_roll_digits="3">
     <meta db=gccc data-in="Chittagonj City College" data-main_roll_digits="3">
 
+    <script>
+        /*------------- SERVICE WORKER  --------------*/
+        if('serviceWorker' in navigator){
+            navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('[REGISTERED]: SERVICE WORKER FILE :', reg.scope))
+            .catch(err => console.log('[ERROR]: registering sw', err));
+        }
+    </script>
+
     <!-- manifest -->
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="manifest.json">
     
     <!-- ios support -->
-    <link rel="apple-touch-icon" href="./others/icon-96x96.png">
+    <link rel="apple-touch-icon" href="others/icon-96x96.png">
     <meta name="apple-mobile-web-app-status-bar" content="#2873ff">
     <meta name="theme-color" content="#2873ff">
 
@@ -34,6 +46,7 @@
     <!-- custom script -->
     <script src="js/aiddb.js" defer></script>
     <script src="js/index.js" defer></script>
+    <script src="js/navbar.js" defer></script>
 
     <title>ShowResult</title>
 

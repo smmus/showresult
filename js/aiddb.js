@@ -29,7 +29,7 @@ function createRankList(db, store_name, data, header_index) {
             let optionalSub = header_index.indexOf('optionalSub') != -1 ? result[header_index.indexOf('optionalSub')] : 'biology';
             let nonOptionalSub = optionalSub == 'biology' ? 'higher_math' : 'biology';
 
-            console.log('optionalSub', optionalSub, 'nonOptionalSub', nonOptionalSub)
+            // console.log('optionalSub', optionalSub, 'nonOptionalSub', nonOptionalSub)
             /** caculating student's optional subjects' marks, **assuming they are [INTEGER]-string** */
             let optionalSubMark = header_index.filter(field_name => field_name.includes(optionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
             let nonOptionalSubMark = header_index.filter(field_name => field_name.includes(nonOptionalSub) && field_name.includes(TOTAL_NUMBER_FIELD_NAME)).map(field_name => parseInt(result[header_index.indexOf(field_name)])).reduce((a, c) => a + c);
