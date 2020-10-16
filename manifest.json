@@ -2,7 +2,7 @@
     "short_name": "ShowResult",
     "name": "Show Result",
     "lang": "en",
-    "start_url": "/",
+    "start_url": "/showresult",
     "background_color": "#6198ff",
     "theme_color": "#2873ff",
     "dir": "ltr",
