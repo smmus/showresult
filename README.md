@@ -40,10 +40,11 @@
 
 ### Todos (consider contributing)
 * [ ] **Update:** the **Color Scheme** 
-* [ ] **Add:** `Dark Mode` under `settings` menu  
-* [ ] **Fix:** One student cannot compare with himself
+* [ ] **Update:** `Navbar` for native app experience (open and close while sliding) 
+* [ ] **Add:** `Dark Mode` under `Settings` menu  
+* [ ] **Fix:** One student *cannot* compare with himself
 * [ ] **Add:** `Ranking` in a roll range (for section)  
-* [ ] **Make:** PWA (working on it) 
+* [x] **Make:** PWA 
 
 ---
 
